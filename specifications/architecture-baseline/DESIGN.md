@@ -11,7 +11,7 @@ This design defines Kando as a simple Kanban todo application using packages alr
 | App runtime and build            | `@tanstack/react-start`, `vite`, `@vitejs/plugin-react`                                          | Use TanStack Start app model with Vite as the build/dev runtime.                  |
 | Routing                          | `@tanstack/react-router`, `@tanstack/router-plugin`                                              | Route-first architecture with generated route tree and typed navigation.          |
 | Route data and SSR query support | `@tanstack/react-router-ssr-query`                                                               | Keep route loaders/actions as source of truth for route-level data concerns.      |
-| UI primitives and components     | `@base-ui/react`, `shadcn`, `class-variance-authority`, `clsx`, `tailwind-merge`, `lucide-react` | Compose accessible primitives with reusable UI components in `src/components/ui`. |
+| UI primitives and components     | `shadcn`, `@base-ui/react`, `class-variance-authority`, `clsx`, `tailwind-merge`, `lucide-react` | Use shadcn components as the default UI layer in `src/components/ui`, with consistent variants and accessibility behavior. |
 | Styling system                   | `tailwindcss`, `@tailwindcss/vite`, `tw-animate-css`, fontsource packages                        | Utility-first styling with consistent variants and animation utilities.           |
 | Data and persistence             | `drizzle-orm`, `drizzle-kit`, `postgres`, `@paralleldrive/cuid2`                                 | Drizzle schema-driven SQL access on Postgres with CUID2 IDs.                      |
 | Testing                          | `vitest`, `@testing-library/react`, `@testing-library/dom`, `jsdom`                              | Unit and component testing with DOM simulation in jsdom.                          |
@@ -23,8 +23,26 @@ This design defines Kando as a simple Kanban todo application using packages alr
 
 - Routes in `src/routes` define entry points and route composition.
 - Shared UI components in `src/components/ui` provide consistent interaction patterns.
+- Interactive UI should use shadcn components by default (for example: dialog, input, button, sidebar, dropdown-menu, select, tooltip, sheet).
 - Main board view renders four status columns: todo, in_progress, blocked, done.
 - Sidebar presents filters for overdue and today, plus optional filters listed below.
+
+## UI Component Standard
+
+- Always prefer shadcn components for app UI composition.
+- Use shadcn button, input, dialog, and sidebar patterns as the baseline for new features.
+- If a needed component does not exist in the current UI set, add it through shadcn first.
+- Only fall back to lower-level primitives when there is no suitable shadcn option.
+- Wrap any custom primitive usage inside `src/components/ui` so route-level code still consumes a consistent shadcn-style API.
+
+## Component Decomposition Standard
+
+- All UI should be broken down into small, reusable, and easily testable components.
+- Route files should focus on composition and data wiring, not large blocks of UI markup.
+- Shared UI elements should live in `src/components/ui` and feature-level reusable pieces should live in `src/components`.
+- Prefer passing data and handlers through explicit props so components can be tested in isolation.
+- Keep side effects and server calls at container boundaries; keep presentational components mostly pure.
+- Complex views (for example, board, swimlane, task card, task dialog, filter panel) should each be separate components with focused responsibilities.
 
 2. Application layer:
 
