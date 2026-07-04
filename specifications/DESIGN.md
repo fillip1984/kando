@@ -74,6 +74,35 @@ This design defines Kando as a simple Kanban todo application using packages alr
 
 - After modifying files in VS Code, files must be saved so the configured Prettier workflow can run.
 - Saving files is required to allow import organization behavior from the configured Prettier/import tooling.
+- Workspace VS Code settings should enforce automatic formatting on save.
+- Workspace VS Code settings should set Prettier as the default formatter.
+- Project setup should include recommended VS Code extensions via `.vscode/extensions.json`.
+- Required recommended extensions should include at least Prettier, ESLint, and Tailwind CSS IntelliSense.
+- Additional recommended extensions for this project should include Chat Customizations Evaluations, ES7 React snippets, and Pretty TypeScript Errors.
+- Suggested workspace recommendations for `.vscode/extensions.json`:
+
+```json
+{
+  "recommendations": [
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "bradlc.vscode-tailwindcss",
+    "ms-vscode.vscode-chat-customizations-evaluations",
+    "dsznajder.es7-react-js-snippets",
+    "yoavbls.pretty-ts-errors"
+  ]
+}
+```
+
+- Required workspace settings for `.vscode/settings.json`:
+
+```json
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
+}
+```
+
 - If auto-save or format-on-save is unavailable, save manually and run the formatting workflow before considering the change complete.
 - Pull requests should not include unorganized imports caused by unsaved files.
 

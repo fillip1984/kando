@@ -19,6 +19,9 @@
 - [x] Decompose board UI from route into reusable components (board, swimlane, task-card, task-dialog, filter-panel).
 - [x] Implement shadcn TanStack Start dark mode architecture (ThemeProvider, ScriptOnce, root wiring, mode toggle).
 - [x] Update root document title and shell metadata from starter defaults to Kando defaults.
+- [x] Add workspace VS Code settings for automatic format on save (`editor.formatOnSave: true`).
+- [x] Add workspace VS Code settings to use Prettier as default formatter (`editor.defaultFormatter: esbenp.prettier-vscode`).
+- [x] Add project recommended VS Code extensions in `.vscode/extensions.json` (Prettier, ESLint, Tailwind CSS IntelliSense).
 
 ## Validation Tasks
 
@@ -32,6 +35,9 @@
 - [x] Verify all new task form controls are shadcn components and no custom wrappers were introduced without approval.
 - [ ] Verify shadcn components were added via CLI workflow (for example: `npx shadcn@latest add ...`) and not manually scaffolded.
 - [ ] Verify dark mode follows shadcn TanStack Start docs (hydration-safe, light/dark/system toggle).
+- [ ] Verify `.vscode/settings.json` enforces format on save.
+- [ ] Verify `.vscode/settings.json` sets Prettier as default formatter.
+- [ ] Verify `.vscode/extensions.json` includes recommended project extensions for setup.
 - [x] Verify overdue filter excludes done tasks and includes dueDate before today.
 - [x] Verify today filter only includes tasks due on current date.
 - [x] Verify filter behavior is single-select: enabling one filter disables the previous one, and clicking the active filter toggles it off.

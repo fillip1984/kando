@@ -1,9 +1,13 @@
 import type { FilterState } from "@/components/board/filter-panel"
 import { FilterPanel } from "@/components/board/filter-panel"
 import { toggleSingleSelectFilter } from "@/components/board/filter-state"
-import { isOverdue, isToday, parseDueDate } from "@/components/board/task-filters"
 import { KanbanBoard } from "@/components/board/kanban-board"
 import { TaskDialog } from "@/components/board/task-dialog"
+import {
+  isOverdue,
+  isToday,
+  parseDueDate,
+} from "@/components/board/task-filters"
 import { ModeToggle } from "@/components/mode-toggle"
 import type { TaskStatus, TaskSummaryType } from "@/server/functions/todos"
 import {

@@ -15,9 +15,9 @@ All work must live under `/specifications`.
 
 For each feature, create a folder:
 
-- `/specifications/<feature-name>/SPEC.md`
-- `/specifications/<feature-name>/DESIGN.md`
-- `/specifications/<feature-name>/TASK.md`
+- `/specifications/SPEC.md`
+- `/specifications/DESIGN.md`
+- `/specifications/TASK.md`
 
 Use lowercase kebab-case for `<feature-name>`.
 
@@ -43,7 +43,7 @@ Use lowercase kebab-case for `<feature-name>`.
 
 ## Standard Workflow
 
-1. Create `/specifications/<feature-name>/`.
+1. Create `/specifications`.
 2. Draft `SPEC.md` and get alignment before implementation.
 3. Draft `DESIGN.md` to map spec requirements to technical decisions.
 4. Create `TASK.md` with checkboxes and delivery order.
