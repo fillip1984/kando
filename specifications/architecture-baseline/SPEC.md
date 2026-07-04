@@ -38,8 +38,8 @@ We are building a simple todo application called Kando. The product requires a c
 - Each swimlane must provide a create-task button pinned to the bottom of the lane.
 - The create-task button must open the same task dialog used for editing.
 - The shared task dialog must support both modes:
-	- Create mode initializes empty/default values for the target swimlane.
-	- Edit mode initializes existing task values.
+  - Create mode initializes empty/default values for the target swimlane.
+  - Edit mode initializes existing task values.
 - Drag-and-drop must update task status (and position if needed) persistently.
 - Sidebar must include filters for overdue tasks and today tasks.
 - Additional recommended filters: by status, no due date, blocked only, done recently.

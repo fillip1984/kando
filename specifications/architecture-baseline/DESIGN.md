@@ -6,16 +6,16 @@ This design defines Kando as a simple Kanban todo application using packages alr
 
 ## Package-Driven Architecture
 
-| Concern                          | Primary Packages                                                                                 | Design Decision                                                                   |
-| -------------------------------- | ------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------- |
-| App runtime and build            | `@tanstack/react-start`, `vite`, `@vitejs/plugin-react`                                          | Use TanStack Start app model with Vite as the build/dev runtime.                  |
-| Routing                          | `@tanstack/react-router`, `@tanstack/router-plugin`                                              | Route-first architecture with generated route tree and typed navigation.          |
-| Route data and SSR query support | `@tanstack/react-router-ssr-query`                                                               | Keep route loaders/actions as source of truth for route-level data concerns.      |
+| Concern                          | Primary Packages                                                                                 | Design Decision                                                                                                            |
+| -------------------------------- | ------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| App runtime and build            | `@tanstack/react-start`, `vite`, `@vitejs/plugin-react`                                          | Use TanStack Start app model with Vite as the build/dev runtime.                                                           |
+| Routing                          | `@tanstack/react-router`, `@tanstack/router-plugin`                                              | Route-first architecture with generated route tree and typed navigation.                                                   |
+| Route data and SSR query support | `@tanstack/react-router-ssr-query`                                                               | Keep route loaders/actions as source of truth for route-level data concerns.                                               |
 | UI primitives and components     | `shadcn`, `@base-ui/react`, `class-variance-authority`, `clsx`, `tailwind-merge`, `lucide-react` | Use shadcn components as the default UI layer in `src/components/ui`, with consistent variants and accessibility behavior. |
-| Styling system                   | `tailwindcss`, `@tailwindcss/vite`, `tw-animate-css`, fontsource packages                        | Utility-first styling with consistent variants and animation utilities.           |
-| Data and persistence             | `drizzle-orm`, `drizzle-kit`, `postgres`, `@paralleldrive/cuid2`                                 | Drizzle schema-driven SQL access on Postgres with CUID2 IDs.                      |
-| Testing                          | `vitest`, `@testing-library/react`, `@testing-library/dom`, `jsdom`                              | Unit and component testing with DOM simulation in jsdom.                          |
-| Code quality                     | `eslint`, `@tanstack/eslint-config`, `prettier`, Tailwind/import plugins                         | Enforce deterministic formatting and linting in CI/local scripts.                 |
+| Styling system                   | `tailwindcss`, `@tailwindcss/vite`, `tw-animate-css`, fontsource packages                        | Utility-first styling with consistent variants and animation utilities.                                                    |
+| Data and persistence             | `drizzle-orm`, `drizzle-kit`, `postgres`, `@paralleldrive/cuid2`                                 | Drizzle schema-driven SQL access on Postgres with CUID2 IDs.                                                               |
+| Testing                          | `vitest`, `@testing-library/react`, `@testing-library/dom`, `jsdom`                              | Unit and component testing with DOM simulation in jsdom.                                                                   |
+| Code quality                     | `eslint`, `@tanstack/eslint-config`, `prettier`, Tailwind/import plugins                         | Enforce deterministic formatting and linting in CI/local scripts.                                                          |
 
 ## Architecture
 
