@@ -3,8 +3,8 @@
 import { fireEvent, render, screen } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 
-import { Swimlanes } from "@/server/functions/todos"
 import type { TaskStatus, TaskSummaryType } from "@/server/functions/todos"
+import { Swimlanes } from "@/server/functions/todos"
 
 import { KanbanBoard } from "./kanban-board"
 

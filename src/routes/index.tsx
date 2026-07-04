@@ -1,8 +1,6 @@
 import type { FilterState } from "@/components/board/filter-panel"
 import { FilterPanel } from "@/components/board/filter-panel"
 import { toggleSingleSelectFilter } from "@/components/board/filter-state"
-import { createTaskFormForLane } from "@/components/board/task-form-state"
-import type { TaskFormState } from "@/components/board/task-form-state"
 import { KanbanBoard } from "@/components/board/kanban-board"
 import { TaskDialog } from "@/components/board/task-dialog"
 import {
@@ -10,6 +8,8 @@ import {
   isToday,
   parseDueDate,
 } from "@/components/board/task-filters"
+import type { TaskFormState } from "@/components/board/task-form-state"
+import { createTaskFormForLane } from "@/components/board/task-form-state"
 import { ModeToggle } from "@/components/mode-toggle"
 import type { TaskStatus, TaskSummaryType } from "@/server/functions/todos"
 import {
