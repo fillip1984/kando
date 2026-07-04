@@ -2,6 +2,11 @@ import type { FilterState } from "@/components/board/filter-panel"
 import { FilterPanel } from "@/components/board/filter-panel"
 import { toggleSingleSelectFilter } from "@/components/board/filter-state"
 import { KanbanBoard } from "@/components/board/kanban-board"
+import {
+  applyTaskEditLocally,
+  createMoveUpdate,
+  createUpdateTaskInput,
+} from "@/components/board/task-mutations"
 import { TaskDialog } from "@/components/board/task-dialog"
 import {
   isOverdue,
@@ -190,31 +195,20 @@ function App() {
 
         const previousTasks = tasks
         const nextPosition = existingTask.position ?? 0
+        const editValues = {
+          title,
+          description: taskForm.description.trim() || null,
+          dueDate: dueDateValue,
+          status: taskForm.status,
+        }
 
         setTasks((current) =>
-          current.map((task) =>
-            task.id === existingTask.id
-              ? {
-                  ...task,
-                  title,
-                  description: taskForm.description.trim() || null,
-                  dueDate: dueDateValue,
-                  status: taskForm.status,
-                }
-              : task
-          )
+          applyTaskEditLocally(current, existingTask.id, editValues)
         )
 
         try {
           await updateTaskFn({
-            data: {
-              id: existingTask.id,
-              title,
-              description: taskForm.description.trim() || null,
-              dueDate: dueDateValue,
-              status: taskForm.status,
-              position: nextPosition,
-            },
+            data: createUpdateTaskInput(existingTask.id, nextPosition, editValues),
           })
         } catch {
           setTasks(previousTasks)
@@ -242,33 +236,19 @@ function App() {
       return
     }
 
-    const targetTasks = tasks
-      .filter((task) => task.status === targetLane && task.id !== movingTask.id)
-      .sort(
-        (a, b) =>
-          (a.position ?? Number.MAX_SAFE_INTEGER) -
-          (b.position ?? Number.MAX_SAFE_INTEGER)
-      )
+    const moveUpdate = createMoveUpdate(tasks, movingTask.id, targetLane)
+    if (!moveUpdate) {
+      return
+    }
 
-    const nextPosition = targetTasks.length
     const previousTasks = tasks
 
     setIsSavingMove(true)
-    setTasks((current) =>
-      current.map((task) =>
-        task.id === movingTask.id
-          ? { ...task, status: targetLane, position: nextPosition }
-          : task
-      )
-    )
+    setTasks(moveUpdate.nextTasks)
 
     try {
       await moveTaskFn({
-        data: {
-          id: movingTask.id,
-          status: targetLane,
-          position: nextPosition,
-        },
+        data: moveUpdate.moveInput,
       })
     } catch {
       setTasks(previousTasks)
