@@ -20,7 +20,8 @@ export const Route = createRootRoute({
       },
       {
         name: "description",
-        content: "Kando is a focused single-board Kanban todo app for tracking work from todo to done.",
+        content:
+          "Kando is a focused single-board Kanban todo app for tracking work from todo to done.",
       },
       {
         name: "application-name",
