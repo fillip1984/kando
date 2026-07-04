@@ -3,8 +3,8 @@
 import { fireEvent, render, screen } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 
-import { FilterPanel } from "./filter-panel"
 import type { FilterState } from "./filter-panel"
+import { FilterPanel } from "./filter-panel"
 import { toggleSingleSelectFilter } from "./filter-state"
 
 const emptyFilters: FilterState = {
@@ -32,7 +32,9 @@ function FilterPanelHarness() {
   )
 
   const rerenderPanel = () => {
-    rerender(<FilterPanel filters={filters} onToggle={onToggle} onReset={onReset} />)
+    rerender(
+      <FilterPanel filters={filters} onToggle={onToggle} onReset={onReset} />
+    )
   }
 
   return { onReset }
