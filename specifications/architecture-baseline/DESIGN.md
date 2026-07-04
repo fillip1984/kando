@@ -31,9 +31,13 @@ This design defines Kando as a simple Kanban todo application using packages alr
 
 - Always prefer shadcn components for app UI composition.
 - Use shadcn button, input, dialog, and sidebar patterns as the baseline for new features.
+- Do not modify shadcn component source implementations from their recommended patterns unless explicitly approved by the user.
 - If a needed component does not exist in the current UI set, add it through shadcn first.
-- Only fall back to lower-level primitives when there is no suitable shadcn option.
-- Wrap any custom primitive usage inside `src/components/ui` so route-level code still consumes a consistent shadcn-style API.
+- Do not wrap shadcn components by default.
+- Wrapping a shadcn component is allowed only when both conditions are met:
+	- No suitable shadcn-native option is available.
+	- The user has explicitly approved the wrapper approach.
+- Only fall back to lower-level primitives when there is no suitable shadcn option and this constraint has been acknowledged in the spec/task notes.
 
 ## Component Decomposition Standard
 
@@ -43,6 +47,23 @@ This design defines Kando as a simple Kanban todo application using packages alr
 - Prefer passing data and handlers through explicit props so components can be tested in isolation.
 - Keep side effects and server calls at container boundaries; keep presentational components mostly pure.
 - Complex views (for example, board, swimlane, task card, task dialog, filter panel) should each be separate components with focused responsibilities.
+
+## Dark Mode Standard
+
+- Dark mode implementation must follow the shadcn TanStack Start documentation: https://ui.shadcn.com/docs/dark-mode/tanstack-start
+- Use the documented ThemeProvider pattern and ScriptOnce approach to prevent flash-of-unstyled-content during hydration.
+- Root layout must be wired per the documented pattern, including suppressHydrationWarning on the html element.
+- Theme selection must support light, dark, and system modes.
+- Add and maintain a user-facing mode toggle based on the documented shadcn pattern.
+- Do not introduce a custom dark mode architecture when the documented shadcn approach is applicable.
+- Any deviation from the documented approach requires explicit user approval and a note in Spec Drift Log.
+
+## Environment File Policy
+
+- Only `.env.example` may be committed to the repository.
+- Any runtime/local environment file (for example: `.env`, `.env.local`, `.env.development`, `.env.production`) must not be committed.
+- Repository `.gitignore` must enforce this with a broad `.env*` ignore rule and an explicit exception for `.env.example`.
+- If additional environment template files are needed in the future, they require explicit user approval and a spec/task note.
 
 2. Application layer:
 
