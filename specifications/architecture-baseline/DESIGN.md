@@ -68,6 +68,13 @@ This design defines Kando as a simple Kanban todo application using packages alr
 - Repository `.gitignore` must enforce this with a broad `.env*` ignore rule and an explicit exception for `.env.example`.
 - If additional environment template files are needed in the future, they require explicit user approval and a spec/task note.
 
+## VS Code Tooling Standard
+
+- After modifying files in VS Code, files must be saved so the configured Prettier workflow can run.
+- Saving files is required to allow import organization behavior from the configured Prettier/import tooling.
+- If auto-save or format-on-save is unavailable, save manually and run the formatting workflow before considering the change complete.
+- Pull requests should not include unorganized imports caused by unsaved files.
+
 2. Application layer:
 
 - Route loaders/actions and server functions in `src/server/functions` implement business behavior.
