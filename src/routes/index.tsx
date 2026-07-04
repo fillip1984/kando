@@ -1,7 +1,7 @@
+import type { FilterState } from "@/components/board/filter-panel"
 import { FilterPanel } from "@/components/board/filter-panel"
 import { KanbanBoard } from "@/components/board/kanban-board"
 import { TaskDialog } from "@/components/board/task-dialog"
-import type { FilterState } from "@/components/board/filter-panel"
 import type { TaskStatus, TaskSummaryType } from "@/server/functions/todos"
 import {
   Swimlanes,
@@ -197,12 +197,16 @@ function App() {
       return
     }
 
-    const dueDateValue = taskForm.dueDate ? new Date(`${taskForm.dueDate}T00:00:00`) : null
+    const dueDateValue = taskForm.dueDate
+      ? new Date(`${taskForm.dueDate}T00:00:00`)
+      : null
 
     setIsSavingTask(true)
     try {
       if (dialogState.mode === "create") {
-        const laneTasks = tasks.filter((task) => task.status === taskForm.status)
+        const laneTasks = tasks.filter(
+          (task) => task.status === taskForm.status
+        )
         const nextPosition = laneTasks.length
         const created = await createTaskFn({
           data: {
@@ -216,7 +220,9 @@ function App() {
 
         setTasks((current) => [...current, created])
       } else if (dialogState.taskId) {
-        const existingTask = tasks.find((task) => task.id === dialogState.taskId)
+        const existingTask = tasks.find(
+          (task) => task.id === dialogState.taskId
+        )
         if (!existingTask) {
           return
         }

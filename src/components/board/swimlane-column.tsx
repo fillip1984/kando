@@ -63,7 +63,11 @@ export function SwimlaneColumn({
         ) : null}
       </div>
 
-      <Button variant="outline" className="mt-3 w-full justify-start" onClick={() => onOpenCreate(lane)}>
+      <Button
+        variant="outline"
+        className="mt-3 w-full justify-start"
+        onClick={() => onOpenCreate(lane)}
+      >
         <Plus className="size-4" />
         Add Task
       </Button>

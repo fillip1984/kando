@@ -30,15 +30,26 @@ export function TaskCard({
     >
       <div className="flex items-start justify-between gap-2">
         <p className="line-clamp-2 text-sm font-medium">{task.title}</p>
-        <Button variant="ghost" size="icon-xs" aria-label="Edit task" onClick={() => onEdit(task)}>
+        <Button
+          variant="ghost"
+          size="icon-xs"
+          aria-label="Edit task"
+          onClick={() => onEdit(task)}
+        >
           <Pencil className="size-3" />
         </Button>
       </div>
       {task.description ? (
-        <p className="mt-1 line-clamp-3 text-xs text-muted-foreground">{task.description}</p>
+        <p className="mt-1 line-clamp-3 text-xs text-muted-foreground">
+          {task.description}
+        </p>
       ) : null}
       <div className="mt-2 flex items-center gap-2 text-xs">
-        <span className={isOverdue ? "text-destructive" : "text-muted-foreground"}>{dueLabel}</span>
+        <span
+          className={isOverdue ? "text-destructive" : "text-muted-foreground"}
+        >
+          {dueLabel}
+        </span>
       </div>
     </div>
   )

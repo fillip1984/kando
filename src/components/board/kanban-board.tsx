@@ -1,5 +1,5 @@
-import { Swimlanes } from "@/server/functions/todos"
 import type { TaskStatus, TaskSummaryType } from "@/server/functions/todos"
+import { Swimlanes } from "@/server/functions/todos"
 
 import { SwimlaneColumn } from "./swimlane-column"
 

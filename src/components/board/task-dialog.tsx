@@ -9,8 +9,8 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Swimlanes } from "@/server/functions/todos"
 import type { TaskStatus } from "@/server/functions/todos"
+import { Swimlanes } from "@/server/functions/todos"
 
 type TaskDialogProps = {
   open: boolean
@@ -56,9 +56,12 @@ export function TaskDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{mode === "create" ? "Create Task" : "Edit Task"}</DialogTitle>
+          <DialogTitle>
+            {mode === "create" ? "Create Task" : "Edit Task"}
+          </DialogTitle>
           <DialogDescription>
-            Use this form to {mode === "create" ? "create a new task" : "update task details"}.
+            Use this form to{" "}
+            {mode === "create" ? "create a new task" : "update task details"}.
           </DialogDescription>
         </DialogHeader>
 
