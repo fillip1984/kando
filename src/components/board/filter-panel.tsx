@@ -18,7 +18,7 @@ export function FilterPanel({ filters, onToggle, onReset }: FilterPanelProps) {
     <aside className="rounded-xl border border-border/70 bg-card p-4 shadow-sm">
       <h2 className="font-heading text-lg">Filters</h2>
       <p className="mt-1 text-xs text-muted-foreground">
-        Filters combine with AND behavior.
+        One filter can be active at a time.
       </p>
 
       <div className="mt-3 grid gap-2 text-sm">

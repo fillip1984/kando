@@ -23,7 +23,7 @@
 ## Validation Tasks
 
 - [x] Unit tests
-- [ ] Integration tests
+- [x] Integration tests
 - [ ] Manual verification
 - [ ] Verify create-task buttons stay pinned to the bottom of each swimlane on desktop and mobile layouts.
 - [x] Verify create mode and edit mode both use the same task dialog component.
@@ -34,7 +34,7 @@
 - [ ] Verify dark mode follows shadcn TanStack Start docs (hydration-safe, light/dark/system toggle).
 - [ ] Verify overdue filter excludes done tasks and includes dueDate before today.
 - [ ] Verify today filter only includes tasks due on current date.
-- [ ] Verify filter behavior is single-select: enabling one filter disables the previous one, and clicking the active filter toggles it off.
+- [x] Verify filter behavior is single-select: enabling one filter disables the previous one, and clicking the active filter toggles it off.
 - [ ] Verify drag-and-drop status changes persist across refresh.
 - [x] `pnpm typecheck`
 - [x] `pnpm lint`
@@ -73,3 +73,11 @@
   Reason: Dark mode setup has not been implemented yet.
   Resolution: Implemented documentation-based theme provider wiring and mode toggle.
   Follow-up task: Complete manual verification for hydration behavior and theme persistence across reloads.
+
+- Date: 2026-07-04
+  Area: Filter interaction model
+  Expected: Filters should be single-select, and clicking the active filter should clear it.
+  Actual: Filter toggles are now exclusive, and active filter click resets filter state.
+  Reason: Earlier implementation used independent multi-select toggles.
+  Resolution: Added single-select filter state transition logic and integration coverage for interaction flow.
+  Follow-up task: Complete manual verification for overdue/today correctness against real board data.

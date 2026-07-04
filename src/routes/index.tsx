@@ -1,5 +1,6 @@
 import type { FilterState } from "@/components/board/filter-panel"
 import { FilterPanel } from "@/components/board/filter-panel"
+import { toggleSingleSelectFilter } from "@/components/board/filter-state"
 import { KanbanBoard } from "@/components/board/kanban-board"
 import { TaskDialog } from "@/components/board/task-dialog"
 import { ModeToggle } from "@/components/mode-toggle"
@@ -269,7 +270,7 @@ function App() {
   }
 
   function toggleFilter(key: keyof FilterState) {
-    setFilters((current) => ({ ...current, [key]: !current[key] }))
+    setFilters((current) => toggleSingleSelectFilter(current, key))
   }
 
   async function onDropToLane(targetLane: TaskStatus) {
