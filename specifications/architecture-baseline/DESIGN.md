@@ -31,6 +31,9 @@ This design defines Kando as a simple Kanban todo application using packages alr
 
 - Always prefer shadcn components for app UI composition.
 - Use shadcn button, input, dialog, and sidebar patterns as the baseline for new features.
+- shadcn components must be added through the command-line workflow (for example: `npx shadcn@latest add <component>`).
+- Do not hand-generate or manually scaffold shadcn component files.
+- If CLI-based addition is blocked by environment constraints, get explicit user approval before any alternative approach and record it in spec/task notes.
 - Do not modify shadcn component source implementations from their recommended patterns unless explicitly approved by the user.
 - If a needed component does not exist in the current UI set, add it through shadcn first.
 - Do not wrap shadcn components by default.
@@ -120,7 +123,9 @@ Suggested additional filters:
 
 Filter behavior:
 
-- Filters should combine predictably (AND semantics by default).
+- Filters are single-select (mutually exclusive); only one filter may be active at a time.
+- Selecting a filter deactivates any previously active filter.
+- Clicking the currently active filter toggles it off.
 - Empty filter state shows all tasks.
 
 ## Drag-and-Drop Design

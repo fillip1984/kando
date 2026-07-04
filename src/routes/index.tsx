@@ -1,10 +1,14 @@
-import { Button } from "@/components/ui/button"
+import { FilterPanel } from "@/components/board/filter-panel"
+import { KanbanBoard } from "@/components/board/kanban-board"
+import { TaskDialog } from "@/components/board/task-dialog"
+import type { FilterState } from "@/components/board/filter-panel"
 import type { TaskStatus, TaskSummaryType } from "@/server/functions/todos"
 import {
   Swimlanes,
   createTaskFn,
   moveTaskFn,
   readTasksFn,
+  updateTaskFn,
 } from "@/server/functions/todos"
 import { createFileRoute } from "@tanstack/react-router"
 import { isSameDay, startOfDay } from "date-fns"
@@ -15,25 +19,26 @@ export const Route = createFileRoute("/")({
   component: App,
 })
 
-type FilterState = {
-  overdue: boolean
-  today: boolean
-  blockedOnly: boolean
-  noDueDate: boolean
-}
-
-const laneTitles: Record<TaskStatus, string> = {
-  todo: "Todo",
-  in_progress: "In Progress",
-  blocked: "Blocked",
-  done: "Done",
-}
-
 const emptyFilters: FilterState = {
   overdue: false,
   today: false,
   blockedOnly: false,
   noDueDate: false,
+}
+
+type TaskDialogMode = "create" | "edit"
+
+type TaskDialogState = {
+  open: boolean
+  mode: TaskDialogMode
+  taskId: string | null
+}
+
+type TaskFormState = {
+  title: string
+  description: string
+  dueDate: string
+  status: TaskStatus
 }
 
 function parseDueDate(value: unknown): Date | null {
@@ -76,10 +81,18 @@ function App() {
   const [tasks, setTasks] = useState<TaskSummaryType[]>(initialTasks)
   const [filters, setFilters] = useState<FilterState>(emptyFilters)
   const [draggedTaskId, setDraggedTaskId] = useState<string | null>(null)
-  const [titleInput, setTitleInput] = useState("")
-  const [descriptionInput, setDescriptionInput] = useState("")
-  const [dueDateInput, setDueDateInput] = useState("")
-  const [isCreating, setIsCreating] = useState(false)
+  const [dialogState, setDialogState] = useState<TaskDialogState>({
+    open: false,
+    mode: "create",
+    taskId: null,
+  })
+  const [taskForm, setTaskForm] = useState<TaskFormState>({
+    title: "",
+    description: "",
+    dueDate: "",
+    status: "todo",
+  })
+  const [isSavingTask, setIsSavingTask] = useState(false)
   const [isSavingMove, setIsSavingMove] = useState(false)
 
   const now = new Date()
@@ -129,32 +142,122 @@ function App() {
 
   const totalShown = filteredTasks.length
 
-  async function createTask() {
-    const title = titleInput.trim()
+  function formatDateInput(value: unknown): string {
+    const dueDate = parseDueDate(value)
+    if (!dueDate) {
+      return ""
+    }
+
+    return dueDate.toISOString().slice(0, 10)
+  }
+
+  function getTaskDueLabel(task: TaskSummaryType): string {
+    const dueDate = parseDueDate(task.dueDate)
+    if (!dueDate) {
+      return "No due date"
+    }
+
+    return `Due ${dueDate.toLocaleDateString()}`
+  }
+
+  function openCreateDialog(targetLane: TaskStatus) {
+    setTaskForm({
+      title: "",
+      description: "",
+      dueDate: "",
+      status: targetLane,
+    })
+    setDialogState({ open: true, mode: "create", taskId: null })
+  }
+
+  function openEditDialog(task: TaskSummaryType) {
+    setTaskForm({
+      title: task.title,
+      description: task.description ?? "",
+      dueDate: formatDateInput(task.dueDate),
+      status: task.status,
+    })
+    setDialogState({ open: true, mode: "edit", taskId: task.id })
+  }
+
+  function setDialogOpen(open: boolean) {
+    setDialogState((current) => ({ ...current, open }))
+  }
+
+  function setTaskFormValue<TField extends keyof TaskFormState>(
+    key: TField,
+    value: TaskFormState[TField]
+  ) {
+    setTaskForm((current) => ({ ...current, [key]: value }))
+  }
+
+  async function saveTaskFromDialog() {
+    const title = taskForm.title.trim()
     if (!title) {
       return
     }
 
-    setIsCreating(true)
-    try {
-      const laneTasks = tasks.filter((task) => task.status === "todo")
-      const nextPosition = laneTasks.length
-      const created = await createTaskFn({
-        data: {
-          title,
-          description: descriptionInput.trim() || null,
-          dueDate: dueDateInput ? new Date(`${dueDateInput}T00:00:00`) : null,
-          status: "todo",
-          position: nextPosition,
-        },
-      })
+    const dueDateValue = taskForm.dueDate ? new Date(`${taskForm.dueDate}T00:00:00`) : null
 
-      setTasks((current) => [...current, created])
-      setTitleInput("")
-      setDescriptionInput("")
-      setDueDateInput("")
+    setIsSavingTask(true)
+    try {
+      if (dialogState.mode === "create") {
+        const laneTasks = tasks.filter((task) => task.status === taskForm.status)
+        const nextPosition = laneTasks.length
+        const created = await createTaskFn({
+          data: {
+            title,
+            description: taskForm.description.trim() || null,
+            dueDate: dueDateValue,
+            status: taskForm.status,
+            position: nextPosition,
+          },
+        })
+
+        setTasks((current) => [...current, created])
+      } else if (dialogState.taskId) {
+        const existingTask = tasks.find((task) => task.id === dialogState.taskId)
+        if (!existingTask) {
+          return
+        }
+
+        const previousTasks = tasks
+        const nextPosition = existingTask.position ?? 0
+
+        setTasks((current) =>
+          current.map((task) =>
+            task.id === existingTask.id
+              ? {
+                  ...task,
+                  title,
+                  description: taskForm.description.trim() || null,
+                  dueDate: dueDateValue,
+                  status: taskForm.status,
+                }
+              : task
+          )
+        )
+
+        try {
+          await updateTaskFn({
+            data: {
+              id: existingTask.id,
+              title,
+              description: taskForm.description.trim() || null,
+              dueDate: dueDateValue,
+              status: taskForm.status,
+              position: nextPosition,
+            },
+          })
+        } catch {
+          setTasks(previousTasks)
+          return
+        }
+      }
+
+      setDialogOpen(false)
     } finally {
-      setIsCreating(false)
+      setIsSavingTask(false)
     }
   }
 
@@ -208,6 +311,8 @@ function App() {
     }
   }
 
+  const isTaskOverdue = (task: TaskSummaryType) => isOverdue(task, now)
+
   return (
     <main className="min-h-svh bg-linear-to-br from-emerald-50 via-background to-teal-50 p-4 md:p-6">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 md:gap-6">
@@ -226,149 +331,40 @@ function App() {
         </header>
 
         <section className="grid gap-4 lg:grid-cols-[280px_1fr]">
-          <aside className="rounded-xl border border-border/70 bg-card p-4 shadow-sm">
-            <h2 className="font-heading text-lg">Filters</h2>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Filters combine with AND behavior.
-            </p>
+          <FilterPanel
+            filters={filters}
+            onToggle={toggleFilter}
+            onReset={() => setFilters(emptyFilters)}
+          />
 
-            <div className="mt-3 grid gap-2 text-sm">
-              <Button
-                variant={filters.overdue ? "default" : "outline"}
-                className="justify-start"
-                onClick={() => toggleFilter("overdue")}
-              >
-                Overdue
-              </Button>
-              <Button
-                variant={filters.today ? "default" : "outline"}
-                className="justify-start"
-                onClick={() => toggleFilter("today")}
-              >
-                Due Today
-              </Button>
-              <Button
-                variant={filters.blockedOnly ? "default" : "outline"}
-                className="justify-start"
-                onClick={() => toggleFilter("blockedOnly")}
-              >
-                Blocked Only
-              </Button>
-              <Button
-                variant={filters.noDueDate ? "default" : "outline"}
-                className="justify-start"
-                onClick={() => toggleFilter("noDueDate")}
-              >
-                No Due Date
-              </Button>
-              <Button
-                variant="ghost"
-                className="justify-start"
-                onClick={() => setFilters(emptyFilters)}
-              >
-                Reset Filters
-              </Button>
-            </div>
-
-            <div className="mt-6">
-              <h3 className="font-heading text-sm">Quick Add</h3>
-              <div className="mt-2 grid gap-2">
-                <input
-                  value={titleInput}
-                  onChange={(event) => setTitleInput(event.target.value)}
-                  placeholder="Task title"
-                  className="h-9 rounded-md border border-input bg-background px-3 text-sm"
-                />
-                <textarea
-                  value={descriptionInput}
-                  onChange={(event) => setDescriptionInput(event.target.value)}
-                  placeholder="Description (optional)"
-                  className="min-h-20 rounded-md border border-input bg-background px-3 py-2 text-sm"
-                />
-                <input
-                  type="date"
-                  value={dueDateInput}
-                  onChange={(event) => setDueDateInput(event.target.value)}
-                  className="h-9 rounded-md border border-input bg-background px-3 text-sm"
-                />
-                <Button
-                  disabled={isCreating || !titleInput.trim()}
-                  onClick={createTask}
-                >
-                  {isCreating ? "Adding..." : "Add Task"}
-                </Button>
-              </div>
-            </div>
-          </aside>
-
-          <section className="grid gap-3 overflow-x-auto md:grid-cols-2 xl:grid-cols-4">
-            {Swimlanes.map((lane) => (
-              <article
-                key={lane}
-                onDragOver={(event) => event.preventDefault()}
-                onDrop={() => onDropToLane(lane)}
-                className="flex min-h-80 flex-col rounded-xl border border-border/70 bg-card p-3 shadow-sm"
-              >
-                <header className="mb-2 flex items-center justify-between">
-                  <h2 className="font-heading text-base">{laneTitles[lane]}</h2>
-                  <span className="rounded-full border border-border px-2 py-0.5 text-xs text-muted-foreground">
-                    {tasksByLane[lane].length}
-                  </span>
-                </header>
-
-                <div className="grid content-start gap-2">
-                  {tasksByLane[lane].map((task) => {
-                    const dueDate = parseDueDate(task.dueDate)
-                    const showOverdue = isOverdue(task, now)
-
-                    return (
-                      <div
-                        key={task.id}
-                        draggable
-                        onDragStart={() => setDraggedTaskId(task.id)}
-                        onDragEnd={() => setDraggedTaskId(null)}
-                        className="rounded-lg border border-border/80 bg-background p-3"
-                      >
-                        <p className="line-clamp-2 text-sm font-medium">
-                          {task.title}
-                        </p>
-                        {task.description ? (
-                          <p className="mt-1 line-clamp-3 text-xs text-muted-foreground">
-                            {task.description}
-                          </p>
-                        ) : null}
-                        <div className="mt-2 flex items-center gap-2 text-xs">
-                          {dueDate ? (
-                            <span
-                              className={
-                                showOverdue
-                                  ? "text-destructive"
-                                  : "text-muted-foreground"
-                              }
-                            >
-                              Due {dueDate.toLocaleDateString()}
-                            </span>
-                          ) : (
-                            <span className="text-muted-foreground">
-                              No due date
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    )
-                  })}
-
-                  {tasksByLane[lane].length === 0 ? (
-                    <div className="rounded-lg border border-dashed border-border p-4 text-center text-xs text-muted-foreground">
-                      Drop a task here
-                    </div>
-                  ) : null}
-                </div>
-              </article>
-            ))}
-          </section>
+          <KanbanBoard
+            tasksByLane={tasksByLane}
+            onDropToLane={onDropToLane}
+            onOpenCreate={openCreateDialog}
+            onEditTask={openEditDialog}
+            onDragStart={setDraggedTaskId}
+            onDragEnd={() => setDraggedTaskId(null)}
+            getTaskDueLabel={getTaskDueLabel}
+            isTaskOverdue={isTaskOverdue}
+          />
         </section>
       </div>
+
+      <TaskDialog
+        open={dialogState.open}
+        mode={dialogState.mode}
+        title={taskForm.title}
+        description={taskForm.description}
+        dueDate={taskForm.dueDate}
+        status={taskForm.status}
+        saving={isSavingTask}
+        onOpenChange={setDialogOpen}
+        onTitleChange={(value) => setTaskFormValue("title", value)}
+        onDescriptionChange={(value) => setTaskFormValue("description", value)}
+        onDueDateChange={(value) => setTaskFormValue("dueDate", value)}
+        onStatusChange={(value) => setTaskFormValue("status", value)}
+        onSubmit={saveTaskFromDialog}
+      />
     </main>
   )
 }

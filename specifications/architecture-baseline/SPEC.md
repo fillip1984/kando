@@ -43,6 +43,9 @@ We are building a simple todo application called Kando. The product requires a c
 - Drag-and-drop must update task status (and position if needed) persistently.
 - Sidebar must include filters for overdue tasks and today tasks.
 - Additional recommended filters: by status, no due date, blocked only, done recently.
+- Sidebar filters must be mutually exclusive: only one filter can be active at a time.
+- Selecting a filter activates it and deactivates any previously active filter.
+- Clicking the currently active filter toggles it off (returns to unfiltered state).
 - Initial release supports exactly one board.
 - Tags are explicitly out of scope for now but must be represented as a planned extension.
 
@@ -56,6 +59,9 @@ We are building a simple todo application called Kando. The product requires a c
 - Submitting the dialog in edit mode updates the existing task.
 - Dragging a card to another column updates its status and persists the change.
 - Sidebar provides overdue and today filters that correctly derive from dueDate.
+- Only one sidebar filter can be active at a time.
+- Activating one filter automatically deactivates the previously active filter.
+- Clicking the active filter again clears it and restores the unfiltered task view.
 - Overdue excludes done tasks and includes tasks with dueDate earlier than the current date.
 - Specification and design both document future support for tags and multiple boards.
 - Task list includes implementation, validation, and spec drift tracking.
