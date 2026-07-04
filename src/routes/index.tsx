@@ -1,14 +1,14 @@
-import { createFileRoute } from "@tanstack/react-router"
-import { isSameDay, startOfDay } from "date-fns"
-import { useMemo, useState } from "react"
 import { Button } from "@/components/ui/button"
+import type { TaskStatus, TaskSummaryType } from "@/server/functions/todos"
 import {
   Swimlanes,
   createTaskFn,
   moveTaskFn,
   readTasksFn,
 } from "@/server/functions/todos"
-import type { TaskStatus, TaskSummaryType } from "@/server/functions/todos"
+import { createFileRoute } from "@tanstack/react-router"
+import { isSameDay, startOfDay } from "date-fns"
+import { useMemo, useState } from "react"
 
 export const Route = createFileRoute("/")({
   loader: async () => await readTasksFn(),
@@ -111,7 +111,11 @@ function App() {
       (acc, lane) => {
         acc[lane] = filteredTasks
           .filter((task) => task.status === lane)
-          .sort((a, b) => (a.position ?? Number.MAX_SAFE_INTEGER) - (b.position ?? Number.MAX_SAFE_INTEGER))
+          .sort(
+            (a, b) =>
+              (a.position ?? Number.MAX_SAFE_INTEGER) -
+              (b.position ?? Number.MAX_SAFE_INTEGER)
+          )
         return acc
       },
       {
@@ -119,7 +123,7 @@ function App() {
         in_progress: [] as TaskSummaryType[],
         blocked: [] as TaskSummaryType[],
         done: [] as TaskSummaryType[],
-      },
+      }
     )
   }, [filteredTasks])
 
@@ -170,7 +174,11 @@ function App() {
 
     const targetTasks = tasks
       .filter((task) => task.status === targetLane && task.id !== movingTask.id)
-      .sort((a, b) => (a.position ?? Number.MAX_SAFE_INTEGER) - (b.position ?? Number.MAX_SAFE_INTEGER))
+      .sort(
+        (a, b) =>
+          (a.position ?? Number.MAX_SAFE_INTEGER) -
+          (b.position ?? Number.MAX_SAFE_INTEGER)
+      )
 
     const nextPosition = targetTasks.length
     const previousTasks = tasks
@@ -178,8 +186,10 @@ function App() {
     setIsSavingMove(true)
     setTasks((current) =>
       current.map((task) =>
-        task.id === movingTask.id ? { ...task, status: targetLane, position: nextPosition } : task,
-      ),
+        task.id === movingTask.id
+          ? { ...task, status: targetLane, position: nextPosition }
+          : task
+      )
     )
 
     try {
@@ -205,16 +215,22 @@ function App() {
           <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
             <div>
               <h1 className="font-heading text-2xl tracking-tight">Kando</h1>
-              <p className="text-sm text-muted-foreground">Single-board Kanban for focused task flow.</p>
+              <p className="text-sm text-muted-foreground">
+                Single-board Kanban for focused task flow.
+              </p>
             </div>
-            <p className="text-sm text-muted-foreground">Showing {totalShown} task{totalShown === 1 ? "" : "s"}</p>
+            <p className="text-sm text-muted-foreground">
+              Showing {totalShown} task{totalShown === 1 ? "" : "s"}
+            </p>
           </div>
         </header>
 
         <section className="grid gap-4 lg:grid-cols-[280px_1fr]">
           <aside className="rounded-xl border border-border/70 bg-card p-4 shadow-sm">
             <h2 className="font-heading text-lg">Filters</h2>
-            <p className="mt-1 text-xs text-muted-foreground">Filters combine with AND behavior.</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Filters combine with AND behavior.
+            </p>
 
             <div className="mt-3 grid gap-2 text-sm">
               <Button
@@ -245,7 +261,11 @@ function App() {
               >
                 No Due Date
               </Button>
-              <Button variant="ghost" className="justify-start" onClick={() => setFilters(emptyFilters)}>
+              <Button
+                variant="ghost"
+                className="justify-start"
+                onClick={() => setFilters(emptyFilters)}
+              >
                 Reset Filters
               </Button>
             </div>
@@ -271,7 +291,10 @@ function App() {
                   onChange={(event) => setDueDateInput(event.target.value)}
                   className="h-9 rounded-md border border-input bg-background px-3 text-sm"
                 />
-                <Button disabled={isCreating || !titleInput.trim()} onClick={createTask}>
+                <Button
+                  disabled={isCreating || !titleInput.trim()}
+                  onClick={createTask}
+                >
                   {isCreating ? "Adding..." : "Add Task"}
                 </Button>
               </div>
@@ -306,17 +329,29 @@ function App() {
                         onDragEnd={() => setDraggedTaskId(null)}
                         className="rounded-lg border border-border/80 bg-background p-3"
                       >
-                        <p className="line-clamp-2 text-sm font-medium">{task.title}</p>
+                        <p className="line-clamp-2 text-sm font-medium">
+                          {task.title}
+                        </p>
                         {task.description ? (
-                          <p className="mt-1 line-clamp-3 text-xs text-muted-foreground">{task.description}</p>
+                          <p className="mt-1 line-clamp-3 text-xs text-muted-foreground">
+                            {task.description}
+                          </p>
                         ) : null}
                         <div className="mt-2 flex items-center gap-2 text-xs">
                           {dueDate ? (
-                            <span className={showOverdue ? "text-destructive" : "text-muted-foreground"}>
+                            <span
+                              className={
+                                showOverdue
+                                  ? "text-destructive"
+                                  : "text-muted-foreground"
+                              }
+                            >
                               Due {dueDate.toLocaleDateString()}
                             </span>
                           ) : (
-                            <span className="text-muted-foreground">No due date</span>
+                            <span className="text-muted-foreground">
+                              No due date
+                            </span>
                           )}
                         </div>
                       </div>
@@ -333,7 +368,7 @@ function App() {
             ))}
           </section>
         </section>
-        </div>
+      </div>
     </main>
   )
 }
