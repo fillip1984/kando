@@ -18,7 +18,7 @@
 - [x] Replace raw form elements with shadcn components for task input flows (dialog, input, textarea, button).
 - [x] Decompose board UI from route into reusable components (board, swimlane, task-card, task-dialog, filter-panel).
 - [x] Implement shadcn TanStack Start dark mode architecture (ThemeProvider, ScriptOnce, root wiring, mode toggle).
-- [ ] Update root document title and shell metadata from starter defaults to Kando defaults.
+- [x] Update root document title and shell metadata from starter defaults to Kando defaults.
 
 ## Validation Tasks
 

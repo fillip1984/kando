@@ -16,7 +16,15 @@ export const Route = createRootRoute({
         content: "width=device-width, initial-scale=1",
       },
       {
-        title: "TanStack Start Starter",
+        title: "Kando | Kanban Todo Board",
+      },
+      {
+        name: "description",
+        content: "Kando is a focused single-board Kanban todo app for tracking work from todo to done.",
+      },
+      {
+        name: "application-name",
+        content: "Kando",
       },
     ],
     links: [
