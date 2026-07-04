@@ -6,37 +6,41 @@ This design defines Kando as a simple Kanban todo application using packages alr
 
 ## Package-Driven Architecture
 
-| Concern | Primary Packages | Design Decision |
-|---|---|---|
-| App runtime and build | `@tanstack/react-start`, `vite`, `@vitejs/plugin-react` | Use TanStack Start app model with Vite as the build/dev runtime. |
-| Routing | `@tanstack/react-router`, `@tanstack/router-plugin` | Route-first architecture with generated route tree and typed navigation. |
-| Route data and SSR query support | `@tanstack/react-router-ssr-query` | Keep route loaders/actions as source of truth for route-level data concerns. |
-| UI primitives and components | `@base-ui/react`, `shadcn`, `class-variance-authority`, `clsx`, `tailwind-merge`, `lucide-react` | Compose accessible primitives with reusable UI components in `src/components/ui`. |
-| Styling system | `tailwindcss`, `@tailwindcss/vite`, `tw-animate-css`, fontsource packages | Utility-first styling with consistent variants and animation utilities. |
-| Data and persistence | `drizzle-orm`, `drizzle-kit`, `postgres`, `@paralleldrive/cuid2` | Drizzle schema-driven SQL access on Postgres with CUID2 IDs. |
-| Testing | `vitest`, `@testing-library/react`, `@testing-library/dom`, `jsdom` | Unit and component testing with DOM simulation in jsdom. |
-| Code quality | `eslint`, `@tanstack/eslint-config`, `prettier`, Tailwind/import plugins | Enforce deterministic formatting and linting in CI/local scripts. |
+| Concern                          | Primary Packages                                                                                 | Design Decision                                                                   |
+| -------------------------------- | ------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------- |
+| App runtime and build            | `@tanstack/react-start`, `vite`, `@vitejs/plugin-react`                                          | Use TanStack Start app model with Vite as the build/dev runtime.                  |
+| Routing                          | `@tanstack/react-router`, `@tanstack/router-plugin`                                              | Route-first architecture with generated route tree and typed navigation.          |
+| Route data and SSR query support | `@tanstack/react-router-ssr-query`                                                               | Keep route loaders/actions as source of truth for route-level data concerns.      |
+| UI primitives and components     | `@base-ui/react`, `shadcn`, `class-variance-authority`, `clsx`, `tailwind-merge`, `lucide-react` | Compose accessible primitives with reusable UI components in `src/components/ui`. |
+| Styling system                   | `tailwindcss`, `@tailwindcss/vite`, `tw-animate-css`, fontsource packages                        | Utility-first styling with consistent variants and animation utilities.           |
+| Data and persistence             | `drizzle-orm`, `drizzle-kit`, `postgres`, `@paralleldrive/cuid2`                                 | Drizzle schema-driven SQL access on Postgres with CUID2 IDs.                      |
+| Testing                          | `vitest`, `@testing-library/react`, `@testing-library/dom`, `jsdom`                              | Unit and component testing with DOM simulation in jsdom.                          |
+| Code quality                     | `eslint`, `@tanstack/eslint-config`, `prettier`, Tailwind/import plugins                         | Enforce deterministic formatting and linting in CI/local scripts.                 |
 
 ## Architecture
 
 1. Presentation layer:
+
 - Routes in `src/routes` define entry points and route composition.
 - Shared UI components in `src/components/ui` provide consistent interaction patterns.
 - Main board view renders four status columns: todo, in_progress, blocked, done.
 - Sidebar presents filters for overdue and today, plus optional filters listed below.
 
 2. Application layer:
+
 - Route loaders/actions and server functions in `src/server/functions` implement business behavior.
 - Utility helpers remain in `src/lib`.
 - Drag-and-drop interactions are handled in the board UI and call server functions to persist status and ordering.
 
 3. Data layer:
+
 - Schema and DB setup live in `src/server/db`.
 - Access to Postgres flows through Drizzle and typed schema definitions.
 
 ## Schema Alignment (Current)
 
 Current todo fields from `src/server/db/schema.ts`:
+
 - title (required)
 - description (optional)
 - status (todo | in_progress | blocked | done)
@@ -44,6 +48,7 @@ Current todo fields from `src/server/db/schema.ts`:
 - position (optional integer)
 
 Design implications:
+
 - Column placement is derived from status.
 - Card ordering within a column uses position.
 - Overdue and today filters are derived from dueDate.
@@ -63,16 +68,19 @@ Design implications:
 ## Filter Design
 
 Required filters:
+
 - Overdue: dueDate is before today and status is not done.
 - Today: dueDate equals today.
 
 Suggested additional filters:
+
 - By status (quick toggles per column)
 - No due date
 - Blocked only
 - Completed today or recently completed
 
 Filter behavior:
+
 - Filters should combine predictably (AND semantics by default).
 - Empty filter state shows all tasks.
 
@@ -89,6 +97,7 @@ No schema change is required for v1 Kanban behavior because current todo fields 
 ## API / Contract Changes
 
 No external API contract changes are required. Internal contract guidance:
+
 - Keep server function return shapes stable and typed.
 - Ensure route-facing data contracts are explicit and minimal.
 - Include mutation endpoints/functions for drag-drop status and position updates.
