@@ -2,11 +2,6 @@ import type { FilterState } from "@/components/board/filter-panel"
 import { FilterPanel } from "@/components/board/filter-panel"
 import { toggleSingleSelectFilter } from "@/components/board/filter-state"
 import { KanbanBoard } from "@/components/board/kanban-board"
-import {
-  applyTaskEditLocally,
-  createMoveUpdate,
-  createUpdateTaskInput,
-} from "@/components/board/task-mutations"
 import { TaskDialog } from "@/components/board/task-dialog"
 import {
   isOverdue,
@@ -15,6 +10,11 @@ import {
 } from "@/components/board/task-filters"
 import type { TaskFormState } from "@/components/board/task-form-state"
 import { createTaskFormForLane } from "@/components/board/task-form-state"
+import {
+  applyTaskEditLocally,
+  createMoveUpdate,
+  createUpdateTaskInput,
+} from "@/components/board/task-mutations"
 import { ModeToggle } from "@/components/mode-toggle"
 import type { TaskStatus, TaskSummaryType } from "@/server/functions/todos"
 import {
@@ -208,7 +208,11 @@ function App() {
 
         try {
           await updateTaskFn({
-            data: createUpdateTaskInput(existingTask.id, nextPosition, editValues),
+            data: createUpdateTaskInput(
+              existingTask.id,
+              nextPosition,
+              editValues
+            ),
           })
         } catch {
           setTasks(previousTasks)
