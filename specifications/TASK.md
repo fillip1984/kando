@@ -27,13 +27,13 @@
 
 - [x] Unit tests
 - [x] Integration tests
-- [ ] Manual verification
+- [x] Manual verification
 - [x] Verify create-task buttons stay pinned to the bottom of each swimlane on desktop and mobile layouts.
 - [x] Verify create mode and edit mode both use the same task dialog component.
 - [x] Verify task edit updates persist and immediately reflect on the board.
 - [x] Verify task create from each swimlane defaults to that swimlane status.
 - [x] Verify all new task form controls are shadcn components and no custom wrappers were introduced without approval.
-- [ ] Verify shadcn components were added via CLI workflow (for example: `npx shadcn@latest add ...`) and not manually scaffolded.
+- [x] Verify shadcn components were added via CLI workflow (for example: `npx shadcn@latest add ...`) and not manually scaffolded.
 - [x] Verify dark mode follows shadcn TanStack Start docs (hydration-safe, light/dark/system toggle).
 - [x] Verify `.vscode/settings.json` enforces format on save.
 - [x] Verify `.vscode/settings.json` sets Prettier as default formatter.
