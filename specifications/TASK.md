@@ -28,16 +28,16 @@
 - [x] Unit tests
 - [x] Integration tests
 - [ ] Manual verification
-- [ ] Verify create-task buttons stay pinned to the bottom of each swimlane on desktop and mobile layouts.
+- [x] Verify create-task buttons stay pinned to the bottom of each swimlane on desktop and mobile layouts.
 - [x] Verify create mode and edit mode both use the same task dialog component.
 - [ ] Verify task edit updates persist and immediately reflect on the board.
-- [ ] Verify task create from each swimlane defaults to that swimlane status.
+- [x] Verify task create from each swimlane defaults to that swimlane status.
 - [x] Verify all new task form controls are shadcn components and no custom wrappers were introduced without approval.
 - [ ] Verify shadcn components were added via CLI workflow (for example: `npx shadcn@latest add ...`) and not manually scaffolded.
-- [ ] Verify dark mode follows shadcn TanStack Start docs (hydration-safe, light/dark/system toggle).
-- [ ] Verify `.vscode/settings.json` enforces format on save.
-- [ ] Verify `.vscode/settings.json` sets Prettier as default formatter.
-- [ ] Verify `.vscode/extensions.json` includes recommended project extensions for setup.
+- [x] Verify dark mode follows shadcn TanStack Start docs (hydration-safe, light/dark/system toggle).
+- [x] Verify `.vscode/settings.json` enforces format on save.
+- [x] Verify `.vscode/settings.json` sets Prettier as default formatter.
+- [x] Verify `.vscode/extensions.json` includes recommended project extensions for setup.
 - [x] Verify overdue filter excludes done tasks and includes dueDate before today.
 - [x] Verify today filter only includes tasks due on current date.
 - [x] Verify filter behavior is single-select: enabling one filter disables the previous one, and clicking the active filter toggles it off.

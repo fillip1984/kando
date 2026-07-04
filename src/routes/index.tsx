@@ -1,6 +1,8 @@
 import type { FilterState } from "@/components/board/filter-panel"
 import { FilterPanel } from "@/components/board/filter-panel"
 import { toggleSingleSelectFilter } from "@/components/board/filter-state"
+import { createTaskFormForLane } from "@/components/board/task-form-state"
+import type { TaskFormState } from "@/components/board/task-form-state"
 import { KanbanBoard } from "@/components/board/kanban-board"
 import { TaskDialog } from "@/components/board/task-dialog"
 import {
@@ -38,13 +40,6 @@ type TaskDialogState = {
   open: boolean
   mode: TaskDialogMode
   taskId: string | null
-}
-
-type TaskFormState = {
-  title: string
-  description: string
-  dueDate: string
-  status: TaskStatus
 }
 
 function App() {
@@ -132,12 +127,7 @@ function App() {
   }
 
   function openCreateDialog(targetLane: TaskStatus) {
-    setTaskForm({
-      title: "",
-      description: "",
-      dueDate: "",
-      status: targetLane,
-    })
+    setTaskForm(createTaskFormForLane(targetLane))
     setDialogState({ open: true, mode: "create", taskId: null })
   }
 
