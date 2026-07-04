@@ -32,8 +32,8 @@
 - [x] Verify all new task form controls are shadcn components and no custom wrappers were introduced without approval.
 - [ ] Verify shadcn components were added via CLI workflow (for example: `npx shadcn@latest add ...`) and not manually scaffolded.
 - [ ] Verify dark mode follows shadcn TanStack Start docs (hydration-safe, light/dark/system toggle).
-- [ ] Verify overdue filter excludes done tasks and includes dueDate before today.
-- [ ] Verify today filter only includes tasks due on current date.
+- [x] Verify overdue filter excludes done tasks and includes dueDate before today.
+- [x] Verify today filter only includes tasks due on current date.
 - [x] Verify filter behavior is single-select: enabling one filter disables the previous one, and clicking the active filter toggles it off.
 - [ ] Verify drag-and-drop status changes persist across refresh.
 - [x] `pnpm typecheck`

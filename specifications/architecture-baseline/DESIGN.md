@@ -54,6 +54,8 @@ This design defines Kando as a simple Kanban todo application using packages alr
 ## Dark Mode Standard
 
 - Dark mode implementation must follow the shadcn TanStack Start documentation: https://ui.shadcn.com/docs/dark-mode/tanstack-start
+- Theme-related components must live under `src/components/theme` (for example: provider, toggle, theme hooks, and hydration helpers).
+- New dark mode files should be created in `src/components/theme` instead of `src/components` or route files.
 - Use the documented ThemeProvider pattern and ScriptOnce approach to prevent flash-of-unstyled-content during hydration.
 - Root layout must be wired per the documented pattern, including suppressHydrationWarning on the html element.
 - Theme selection must support light, dark, and system modes.

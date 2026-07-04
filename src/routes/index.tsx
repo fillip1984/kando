@@ -1,6 +1,7 @@
 import type { FilterState } from "@/components/board/filter-panel"
 import { FilterPanel } from "@/components/board/filter-panel"
 import { toggleSingleSelectFilter } from "@/components/board/filter-state"
+import { isOverdue, isToday, parseDueDate } from "@/components/board/task-filters"
 import { KanbanBoard } from "@/components/board/kanban-board"
 import { TaskDialog } from "@/components/board/task-dialog"
 import { ModeToggle } from "@/components/mode-toggle"
@@ -13,7 +14,6 @@ import {
   updateTaskFn,
 } from "@/server/functions/todos"
 import { createFileRoute } from "@tanstack/react-router"
-import { isSameDay, startOfDay } from "date-fns"
 import { useMemo, useState } from "react"
 
 export const Route = createFileRoute("/")({
@@ -41,41 +41,6 @@ type TaskFormState = {
   description: string
   dueDate: string
   status: TaskStatus
-}
-
-function parseDueDate(value: unknown): Date | null {
-  if (!value) {
-    return null
-  }
-
-  const date = value instanceof Date ? value : new Date(String(value))
-  if (Number.isNaN(date.getTime())) {
-    return null
-  }
-
-  return date
-}
-
-function isOverdue(task: TaskSummaryType, now: Date): boolean {
-  if (task.status === "done") {
-    return false
-  }
-
-  const dueDate = parseDueDate(task.dueDate)
-  if (!dueDate) {
-    return false
-  }
-
-  return dueDate < startOfDay(now)
-}
-
-function isToday(task: TaskSummaryType, now: Date): boolean {
-  const dueDate = parseDueDate(task.dueDate)
-  if (!dueDate) {
-    return false
-  }
-
-  return isSameDay(dueDate, now)
 }
 
 function App() {
