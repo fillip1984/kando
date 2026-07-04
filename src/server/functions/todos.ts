@@ -23,6 +23,12 @@ export type UpdateTaskInput = {
   position: number;
 };
 
+export type MoveTaskInput = {
+  id: string;
+  status: TaskStatus;
+  position: number;
+};
+
 export type TaskSummaryType = Awaited<ReturnType<typeof readTasksFn>>[0];
 export type TaskDetailType = Awaited<ReturnType<typeof readTaskFn>>;
 
@@ -67,6 +73,18 @@ export const updateTaskFn = createServerFn({ method: "POST" })
         title: data.title,
         description: data.description ?? null,
         dueDate: data.dueDate ?? null,
+        status: data.status,
+        position: data.position,
+      })
+      .where(eq(todos.id, data.id));
+  });
+
+export const moveTaskFn = createServerFn({ method: "POST" })
+  .validator((data: MoveTaskInput) => data)
+  .handler(async ({ data }) => {
+    await db
+      .update(todos)
+      .set({
         status: data.status,
         position: data.position,
       })
