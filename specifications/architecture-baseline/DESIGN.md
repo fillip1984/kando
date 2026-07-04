@@ -35,8 +35,8 @@ This design defines Kando as a simple Kanban todo application using packages alr
 - If a needed component does not exist in the current UI set, add it through shadcn first.
 - Do not wrap shadcn components by default.
 - Wrapping a shadcn component is allowed only when both conditions are met:
-	- No suitable shadcn-native option is available.
-	- The user has explicitly approved the wrapper approach.
+  - No suitable shadcn-native option is available.
+  - The user has explicitly approved the wrapper approach.
 - Only fall back to lower-level primitives when there is no suitable shadcn option and this constraint has been acknowledged in the spec/task notes.
 
 ## Component Decomposition Standard
