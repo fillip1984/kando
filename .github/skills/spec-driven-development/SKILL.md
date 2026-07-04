@@ -13,13 +13,19 @@ Use this skill when defining or delivering any feature that should be built from
 
 All work must live under `/specifications`.
 
-For each feature, create a folder:
+Default (canonical) location for active work:
 
 - `/specifications/SPEC.md`
 - `/specifications/DESIGN.md`
 - `/specifications/TASK.md`
 
-Use lowercase kebab-case for `<feature-name>`.
+Do not create nested duplicate paths such as `/specifications/architecture-baseline/` unless the user explicitly requests per-feature folders.
+
+Only when explicitly requested, use per-feature folders with lowercase kebab-case:
+
+- `/specifications/<feature-name>/SPEC.md`
+- `/specifications/<feature-name>/DESIGN.md`
+- `/specifications/<feature-name>/TASK.md`
 
 ## File Responsibilities
 

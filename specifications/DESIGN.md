@@ -47,6 +47,8 @@ This design defines Kando as a simple Kanban todo application using packages alr
 - All UI should be broken down into small, reusable, and easily testable components.
 - Route files should focus on composition and data wiring, not large blocks of UI markup.
 - Shared UI elements should live in `src/components/ui` and feature-level reusable pieces should live in `src/components`.
+- Application navigation components should live in `src/components/nav`.
+- Specifically, `app-sidebar.tsx` and `app-topbar.tsx` should be placed under `src/components/nav`.
 - Prefer passing data and handlers through explicit props so components can be tested in isolation.
 - Keep side effects and server calls at container boundaries; keep presentational components mostly pure.
 - Complex views (for example, board, swimlane, task card, task dialog, filter panel) should each be separate components with focused responsibilities.
