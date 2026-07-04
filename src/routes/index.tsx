@@ -2,6 +2,7 @@ import type { FilterState } from "@/components/board/filter-panel"
 import { FilterPanel } from "@/components/board/filter-panel"
 import { KanbanBoard } from "@/components/board/kanban-board"
 import { TaskDialog } from "@/components/board/task-dialog"
+import { ModeToggle } from "@/components/mode-toggle"
 import type { TaskStatus, TaskSummaryType } from "@/server/functions/todos"
 import {
   Swimlanes,
@@ -330,9 +331,12 @@ function App() {
                 Single-board Kanban for focused task flow.
               </p>
             </div>
-            <p className="text-sm text-muted-foreground">
-              Showing {totalShown} task{totalShown === 1 ? "" : "s"}
-            </p>
+            <div className="flex items-center gap-2">
+              <p className="text-sm text-muted-foreground">
+                Showing {totalShown} task{totalShown === 1 ? "" : "s"}
+              </p>
+              <ModeToggle />
+            </div>
           </div>
         </header>
 

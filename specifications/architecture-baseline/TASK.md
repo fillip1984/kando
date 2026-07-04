@@ -17,7 +17,7 @@
 - [x] Use the target swimlane as the default status when opening create mode from a swimlane button.
 - [x] Replace raw form elements with shadcn components for task input flows (dialog, input, textarea, button).
 - [x] Decompose board UI from route into reusable components (board, swimlane, task-card, task-dialog, filter-panel).
-- [ ] Implement shadcn TanStack Start dark mode architecture (ThemeProvider, ScriptOnce, root wiring, mode toggle).
+- [x] Implement shadcn TanStack Start dark mode architecture (ThemeProvider, ScriptOnce, root wiring, mode toggle).
 - [ ] Update root document title and shell metadata from starter defaults to Kando defaults.
 
 ## Validation Tasks
@@ -69,7 +69,7 @@
 - Date: 2026-07-04
   Area: Dark mode standard
   Expected: Dark mode implemented per shadcn TanStack Start documentation.
-  Actual: Root layout does not include documented ThemeProvider/ScriptOnce wiring or mode toggle.
+  Actual: ThemeProvider with ScriptOnce is wired in root shell, suppressHydrationWarning is enabled, and a user-facing mode toggle is available.
   Reason: Dark mode setup has not been implemented yet.
-  Resolution: Implement documentation-based dark mode architecture and toggle.
-  Follow-up task: Add theme provider, root wiring, and mode toggle per documented pattern.
+  Resolution: Implemented documentation-based theme provider wiring and mode toggle.
+  Follow-up task: Complete manual verification for hydration behavior and theme persistence across reloads.
