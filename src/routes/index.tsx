@@ -1,5 +1,5 @@
-import { DeleteTaskDialog } from "@/components/board/delete-task-dialog"
 import { BoardHeader } from "@/components/board/board-header"
+import { DeleteTaskDialog } from "@/components/board/delete-task-dialog"
 import type { FilterState } from "@/components/board/filter-panel"
 import { FilterPanel } from "@/components/board/filter-panel"
 import { toggleSingleSelectFilter } from "@/components/board/filter-state"
@@ -175,9 +175,10 @@ function App() {
 
   async function saveTaskFromDialog() {
     const title = taskForm.title.trim()
-    if (!title) {
+    if (!title || !taskForm.status) {
       return
     }
+    const selectedStatus = taskForm.status
 
     const dueDateValue = taskForm.dueDate
       ? new Date(`${taskForm.dueDate}T00:00:00`)
@@ -186,16 +187,14 @@ function App() {
     setIsSavingTask(true)
     try {
       if (dialogState.mode === "create") {
-        const laneTasks = tasks.filter(
-          (task) => task.status === taskForm.status
-        )
+        const laneTasks = tasks.filter((task) => task.status === selectedStatus)
         const nextPosition = laneTasks.length
         const created = await createTaskFn({
           data: {
             title,
             description: taskForm.description.trim() || null,
             dueDate: dueDateValue,
-            status: taskForm.status,
+            status: selectedStatus,
             position: nextPosition,
           },
         })
@@ -215,7 +214,7 @@ function App() {
           title,
           description: taskForm.description.trim() || null,
           dueDate: dueDateValue,
-          status: taskForm.status,
+          status: selectedStatus,
         }
 
         setTasks((current) =>

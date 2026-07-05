@@ -135,7 +135,7 @@
 - [x] Decide whether task position should remain ordered per status column or be made globally ordered.
 - [x] Add focused tests for any new filter behavior before shipping the next board iteration.
 - [x] Implement task editing via task card click and preserve drag-and-drop usability.
-- [ ] Add integration coverage for task-card click-to-edit behavior.
+- [x] Add integration coverage for task-card click-to-edit behavior.
 - [x] Add a visible trashcan icon on each task card to initiate deletion.
 - [x] Add a delete confirmation dialog and require confirmation before deletion mutation.
 - [x] Add integration coverage for delete confirm and delete cancel behaviors.
@@ -143,7 +143,7 @@
 - [x] Add validation coverage for theme control placement in responsive layouts.
 - [x] Replace task due date native input with a shadcn Calendar-based picker.
 - [x] Add validation coverage for Calendar date picking in create and edit dialogs.
-- [ ] Prefer combobox with clear option for future dropdown-like task fields instead of select.
+- [x] Prefer combobox with clear option for future dropdown-like task fields instead of select.
 
 ## Spec-Derived Delivery Tasks (Next Slice)
 
@@ -157,12 +157,12 @@
 - [x] Move theme mode control under the app bar region in the board layout.
 - [x] Replace due-date native input with shadcn Calendar picker in task dialog.
 - [x] Maintain create and edit dialog parity after Calendar migration.
-- [ ] Introduce combobox-with-clear pattern for dropdown-like choice fields when a dropdown control is needed.
+- [x] Introduce combobox-with-clear pattern for dropdown-like choice fields when a dropdown control is needed.
 
 ### Validation
 
-- [ ] Add integration tests for task-card click-to-edit behavior.
-- [ ] Add interaction tests proving drag-and-drop still works after card-click edit change.
+- [x] Add integration tests for task-card click-to-edit behavior.
+- [x] Add interaction tests proving drag-and-drop still works after card-click edit change.
 - [x] Add integration tests for delete confirmation confirm path (task removed and persisted).
 - [x] Add integration tests for delete confirmation cancel path (task unchanged).
 - [x] Add responsive layout checks for theme control placement under app bar.

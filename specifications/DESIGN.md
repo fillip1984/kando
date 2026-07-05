@@ -35,8 +35,8 @@ This design defines Kando as a simple Kanban todo application using packages alr
 
 - Always prefer shadcn components for app UI composition.
 - Use shadcn button, input, dialog, and sidebar patterns as the baseline for new features.
-- Date picking fields should use shadcn Calendar-based interactions rather than native date inputs.
-- For dropdown-style choices, prefer a combobox with a clear option over select.
+- Date picking fields should use shadcn Date Picker-based interactions rather than native date inputs. Documentation can be found here: https://ui.shadcn.com/docs/components/base/date-picker
+- For dropdown-style choices, prefer a combobox with a clear option over select. Documentation can be found here: https://ui.shadcn.com/docs/components/base/combobox#clear-button
 - shadcn components must be added through the command-line workflow (for example: `npx shadcn@latest add <component>`).
 - Do not hand-generate or manually scaffold shadcn component files.
 - If CLI-based addition is blocked by environment constraints, get explicit user approval before any alternative approach and record it in spec/task notes.

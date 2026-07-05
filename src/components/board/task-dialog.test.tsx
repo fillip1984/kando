@@ -1,9 +1,13 @@
 // @vitest-environment jsdom
 
-import { fireEvent, render, screen } from "@testing-library/react"
-import { describe, expect, it, vi } from "vitest"
+import { cleanup, fireEvent, render, screen } from "@testing-library/react"
+import { afterEach, describe, expect, it, vi } from "vitest"
 
 import { TaskDialog } from "./task-dialog"
+
+afterEach(() => {
+  cleanup()
+})
 
 function createBaseProps() {
   return {
@@ -53,7 +57,9 @@ describe("TaskDialog", () => {
     expect(screen.getByDisplayValue("Existing title")).toBeDefined()
     expect(screen.getByDisplayValue("Existing description")).toBeDefined()
     expect(screen.getByText("Selected 2026-07-04")).toBeDefined()
-    expect(screen.getByRole("button", { name: "Clear" })).toBeDefined()
+    expect(screen.getByRole("button", { name: "Clear due date" })).toBeDefined()
+    expect(screen.getByDisplayValue("Blocked")).toBeDefined()
+    expect(screen.getByText("Selected Blocked")).toBeDefined()
   })
 
   it("updates due date through calendar day selection and clear", () => {
@@ -64,7 +70,21 @@ describe("TaskDialog", () => {
     fireEvent.click(screen.getByRole("button", { name: /july 15th, 2026/i }))
     expect(props.onDueDateChange).toHaveBeenCalledWith("2026-07-15")
 
-    fireEvent.click(screen.getByRole("button", { name: "Clear" }))
+    fireEvent.click(screen.getByRole("button", { name: "Clear due date" }))
     expect(props.onDueDateChange).toHaveBeenCalledWith("")
+  })
+
+  it("updates and clears status through combobox input", () => {
+    const props = createBaseProps()
+
+    render(<TaskDialog {...props} status="blocked" />)
+
+    fireEvent.change(screen.getByLabelText("Status"), {
+      target: { value: "Done" },
+    })
+    expect(props.onStatusChange).toHaveBeenCalledWith("done")
+
+    fireEvent.click(screen.getByRole("button", { name: "Clear status" }))
+    expect(props.onStatusChange).toHaveBeenCalledWith("")
   })
 })

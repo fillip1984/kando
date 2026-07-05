@@ -52,4 +52,54 @@ describe("KanbanBoard integration", () => {
 
     expect(onOpenCreate.mock.calls.map((call) => call[0])).toEqual(Swimlanes)
   })
+
+  it("opens edit on card click and still wires drag start/end handlers", () => {
+    const task: TaskSummaryType = {
+      id: "task-1",
+      title: "Sample Task",
+      description: "Details",
+      status: "todo",
+      dueDate: new Date(2026, 6, 5),
+      position: 0,
+    } as TaskSummaryType
+
+    const tasksByLane: Record<TaskStatus, TaskSummaryType[]> = {
+      todo: [task],
+      in_progress: [],
+      blocked: [],
+      done: [],
+    }
+
+    const onEditTask = vi.fn()
+    const onDragStart = vi.fn()
+    const onDragEnd = vi.fn()
+
+    render(
+      <KanbanBoard
+        tasksByLane={tasksByLane}
+        onDropToLane={vi.fn()}
+        onOpenCreate={vi.fn()}
+        onEditTask={onEditTask}
+        onRequestDeleteTask={vi.fn()}
+        onDragStart={onDragStart}
+        onDragEnd={onDragEnd}
+        getTaskDueLabel={() => "Due 7/5/2026"}
+        isTaskOverdue={() => false}
+      />
+    )
+
+    fireEvent.click(screen.getByText("Sample Task"))
+    expect(onEditTask).toHaveBeenCalledTimes(1)
+    expect(onEditTask).toHaveBeenCalledWith(task)
+
+    const card = screen.getByText("Sample Task").closest('[draggable="true"]')
+    expect(card).toBeTruthy()
+
+    fireEvent.dragStart(card as HTMLElement)
+    fireEvent.dragEnd(card as HTMLElement)
+
+    expect(onDragStart).toHaveBeenCalledTimes(1)
+    expect(onDragStart).toHaveBeenCalledWith("task-1")
+    expect(onDragEnd).toHaveBeenCalledTimes(1)
+  })
 })

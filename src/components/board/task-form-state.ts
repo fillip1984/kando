@@ -4,7 +4,7 @@ export type TaskFormState = {
   title: string
   description: string
   dueDate: string
-  status: TaskStatus
+  status: TaskStatus | ""
 }
 
 export function createTaskFormForLane(targetLane: TaskStatus): TaskFormState {
