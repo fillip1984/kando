@@ -11,6 +11,7 @@ import { toggleSingleSelectFilter } from "./filter-state"
 const emptyFilters: FilterState = {
   overdue: false,
   today: false,
+  doneRecently: false,
   blockedOnly: false,
   noDueDate: false,
 }

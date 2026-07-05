@@ -160,6 +160,7 @@ Suggested additional filters:
 - No due date
 - Blocked only
 - Completed today or recently completed
+- Done recently is implemented as a status-done filter over tasks whose dueDate falls within the last 7 days because v1 does not track a separate completion timestamp.
 
 Filter behavior:
 
@@ -185,7 +186,7 @@ No external API contract changes are required. Internal contract guidance:
 - Keep server function return shapes stable and typed.
 - Ensure route-facing data contracts are explicit and minimal.
 - Include mutation endpoints/functions for drag-drop status and position updates.
-- Keep filter query contract explicit for overdue and today behavior.
+- Keep filter query contract explicit for overdue, today, and done recently behavior.
 
 ## Migration / Rollout Plan
 

@@ -11,6 +11,7 @@ import {
 export type FilterState = {
   overdue: boolean
   today: boolean
+  doneRecently: boolean
   blockedOnly: boolean
   noDueDate: boolean
 }
@@ -48,6 +49,13 @@ export function FilterPanel({ filters, onToggle, onReset }: FilterPanelProps) {
                 onClick={() => onToggle("today")}
               >
                 Due Today
+              </Button>
+              <Button
+                variant={filters.doneRecently ? "default" : "outline"}
+                className="justify-start"
+                onClick={() => onToggle("doneRecently")}
+              >
+                Done Recently
               </Button>
               <Button
                 variant={filters.blockedOnly ? "default" : "outline"}

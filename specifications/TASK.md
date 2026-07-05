@@ -87,3 +87,10 @@
   Reason: Earlier implementation used independent multi-select toggles.
   Resolution: Added single-select filter state transition logic and integration coverage for interaction flow.
   Follow-up task: Complete manual verification for overdue/today correctness against real board data.
+
+## Follow-up Tasks
+
+- [x] Add the optional `done recently` filter described in the design doc.
+- [x] Resolve the open question about whether overdue and today filters should include done tasks when the due date matches.
+- [x] Decide whether task position should remain ordered per status column or be made globally ordered.
+- [x] Add focused tests for any new filter behavior before shipping the next board iteration.

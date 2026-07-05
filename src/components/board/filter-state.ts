@@ -10,6 +10,7 @@ export function toggleSingleSelectFilter(
     return {
       overdue: false,
       today: false,
+      doneRecently: false,
       blockedOnly: false,
       noDueDate: false,
     }
@@ -18,6 +19,7 @@ export function toggleSingleSelectFilter(
   return {
     overdue: key === "overdue",
     today: key === "today",
+    doneRecently: key === "doneRecently",
     blockedOnly: key === "blockedOnly",
     noDueDate: key === "noDueDate",
   }

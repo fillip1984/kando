@@ -68,6 +68,6 @@ We are building a simple todo application called Kando. The product requires a c
 
 ## Open Questions
 
-- Should done tasks appear in overdue/today filter results when dueDate matches conditions?
-- Should position be globally ordered or ordered per status column?
-- Which extra sidebar filters should ship in v1 versus follow-up iterations?
+- Done tasks do not appear in overdue results, and today includes done tasks when dueDate matches the current date.
+- Position remains ordered per status column in v1.
+- Extra sidebar filters in v1 are blocked only, no due date, and done recently; by status remains a follow-up iteration.

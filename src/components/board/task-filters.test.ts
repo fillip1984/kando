@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { isOverdue, isToday } from "./task-filters"
+import { isDoneRecently, isOverdue, isToday } from "./task-filters"
 
 describe("task filter date rules", () => {
   it("overdue excludes done tasks and includes tasks due before today", () => {
@@ -21,5 +21,22 @@ describe("task filter date rules", () => {
     expect(isToday({ status: "todo", dueDate: todayMorning }, now)).toBe(true)
     expect(isToday({ status: "todo", dueDate: tomorrow }, now)).toBe(false)
     expect(isToday({ status: "todo", dueDate: null }, now)).toBe(false)
+  })
+
+  it("done recently matches only completed tasks with due dates in the recent window", () => {
+    const now = new Date(2026, 6, 10, 12, 0, 0)
+    const withinWindow = new Date(2026, 6, 4, 10, 0, 0)
+    const outsideWindow = new Date(2026, 5, 30, 10, 0, 0)
+
+    expect(
+      isDoneRecently({ status: "done", dueDate: withinWindow }, now)
+    ).toBe(true)
+    expect(
+      isDoneRecently({ status: "done", dueDate: outsideWindow }, now)
+    ).toBe(false)
+    expect(
+      isDoneRecently({ status: "todo", dueDate: withinWindow }, now)
+    ).toBe(false)
+    expect(isDoneRecently({ status: "done", dueDate: null }, now)).toBe(false)
   })
 })

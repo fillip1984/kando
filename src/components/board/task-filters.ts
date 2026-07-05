@@ -1,4 +1,4 @@
-import { isSameDay, startOfDay } from "date-fns"
+import { differenceInCalendarDays, isSameDay, startOfDay } from "date-fns"
 
 export type TaskWithDueDateStatus = {
   status: string
@@ -38,4 +38,26 @@ export function isToday(task: TaskWithDueDateStatus, now: Date): boolean {
   }
 
   return isSameDay(dueDate, now)
+}
+
+export function isDoneRecently(
+  task: TaskWithDueDateStatus,
+  now: Date,
+  recentDays = 7
+): boolean {
+  if (task.status !== "done") {
+    return false
+  }
+
+  const dueDate = parseDueDate(task.dueDate)
+  if (!dueDate) {
+    return false
+  }
+
+  const daysSinceDue = differenceInCalendarDays(
+    startOfDay(now),
+    startOfDay(dueDate)
+  )
+
+  return daysSinceDue >= 0 && daysSinceDue <= recentDays
 }

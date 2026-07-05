@@ -4,6 +4,7 @@ import { toggleSingleSelectFilter } from "@/components/board/filter-state"
 import { KanbanBoard } from "@/components/board/kanban-board"
 import { TaskDialog } from "@/components/board/task-dialog"
 import {
+  isDoneRecently,
   isOverdue,
   isToday,
   parseDueDate,
@@ -40,6 +41,7 @@ export const Route = createFileRoute("/")({
 const emptyFilters: FilterState = {
   overdue: false,
   today: false,
+  doneRecently: false,
   blockedOnly: false,
   noDueDate: false,
 }
@@ -80,6 +82,10 @@ function App() {
       }
 
       if (filters.today && !isToday(task, now)) {
+        return false
+      }
+
+      if (filters.doneRecently && !isDoneRecently(task, now)) {
         return false
       }
 
