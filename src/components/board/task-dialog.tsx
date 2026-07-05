@@ -124,7 +124,9 @@ export function TaskDialog({
             <Popover>
               <PopoverTrigger
                 aria-label="Open due date picker"
-                render={<Button variant="outline" className="justify-between" />}
+                render={
+                  <Button variant="outline" className="justify-between" />
+                }
               >
                 <span className="flex min-w-0 items-center gap-2">
                   <CalendarIcon className="size-4" />
@@ -170,7 +172,12 @@ export function TaskDialog({
               >
                 <span className="flex min-w-0 items-center gap-2">
                   <Workflow className="size-4" />
-                  <span className={cn("truncate", !status && "text-muted-foreground") }>
+                  <span
+                    className={cn(
+                      "truncate",
+                      !status && "text-muted-foreground"
+                    )}
+                  >
                     {status ? laneTitles[status] : "Status"}
                   </span>
                 </span>
@@ -210,7 +217,10 @@ export function TaskDialog({
                 <span className="flex min-w-0 items-center gap-2">
                   <Flag className="size-4" />
                   <span
-                    className={cn("truncate", !priority && "text-muted-foreground")}
+                    className={cn(
+                      "truncate",
+                      !priority && "text-muted-foreground"
+                    )}
                   >
                     {priority ? priorityTitles[priority] : "Priority"}
                   </span>

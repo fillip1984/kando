@@ -49,6 +49,7 @@ We are building a simple todo application called Kando. The product requires a c
 - Editing a task must be performed through a dialog-based form.
 - Editing must be initiated by clicking the task card surface.
 - Each task card must show a visible trashcan icon action for deletion.
+- Trash/delete actions must use destructive button variants.
 - Each task card must render due date and priority as shadcn badges.
 - Task card metadata badges must use icons to indicate due date and priority instead of text labels like "Due" or "Priority".
 - Deleting a task must require a confirmation dialog before the delete mutation is executed.
@@ -80,6 +81,7 @@ We are building a simple todo application called Kando. The product requires a c
 - Clicking the pinned create button opens the shared task dialog in create mode.
 - Clicking an existing task card opens the shared task dialog in edit mode with pre-filled values.
 - Each task card visibly renders a trashcan icon delete action.
+- Trash/delete controls render with destructive variant styling.
 - Each task card shows due date and priority metadata using shadcn badge components.
 - Due date and priority badges use icons as their field indicators rather than text labels.
 - Clicking the trashcan action opens a confirmation dialog before deletion.

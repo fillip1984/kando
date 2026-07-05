@@ -28,6 +28,7 @@ This design defines Kando as a simple Kanban todo application using packages alr
 - Theme mode control is placed under the app bar.
 - Task edit interaction is triggered by clicking a task card, which opens the shared task dialog in edit mode.
 - Task cards include a visible trashcan icon action for deletion.
+- Trash/delete actions use destructive button variants to signal destructive intent.
 - Task cards display due date and priority using shadcn badge components.
 - Task-card due date and priority indicators use icons as field cues instead of text labels.
 - Task dialog form is compact and uses placeholders and/or icon-led input groups to convey field meaning.
