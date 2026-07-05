@@ -52,12 +52,18 @@ We are building a simple todo application called Kando. The product requires a c
 - Trash/delete actions must use destructive button variants.
 - Each task card must render due date and priority as shadcn badges.
 - Task card metadata badges must use icons to indicate due date and priority instead of text labels like "Due" or "Priority".
+- If a task has no due date, the task card must not render a due-date badge.
 - Deleting a task must require a confirmation dialog before the delete mutation is executed.
 - Theme control must be placed under the app bar.
 - Date picking fields must use a shadcn date picker-based picker.
 - Date picker display controls must include an inline `span` with an `X` affordance for clearing selected values, similar to combobox clear interactions.
+- Date-picker clear affordances must use the lucide `X` icon.
 - Dropdown-style choice fields should prefer combobox with a clear option over select.
+- Dropdown input-group icons must be positioned at the front (inline-start) of the control.
+- Combobox controls should not shrink to the point that selected values become unreadable.
+- Combobox selected values should remain fully visible within reasonable layout constraints.
 - Task dialog inputs should be compact and avoid standalone text labels when placeholders and/or icon input groups can convey field meaning.
+- Task dialog title field must use a title icon as its semantic input-group icon.
 - Todo priority must be nullable and constrained to: important, urgent, frantic.
 - Package management and package execution commands must use pnpm/pnpx conventions.
 - Each swimlane must provide a create-task button pinned to the bottom of the lane.
@@ -84,14 +90,20 @@ We are building a simple todo application called Kando. The product requires a c
 - Trash/delete controls render with destructive variant styling.
 - Each task card shows due date and priority metadata using shadcn badge components.
 - Due date and priority badges use icons as their field indicators rather than text labels.
+- Tasks without due dates render no due-date badge on the task card.
 - Clicking the trashcan action opens a confirmation dialog before deletion.
 - Confirming deletion removes the task and persists the change.
 - Canceling deletion closes the confirmation dialog and leaves the task unchanged.
 - Theme mode control is rendered under the app bar.
 - Date picking fields render a shadcn date picker-based picker.
 - Date picker selected-value displays include an inline `X` clear affordance rendered as a `span` inside the display control.
+- Date-picker clear affordances render with the lucide `X` icon.
 - Dropdown-style controls prefer combobox with a clear option over select.
+- Dropdown controls with input-group icons render those icons at the front of the control.
+- Combobox controls preserve enough width for selected value readability and avoid excessive shrinking.
+- Combobox selected values are fully visible within reasonable layout constraints.
 - Task dialog uses a compact layout where field meaning is conveyed through placeholders and/or icon input groups instead of standalone labels.
+- Task dialog title input renders a title icon as the field indicator.
 - Task create and edit flows support priority values of null, important, urgent, or frantic.
 - Submitting the dialog in create mode creates a new task in the intended swimlane.
 - Submitting the dialog in edit mode updates the existing task.

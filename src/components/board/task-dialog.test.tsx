@@ -73,6 +73,7 @@ describe("TaskDialog", () => {
     expect(screen.queryByText("Status")).toBeNull()
     expect(screen.getByPlaceholderText("Task title")).toBeDefined()
     expect(screen.getByPlaceholderText("Description (optional)")).toBeDefined()
+    expect(screen.getByTestId("title-icon")).toBeDefined()
   })
 
   it("updates due date through calendar day selection and inline span clear", () => {
@@ -88,9 +89,30 @@ describe("TaskDialog", () => {
 
     const clearDueDate = screen.getByLabelText("Clear due date")
     expect(clearDueDate.tagName).toBe("SPAN")
-    expect(clearDueDate.textContent).toBe("X")
+    expect(screen.getByTestId("date-clear-icon")).toBeDefined()
     fireEvent.click(clearDueDate)
     expect(props.onDueDateChange).toHaveBeenCalledWith("")
+  })
+
+  it("renders dropdown icons in inline-start addon and keeps combobox width visible", () => {
+    const props = createBaseProps()
+
+    render(<TaskDialog {...props} status="todo" priority="important" />)
+
+    const statusIcon = screen.getByTestId("status-icon")
+    const priorityIcon = screen.getByTestId("priority-field-icon")
+
+    const statusAddon = statusIcon.closest('[data-slot="input-group-addon"]')
+    const priorityAddon = priorityIcon.closest('[data-slot="input-group-addon"]')
+
+    expect(statusAddon?.getAttribute("data-align")).toBe("inline-start")
+    expect(priorityAddon?.getAttribute("data-align")).toBe("inline-start")
+
+    const statusGroup = screen
+      .getByRole("combobox", { name: "Open status options" })
+      .closest('[data-slot="input-group"]')
+    expect(statusGroup?.className).toContain("min-w-44")
+    expect(statusGroup?.className).toContain("shrink-0")
   })
 
   it("updates and clears status through combobox selector", () => {

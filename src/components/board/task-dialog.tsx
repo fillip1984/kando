@@ -25,7 +25,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
 import type { TaskPriority, TaskStatus } from "@/server/functions/todos"
 import { format } from "date-fns"
-import { AlignLeft, CalendarIcon, Flag, Text, Workflow } from "lucide-react"
+import { AlignLeft, CalendarIcon, Flag, Kanban, Type, X } from "lucide-react"
 
 type TaskDialogProps = {
   open: boolean
@@ -100,7 +100,10 @@ export function TaskDialog({
 
         <div className="grid gap-3">
           <div className="relative">
-            <Text className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Type
+              data-testid="title-icon"
+              className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+            />
             <Input
               aria-label="Task title"
               value={title}
@@ -152,7 +155,7 @@ export function TaskDialog({
                       onDueDateChange("")
                     }}
                   >
-                    X
+                    <X data-testid="date-clear-icon" className="size-3" />
                   </span>
                 ) : null}
               </PopoverTrigger>
@@ -177,9 +180,9 @@ export function TaskDialog({
                 showTrigger
                 value={status ? laneTitles[status] : ""}
                 placeholder="Status"
-                className="h-9"
+                className="h-9 w-full max-w-full min-w-44 shrink-0"
               >
-                <Workflow className="ml-2 size-4 text-muted-foreground" />
+                <Kanban data-testid="status-icon" className="size-4" />
               </ComboboxInput>
               <ComboboxContent className="w-full">
                 <ComboboxList>
@@ -203,9 +206,9 @@ export function TaskDialog({
                 showTrigger
                 value={priority ? priorityTitles[priority] : ""}
                 placeholder="Priority"
-                className="h-9"
+                className="h-9 w-full max-w-full min-w-44 shrink-0"
               >
-                <Flag className="ml-2 size-4 text-muted-foreground" />
+                <Flag data-testid="priority-field-icon" className="size-4" />
               </ComboboxInput>
               <ComboboxContent className="w-full">
                 <ComboboxList>

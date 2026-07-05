@@ -59,13 +59,15 @@ export function TaskCard({
         </p>
       ) : null}
       <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
-        <Badge
-          variant={isOverdue ? "destructive" : "outline"}
-          aria-label={`Due date ${dueLabel}`}
-        >
-          <CalendarClock data-testid="due-date-icon" />
-          <span>{dueLabel}</span>
-        </Badge>
+        {task.dueDate ? (
+          <Badge
+            variant={isOverdue ? "destructive" : "outline"}
+            aria-label={`Due date ${dueLabel}`}
+          >
+            <CalendarClock data-testid="due-date-icon" />
+            <span>{dueLabel}</span>
+          </Badge>
+        ) : null}
         {task.priority ? (
           <Badge
             variant={priorityBadgeVariant}

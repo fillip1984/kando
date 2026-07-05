@@ -62,6 +62,25 @@ describe("TaskCard interactions", () => {
     expect(screen.queryByTestId("priority-icon")).toBeNull()
   })
 
+  it("does not render a due-date badge when due date is missing", () => {
+    const task = createTask()
+    task.dueDate = null
+
+    render(
+      <TaskCard
+        task={task}
+        dueLabel="No date"
+        isOverdue={false}
+        onEdit={vi.fn()}
+        onRequestDelete={vi.fn()}
+        onDragStart={vi.fn()}
+        onDragEnd={vi.fn()}
+      />
+    )
+
+    expect(screen.queryByTestId("due-date-icon")).toBeNull()
+  })
+
   it("opens edit when task card surface is clicked", () => {
     const onEdit = vi.fn()
 

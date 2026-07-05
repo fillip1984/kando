@@ -227,6 +227,47 @@
 - [x] Add task-card tests verifying priority badge rendering with icon indicators and null-priority behavior.
 - [x] Verify `pnpm typecheck`, `pnpm lint`, and `pnpm test` pass after task-card badge implementation.
 
+## Task Card Due Date Badge Visibility Tasks (2026-07-05)
+
+### Implementation
+
+- [x] Update task-card rendering to omit the due-date badge when `dueDate` is null/empty.
+
+### Validation
+
+- [x] Add task-card tests verifying no due-date badge is rendered when due date is missing.
+
+## Dropdown Icon Placement Tasks (2026-07-05)
+
+### Implementation
+
+- [x] Ensure dropdown input-group icons are rendered at the front (inline-start) of controls.
+
+### Validation
+
+- [x] Add or update tests verifying dropdown icon placement is inline-start for compact dropdown controls.
+
+## Combobox Visibility Tasks (2026-07-05)
+
+### Implementation
+
+- [x] Ensure combobox controls do not shrink excessively in task-dialog and related compact layouts.
+- [x] Ensure selected combobox values remain fully visible where practical.
+
+### Validation
+
+- [x] Add or update tests verifying combobox selected values remain visible under normal layout widths.
+
+## Task Dialog Title Icon Tasks (2026-07-05)
+
+### Implementation
+
+- [x] Ensure task-dialog title input uses a title icon as the semantic field indicator.
+
+### Validation
+
+- [x] Add or update task-dialog tests verifying title input icon is the expected title icon.
+
 ## Task Dialog Compactness Tasks (2026-07-05)
 
 ### Implementation
@@ -252,6 +293,7 @@
 
 - [x] Add tests validating date picker clear via inline `span` `X` affordance.
 - [x] Verify `pnpm typecheck`, `pnpm lint`, and `pnpm test` pass after date picker clear-affordance updates.
+- [x] Verify date-picker clear affordance uses lucide `X` icon.
 
 ## Spec Drift Tasks (2026-07-05)
 
