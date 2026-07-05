@@ -28,6 +28,9 @@ This design defines Kando as a simple Kanban todo application using packages alr
 - Theme mode control is placed under the app bar.
 - Task edit interaction is triggered by clicking a task card, which opens the shared task dialog in edit mode.
 - Task cards include a visible trashcan icon action for deletion.
+- Task cards display due date and priority using shadcn badge components.
+- Task-card due date and priority indicators use icons as field cues instead of text labels.
+- Task dialog form is compact and uses placeholders and/or icon-led input groups to convey field meaning.
 - Delete action opens a confirmation dialog; mutation only runs after user confirms.
 - Sidebar presents filters for overdue and today, plus optional filters listed below.
 
@@ -35,11 +38,14 @@ This design defines Kando as a simple Kanban todo application using packages alr
 
 - Always prefer shadcn components for app UI composition.
 - Use shadcn button, input, dialog, and sidebar patterns as the baseline for new features.
+- Use shadcn badge components for compact task metadata rendering (for example: due date and priority).
 - Do not import `@base-ui/*` components directly in feature code, route code, or app-level composition files.
 - Always use `@/components/ui/*` component wrappers for UI primitives in app code.
 - Direct `@base-ui/*` usage is only allowed inside `src/components/ui/*` when building or maintaining shared UI wrappers.
 - Date picking fields should use shadcn Date Picker-based interactions rather than native date inputs. Documentation can be found here: https://ui.shadcn.com/docs/components/base/date-picker
+- Date picker display controls should include an inline `span` containing `X` to clear the current value, matching the clear affordance pattern used by combobox controls.
 - For dropdown-style choices, prefer a combobox with a clear option over select. Documentation can be found here: https://ui.shadcn.com/docs/components/base/combobox#clear-button
+- Task dialog should prefer compact shadcn input compositions where placeholders and icon affordances replace standalone field labels.
 - shadcn components must be added through the command-line workflow (for example: `pnpx shadcn@latest add <component>`).
 - If a required UI component is missing from `src/components/ui`, add it through the shadcn CLI command and then consume it from `@/components/ui/*`.
 - Do not hand-generate or manually scaffold shadcn component files.
@@ -143,12 +149,14 @@ Current todo fields from `src/server/db/schema.ts`:
 - title (required)
 - description (optional)
 - status (todo | in_progress | blocked | done)
+- priority (optional; important | urgent | frantic)
 - dueDate (optional date)
 - position (optional integer)
 
 Design implications:
 
 - Column placement is derived from status.
+- Priority is optional and should default to null when not explicitly set.
 - Card ordering within a column uses position.
 - Overdue and today filters are derived from dueDate.
 

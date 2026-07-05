@@ -35,6 +35,9 @@ We are building a simple todo application called Kando. The product requires a c
 - As a user, I can delete a task from its card using a visible trashcan action.
 - As a user, I must confirm task deletion in a dialog before the task is removed.
 - As a user, I can control theme from a control placed under the app bar.
+- As a user, I can set a task priority to important, urgent, frantic, or leave it unset.
+- As a user, I can see due date and priority metadata on each task card at a glance.
+- As a user, I can use a compact task dialog where placeholders and icons communicate field meaning.
 - As a developer, I can rely on the schema fields for task behavior and rendering.
 - As a maintainer, I can evolve toward tags and multiple boards without reworking core flows.
 
@@ -46,10 +49,15 @@ We are building a simple todo application called Kando. The product requires a c
 - Editing a task must be performed through a dialog-based form.
 - Editing must be initiated by clicking the task card surface.
 - Each task card must show a visible trashcan icon action for deletion.
+- Each task card must render due date and priority as shadcn badges.
+- Task card metadata badges must use icons to indicate due date and priority instead of text labels like "Due" or "Priority".
 - Deleting a task must require a confirmation dialog before the delete mutation is executed.
 - Theme control must be placed under the app bar.
 - Date picking fields must use a shadcn date picker-based picker.
+- Date picker display controls must include an inline `span` with an `X` affordance for clearing selected values, similar to combobox clear interactions.
 - Dropdown-style choice fields should prefer combobox with a clear option over select.
+- Task dialog inputs should be compact and avoid standalone text labels when placeholders and/or icon input groups can convey field meaning.
+- Todo priority must be nullable and constrained to: important, urgent, frantic.
 - Package management and package execution commands must use pnpm/pnpx conventions.
 - Each swimlane must provide a create-task button pinned to the bottom of the lane.
 - The create-task button must open the same task dialog used for editing.
@@ -72,12 +80,17 @@ We are building a simple todo application called Kando. The product requires a c
 - Clicking the pinned create button opens the shared task dialog in create mode.
 - Clicking an existing task card opens the shared task dialog in edit mode with pre-filled values.
 - Each task card visibly renders a trashcan icon delete action.
+- Each task card shows due date and priority metadata using shadcn badge components.
+- Due date and priority badges use icons as their field indicators rather than text labels.
 - Clicking the trashcan action opens a confirmation dialog before deletion.
 - Confirming deletion removes the task and persists the change.
 - Canceling deletion closes the confirmation dialog and leaves the task unchanged.
 - Theme mode control is rendered under the app bar.
 - Date picking fields render a shadcn date picker-based picker.
+- Date picker selected-value displays include an inline `X` clear affordance rendered as a `span` inside the display control.
 - Dropdown-style controls prefer combobox with a clear option over select.
+- Task dialog uses a compact layout where field meaning is conveyed through placeholders and/or icon input groups instead of standalone labels.
+- Task create and edit flows support priority values of null, important, urgent, or frantic.
 - Submitting the dialog in create mode creates a new task in the intended swimlane.
 - Submitting the dialog in edit mode updates the existing task.
 - Dragging a card to another column updates its status and persists the change.
