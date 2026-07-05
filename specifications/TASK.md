@@ -139,6 +139,7 @@
 - [x] Add a visible trashcan icon on each task card to initiate deletion.
 - [x] Add a delete confirmation dialog and require confirmation before deletion mutation.
 - [ ] Add integration coverage for delete confirm and delete cancel behaviors.
+- [x] Add integration coverage for delete confirm and delete cancel behaviors.
 - [ ] Move theme mode control under the app bar.
 - [ ] Add validation coverage for theme control placement in responsive layouts.
 - [ ] Replace task due date native input with a shadcn Calendar-based picker.
@@ -163,8 +164,8 @@
 
 - [ ] Add integration tests for task-card click-to-edit behavior.
 - [ ] Add interaction tests proving drag-and-drop still works after card-click edit change.
-- [ ] Add integration tests for delete confirmation confirm path (task removed and persisted).
-- [ ] Add integration tests for delete confirmation cancel path (task unchanged).
+- [x] Add integration tests for delete confirmation confirm path (task removed and persisted).
+- [x] Add integration tests for delete confirmation cancel path (task unchanged).
 - [ ] Add responsive layout checks for theme control placement under app bar.
 - [ ] Add create/edit dialog tests for Calendar date selection and clearing behavior.
 - [ ] Verify lint, typecheck, and tests pass after the slice (`pnpm lint`, `pnpm typecheck`, `pnpm test`).
