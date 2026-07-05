@@ -18,7 +18,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import type { TaskPriority, TaskStatus } from "@/server/functions/todos"
 import { format } from "date-fns"
-import { AlignLeft, Flag, Kanban, Type } from "lucide-react"
+import { AlignLeft, Flag, GoalIcon, Kanban, Type } from "lucide-react"
 import StyledDatePicker from "../custom-ui/styled-date-picker"
 import { Field } from "../ui/field"
 import { InputGroupAddon } from "../ui/input-group"
@@ -125,6 +125,8 @@ export function TaskDialog({
               <StyledDatePicker
                 value={selectedDueDate}
                 handleSetValue={handleDueDateSelect}
+                leadingIcon={<GoalIcon data-testid="due-date-icon" />}
+                placeholder="Due date"
               />
             </Field>
 
@@ -135,7 +137,6 @@ export function TaskDialog({
             >
               <ComboboxInput
                 aria-label="Open status options"
-                showClear
                 showTrigger
                 value={status ? laneTitles[status] : ""}
                 placeholder="Status"

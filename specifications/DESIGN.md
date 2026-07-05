@@ -49,9 +49,15 @@ This design defines Kando as a simple Kanban todo application using packages alr
 - Date picking fields should use shadcn Date Picker-based interactions rather than native date inputs. Documentation can be found here: https://ui.shadcn.com/docs/components/base/date-picker
 - Use the shared styled date-picker component at `src/components/custom-ui/styled-date-picker.tsx` as the default date-picker implementation for app features.
 - New date-picker UI in feature code should compose through this shared styled date-picker component instead of re-implementing ad hoc `Popover + Calendar` trigger layouts.
+- The shared styled date-picker should accept an optional `leadingIcon` prop to support semantic icon customization by field.
+- The shared styled date-picker should accept an optional `placeholder` prop to support field-specific empty-state text.
+- When `leadingIcon` is omitted, the shared styled date-picker should default to a calendar icon.
+- When `placeholder` is omitted, the shared styled date-picker should default to a generic date placeholder.
 - Date picker display controls should include an inline `span` containing `X` to clear the current value, matching the clear affordance pattern used by combobox controls.
 - Date-picker clear affordances should use the lucide `X` icon for consistency with other clear controls.
-- For dropdown-style choices, prefer a combobox with a clear option over select. Documentation can be found here: https://ui.shadcn.com/docs/components/base/combobox#clear-button
+- For dropdown-style choices, prefer combobox over select. Documentation can be found here: https://ui.shadcn.com/docs/components/base/combobox#clear-button
+- Required combobox fields must not expose clear actions.
+- Optional combobox fields may expose clear actions.
 - In dropdown input-group compositions, place semantic field icons at the front (inline-start) of the control.
 - In compact combobox compositions, provide semantic field icons via a leading input-group addon.
 - Combobox controls should be sized to avoid excessive shrinking (for example with `shrink-0`) so selected values remain readable.

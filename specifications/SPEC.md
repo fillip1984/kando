@@ -57,10 +57,14 @@ We are building a simple todo application called Kando. The product requires a c
 - Theme control must be placed under the app bar.
 - Date picking fields must use a shadcn date picker-based picker.
 - Date picker fields in app features must use the shared styled date-picker component in `src/components/custom-ui/styled-date-picker.tsx`.
+- The shared styled date-picker component must support a configurable leading icon for field-specific semantics.
+- The shared styled date-picker component must support a configurable placeholder for field-specific empty-state guidance.
 - Due-date indicators must use a consistent icon treatment between task-dialog date fields and task-card due-date badges.
 - Date picker display controls must include an inline `span` with an `X` affordance for clearing selected values, similar to combobox clear interactions.
 - Date-picker clear affordances must use the lucide `X` icon.
-- Dropdown-style choice fields should prefer combobox with a clear option over select.
+- Dropdown-style choice fields should prefer combobox over select.
+- Required fields implemented as comboboxes must not enable clear actions.
+- Optional fields implemented as comboboxes may enable clear actions.
 - Dropdown input-group icons must be positioned at the front (inline-start) of the control.
 - Dropdown icon composition should use leading input-group addons when building compact combobox controls.
 - Combobox controls should use shrink-resistant sizing (for example `shrink-0`) so selected values remain readable.
@@ -100,10 +104,13 @@ We are building a simple todo application called Kando. The product requires a c
 - Theme mode control is rendered under the app bar.
 - Date picking fields render a shadcn date picker-based picker.
 - Date picking fields in app features use the shared styled date-picker component.
+- Styled date-picker usage supports customizable leading icon and placeholder text per field context.
 - Due-date indicators use a consistent icon treatment across task-dialog and task-card contexts.
 - Date picker selected-value displays include an inline `X` clear affordance rendered as a `span` inside the display control.
 - Date-picker clear affordances render with the lucide `X` icon.
-- Dropdown-style controls prefer combobox with a clear option over select.
+- Dropdown-style controls prefer combobox over select.
+- Required combobox fields render without clear actions.
+- Optional combobox fields may render with clear actions.
 - Dropdown controls with input-group icons render those icons at the front of the control.
 - Dropdown controls with semantic field icons use leading input-group addons in compact dialog layouts.
 - Combobox controls preserve enough width for selected value readability and avoid excessive shrinking.

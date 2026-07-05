@@ -13,17 +13,20 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
 export default function StyledDatePicker({
   value,
   handleSetValue,
+  leadingIcon,
+  placeholder,
 }: {
   value: Date | undefined
   handleSetValue: (value: Date | undefined) => void
+  leadingIcon?: React.ReactNode
+  placeholder?: string
 }) {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
     <InputGroup>
       <InputGroupAddon>
-        <CalendarIcon />
-        <span className="sr-only">Select date</span>
+        {leadingIcon ? leadingIcon : <CalendarIcon />}
       </InputGroupAddon>
 
       <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -34,7 +37,7 @@ export default function StyledDatePicker({
               id="date-required"
               value={value ? format(value, "yyyy-MM-dd") : ""}
               // TODO: placeholder isn't working, it isn't visible
-              placeholder="Due date"
+              placeholder={placeholder || "Select date"}
               onKeyDown={(e) => {
                 if (e.key === "ArrowDown") {
                   e.preventDefault()
