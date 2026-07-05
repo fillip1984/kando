@@ -130,7 +130,10 @@ export function TaskDialog({
               <PopoverTrigger
                 aria-label="Open due date picker"
                 render={
-                  <Button variant="outline" className="justify-between" />
+                  <Button
+                    variant="outline"
+                    className="relative justify-start"
+                  />
                 }
               >
                 <span className="flex min-w-0 items-center gap-2">
@@ -149,7 +152,8 @@ export function TaskDialog({
                 {selectedDueDate ? (
                   <span
                     aria-label="Clear due date"
-                    className="ml-2 rounded px-1 text-xs text-muted-foreground hover:bg-muted"
+                    // className="ml-2 rounded px-1 text-xs text-muted-foreground hover:bg-muted"
+                    className="absolute right-2 text-muted-foreground"
                     onClick={(event) => {
                       event.preventDefault()
                       event.stopPropagation()
