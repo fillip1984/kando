@@ -257,12 +257,12 @@
 
 ### Implementation
 
-- [ ] Replace task-dialog dropdown-menu controls for status and priority with combobox-with-clear controls per spec preference.
-- [ ] Preserve current compact/icon-led dialog behavior while migrating status and priority controls to combobox interactions.
+- [x] Replace task-dialog dropdown-menu controls for status and priority with combobox-with-clear controls per spec preference.
+- [x] Preserve current compact/icon-led dialog behavior while migrating status and priority controls to combobox interactions.
 - [ ] Resolve schema rollout drift by fixing the failed `pnpm db:push` path for the new nullable `priority` column.
 
 ### Validation
 
-- [ ] Add or update task-dialog tests to validate combobox-with-clear behavior for status and priority.
-- [ ] Verify migration or push path applies `priority` schema changes successfully in the target database.
-- [ ] Verify `pnpm typecheck`, `pnpm lint`, and `pnpm test` pass after drift remediation changes.
+- [x] Add or update task-dialog tests to validate combobox-with-clear behavior for status and priority.
+- [ ] Verify migration or push path applies `priority` schema changes successfully in the target database. (Deferred: user requested skipping db push checks in this pass.)
+- [x] Verify `pnpm typecheck`, `pnpm lint`, and `pnpm test` pass after drift remediation changes.

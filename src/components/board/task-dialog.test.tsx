@@ -60,8 +60,6 @@ describe("TaskDialog", () => {
     expect(screen.getByDisplayValue("Existing title")).toBeDefined()
     expect(screen.getByDisplayValue("Existing description")).toBeDefined()
     expect(screen.getByLabelText("Clear due date")).toBeDefined()
-    expect(screen.getByLabelText("Clear status")).toBeDefined()
-    expect(screen.getByLabelText("Clear priority")).toBeDefined()
   })
 
   it("renders compact fields without standalone labels", () => {
@@ -95,33 +93,55 @@ describe("TaskDialog", () => {
     expect(props.onDueDateChange).toHaveBeenCalledWith("")
   })
 
-  it("updates and clears status through compact selector", () => {
+  it("updates and clears status through combobox selector", () => {
     const props = createBaseProps()
 
     render(<TaskDialog {...props} status="blocked" />)
 
-    fireEvent.click(screen.getByRole("button", { name: "Open status options" }))
+    const statusInput = screen.getByRole("combobox", {
+      name: "Open status options",
+    })
+    const statusGroup = statusInput.closest('[data-slot="input-group"]')
+    const statusTriggerButton = statusGroup?.querySelector(
+      '[data-slot="input-group-button"]'
+    )
+    expect(statusTriggerButton).toBeTruthy()
+    fireEvent.click(statusTriggerButton as Element)
     fireEvent.click(screen.getByRole("option", { name: "Done" }))
 
     expect(props.onStatusChange).toHaveBeenCalledWith("done")
 
-    fireEvent.click(screen.getByLabelText("Clear status"))
+    const clearStatusButton = statusGroup?.querySelector(
+      '[data-slot="combobox-clear"]'
+    )
+    expect(clearStatusButton).toBeTruthy()
+    fireEvent.click(clearStatusButton as Element)
     expect(props.onStatusChange).toHaveBeenCalledWith("")
   })
 
-  it("updates and clears priority through compact selector", () => {
+  it("updates and clears priority through combobox selector", () => {
     const props = createBaseProps()
 
     render(<TaskDialog {...props} priority="important" />)
 
-    fireEvent.click(
-      screen.getByRole("button", { name: "Open priority options" })
+    const priorityInput = screen.getByRole("combobox", {
+      name: "Open priority options",
+    })
+    const priorityGroup = priorityInput.closest('[data-slot="input-group"]')
+    const priorityTriggerButton = priorityGroup?.querySelector(
+      '[data-slot="input-group-button"]'
     )
+    expect(priorityTriggerButton).toBeTruthy()
+    fireEvent.click(priorityTriggerButton as Element)
     fireEvent.click(screen.getByRole("option", { name: "Frantic" }))
 
     expect(props.onPriorityChange).toHaveBeenCalledWith("frantic")
 
-    fireEvent.click(screen.getByLabelText("Clear priority"))
+    const clearPriorityButton = priorityGroup?.querySelector(
+      '[data-slot="combobox-clear"]'
+    )
+    expect(clearPriorityButton).toBeTruthy()
+    fireEvent.click(clearPriorityButton as Element)
     expect(props.onPriorityChange).toHaveBeenCalledWith("")
   })
 })

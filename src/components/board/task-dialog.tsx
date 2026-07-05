@@ -9,11 +9,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+  Combobox,
+  ComboboxContent,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "@/components/ui/combobox"
 import { Input } from "@/components/ui/input"
 import {
   Popover,
@@ -165,93 +166,57 @@ export function TaskDialog({
               </PopoverContent>
             </Popover>
 
-            <DropdownMenu>
-              <DropdownMenuTrigger
+            <Combobox
+              value={status || null}
+              items={statusOptions}
+              onValueChange={(next) => onStatusChange(next ?? "")}
+            >
+              <ComboboxInput
                 aria-label="Open status options"
-                className="flex h-9 items-center justify-between gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm"
+                showClear
+                showTrigger
+                value={status ? laneTitles[status] : ""}
+                placeholder="Status"
+                className="h-9"
               >
-                <span className="flex min-w-0 items-center gap-2">
-                  <Workflow className="size-4" />
-                  <span
-                    className={cn(
-                      "truncate",
-                      !status && "text-muted-foreground"
-                    )}
-                  >
-                    {status ? laneTitles[status] : "Status"}
-                  </span>
-                </span>
-                {status ? (
-                  <span
-                    aria-label="Clear status"
-                    className="ml-2 rounded px-1 text-xs text-muted-foreground hover:bg-muted"
-                    onClick={(event) => {
-                      event.preventDefault()
-                      event.stopPropagation()
-                      onStatusChange("")
-                    }}
-                  >
-                    X
-                  </span>
-                ) : null}
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-full">
-                {statusOptions.map((value) => (
-                  <DropdownMenuItem
-                    key={value}
-                    role="option"
-                    aria-selected={status === value}
-                    onClick={() => onStatusChange(value)}
-                  >
-                    {laneTitles[value]}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+                <Workflow className="ml-2 size-4 text-muted-foreground" />
+              </ComboboxInput>
+              <ComboboxContent className="w-full">
+                <ComboboxList>
+                  {statusOptions.map((value) => (
+                    <ComboboxItem key={value} value={value}>
+                      {laneTitles[value]}
+                    </ComboboxItem>
+                  ))}
+                </ComboboxList>
+              </ComboboxContent>
+            </Combobox>
 
-            <DropdownMenu>
-              <DropdownMenuTrigger
+            <Combobox
+              value={priority || null}
+              items={priorityOptions}
+              onValueChange={(next) => onPriorityChange(next ?? "")}
+            >
+              <ComboboxInput
                 aria-label="Open priority options"
-                className="flex h-9 items-center justify-between gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm"
+                showClear
+                showTrigger
+                value={priority ? priorityTitles[priority] : ""}
+                placeholder="Priority"
+                className="h-9"
               >
-                <span className="flex min-w-0 items-center gap-2">
-                  <Flag className="size-4" />
-                  <span
-                    className={cn(
-                      "truncate",
-                      !priority && "text-muted-foreground"
-                    )}
-                  >
-                    {priority ? priorityTitles[priority] : "Priority"}
-                  </span>
-                </span>
-                {priority ? (
-                  <span
-                    aria-label="Clear priority"
-                    className="ml-2 rounded px-1 text-xs text-muted-foreground hover:bg-muted"
-                    onClick={(event) => {
-                      event.preventDefault()
-                      event.stopPropagation()
-                      onPriorityChange("")
-                    }}
-                  >
-                    X
-                  </span>
-                ) : null}
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-full">
-                {priorityOptions.map((value) => (
-                  <DropdownMenuItem
-                    key={value}
-                    role="option"
-                    aria-selected={priority === value}
-                    onClick={() => onPriorityChange(value)}
-                  >
-                    {priorityTitles[value]}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+                <Flag className="ml-2 size-4 text-muted-foreground" />
+              </ComboboxInput>
+              <ComboboxContent className="w-full">
+                <ComboboxList>
+                  {priorityOptions.map((value) => (
+                    <ComboboxItem key={value} value={value}>
+                      {priorityTitles[value]}
+                    </ComboboxItem>
+                  ))}
+                </ComboboxList>
+              </ComboboxContent>
+            </Combobox>
           </div>
         </div>
 
