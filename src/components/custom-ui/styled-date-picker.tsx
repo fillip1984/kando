@@ -14,7 +14,7 @@ export default function StyledDatePicker({
   value,
   handleSetValue,
 }: {
-  value: Date | undefined | ""
+  value: Date | undefined
   handleSetValue: (value: Date | undefined) => void
 }) {
   const [isOpen, setIsOpen] = useState(false)
@@ -32,7 +32,7 @@ export default function StyledDatePicker({
             <InputGroupInput
               className="w-full min-w-0 text-left"
               id="date-required"
-              value={value && value !== "" ? format(value, "yyyy-MM-dd") : ""}
+              value={value ? format(value, "yyyy-MM-dd") : ""}
               // TODO: placeholder isn't working, it isn't visible
               placeholder="Due date"
               onKeyDown={(e) => {

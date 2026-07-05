@@ -323,6 +323,16 @@
 
 - [x] Verify `SPEC.md` and `DESIGN.md` both reference the shared styled date-picker standard.
 
+## Styled Date Picker Follow-up Tasks (2026-07-05)
+
+### Implementation
+
+- [ ] Fix styled date-picker placeholder visibility when no date is selected.
+
+### Validation
+
+- [ ] Add or update tests to verify placeholder text is visible in the empty styled date-picker state.
+
 ## Spec Drift Tasks (2026-07-05)
 
 ### Implementation
