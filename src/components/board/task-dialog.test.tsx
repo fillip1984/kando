@@ -58,7 +58,6 @@ describe("TaskDialog", () => {
     expect(screen.getByDisplayValue("Existing description")).toBeDefined()
     expect(screen.getByText("Selected 2026-07-04")).toBeDefined()
     expect(screen.getByRole("button", { name: "Clear due date" })).toBeDefined()
-    expect(screen.getByDisplayValue("Blocked")).toBeDefined()
     expect(screen.getByText("Selected Blocked")).toBeDefined()
   })
 
@@ -79,9 +78,9 @@ describe("TaskDialog", () => {
 
     render(<TaskDialog {...props} status="blocked" />)
 
-    fireEvent.change(screen.getByLabelText("Status"), {
-      target: { value: "Done" },
-    })
+    fireEvent.click(screen.getByRole("button", { name: "Open status options" }))
+    fireEvent.click(screen.getByRole("option", { name: "Done" }))
+
     expect(props.onStatusChange).toHaveBeenCalledWith("done")
 
     fireEvent.click(screen.getByRole("button", { name: "Clear status" }))

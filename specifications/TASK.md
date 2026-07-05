@@ -123,10 +123,10 @@
 - Date: 2026-07-05
   Area: Dropdown component preference
   Expected: Dropdown-style choices should prefer a combobox with clear option over select.
-  Actual: No combobox standard is currently enforced in board form controls.
+  Actual: Task dialog status now uses a combobox with clear option.
   Reason: Earlier implementation did not formalize a dropdown preference policy.
-  Resolution: Design/spec updated with combobox preference guidance.
-  Follow-up task: Apply combobox-with-clear pattern when introducing or migrating dropdown-like fields.
+  Resolution: Implemented combobox-based status selection and clear action in task dialog.
+  Follow-up task: Continue using combobox-with-clear for future dropdown-like fields.
 
 ## Follow-up Tasks
 
