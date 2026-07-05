@@ -103,7 +103,9 @@ describe("TaskDialog", () => {
     const priorityIcon = screen.getByTestId("priority-field-icon")
 
     const statusAddon = statusIcon.closest('[data-slot="input-group-addon"]')
-    const priorityAddon = priorityIcon.closest('[data-slot="input-group-addon"]')
+    const priorityAddon = priorityIcon.closest(
+      '[data-slot="input-group-addon"]'
+    )
 
     expect(statusAddon?.getAttribute("data-align")).toBe("inline-start")
     expect(priorityAddon?.getAttribute("data-align")).toBe("inline-start")
