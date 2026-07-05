@@ -25,7 +25,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
 import type { TaskPriority, TaskStatus } from "@/server/functions/todos"
 import { format } from "date-fns"
-import { AlignLeft, CalendarIcon, Flag, Kanban, Type, X } from "lucide-react"
+import { AlignLeft, Flag, GoalIcon, Kanban, Type, X } from "lucide-react"
 import { InputGroupAddon } from "../ui/input-group"
 
 type TaskDialogProps = {
@@ -88,7 +88,7 @@ export function TaskDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>
             {mode === "create" ? "Create Task" : "Edit Task"}
@@ -125,7 +125,7 @@ export function TaskDialog({
             />
           </div>
 
-          <div className="grid gap-2 sm:grid-cols-3">
+          <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
             <Popover>
               <PopoverTrigger
                 aria-label="Open due date picker"
@@ -134,7 +134,7 @@ export function TaskDialog({
                 }
               >
                 <span className="flex min-w-0 items-center gap-2">
-                  <CalendarIcon className="size-4 text-muted-foreground" />
+                  <GoalIcon className="size-4 text-muted-foreground" />
                   <span
                     className={cn(
                       "truncate",

@@ -303,6 +303,16 @@
 - [x] Verify `pnpm typecheck`, `pnpm lint`, and `pnpm test` pass after date picker clear-affordance updates.
 - [x] Verify date-picker clear affordance uses lucide `X` icon.
 
+## Due-Date Icon Consistency Tasks (2026-07-05)
+
+### Implementation
+
+- [x] Synchronize task-card due-date badge icon with task-dialog due-date field icon.
+
+### Validation
+
+- [x] Verify due-date icon consistency in task-dialog and task-card rendering/tests.
+
 ## Spec Drift Tasks (2026-07-05)
 
 ### Implementation

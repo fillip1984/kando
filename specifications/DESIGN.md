@@ -31,6 +31,7 @@ This design defines Kando as a simple Kanban todo application using packages alr
 - Trash/delete actions use destructive button variants to signal destructive intent.
 - Task cards display due date and priority using shadcn badge components.
 - Task-card due date and priority indicators use icons as field cues instead of text labels.
+- Due-date icon cues are kept consistent between task-dialog date fields and task-card due-date badges.
 - Task cards omit the due-date badge when a task has no due date value.
 - Task dialog form is compact and uses placeholders and/or icon-led input groups to convey field meaning.
 - Task dialog title input uses a title icon for field identification.

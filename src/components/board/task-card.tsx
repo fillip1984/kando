@@ -1,4 +1,4 @@
-import { CalendarClock, Flag, Trash2 } from "lucide-react"
+import { Flag, GoalIcon, Trash2 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -64,7 +64,7 @@ export function TaskCard({
             variant={isOverdue ? "destructive" : "outline"}
             aria-label={`Due date ${dueLabel}`}
           >
-            <CalendarClock data-testid="due-date-icon" />
+            <GoalIcon data-testid="due-date-icon" />
             <span>{dueLabel}</span>
           </Badge>
         ) : null}
