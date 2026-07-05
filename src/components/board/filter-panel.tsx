@@ -1,4 +1,12 @@
 import { Button } from "@/components/ui/button"
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarHeader,
+} from "@/components/ui/sidebar"
 
 export type FilterState = {
   overdue: boolean
@@ -15,45 +23,56 @@ type FilterPanelProps = {
 
 export function FilterPanel({ filters, onToggle, onReset }: FilterPanelProps) {
   return (
-    <aside className="rounded-xl border border-border/70 bg-card p-4 shadow-sm">
-      <h2 className="font-heading text-lg">Filters</h2>
-      <p className="mt-1 text-xs text-muted-foreground">
-        One filter can be active at a time.
-      </p>
+    <Sidebar collapsible="offcanvas" variant="sidebar" className="border-r">
+      <SidebarHeader className="px-4 pt-4">
+        <h2 className="font-heading text-lg">Filters</h2>
+        <p className="text-xs text-muted-foreground">
+          One filter can be active at a time.
+        </p>
+      </SidebarHeader>
 
-      <div className="mt-3 grid gap-2 text-sm">
-        <Button
-          variant={filters.overdue ? "default" : "outline"}
-          className="justify-start"
-          onClick={() => onToggle("overdue")}
-        >
-          Overdue
-        </Button>
-        <Button
-          variant={filters.today ? "default" : "outline"}
-          className="justify-start"
-          onClick={() => onToggle("today")}
-        >
-          Due Today
-        </Button>
-        <Button
-          variant={filters.blockedOnly ? "default" : "outline"}
-          className="justify-start"
-          onClick={() => onToggle("blockedOnly")}
-        >
-          Blocked Only
-        </Button>
-        <Button
-          variant={filters.noDueDate ? "default" : "outline"}
-          className="justify-start"
-          onClick={() => onToggle("noDueDate")}
-        >
-          No Due Date
-        </Button>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <div className="grid gap-2 px-2 text-sm">
+              <Button
+                variant={filters.overdue ? "default" : "outline"}
+                className="justify-start"
+                onClick={() => onToggle("overdue")}
+              >
+                Overdue
+              </Button>
+              <Button
+                variant={filters.today ? "default" : "outline"}
+                className="justify-start"
+                onClick={() => onToggle("today")}
+              >
+                Due Today
+              </Button>
+              <Button
+                variant={filters.blockedOnly ? "default" : "outline"}
+                className="justify-start"
+                onClick={() => onToggle("blockedOnly")}
+              >
+                Blocked Only
+              </Button>
+              <Button
+                variant={filters.noDueDate ? "default" : "outline"}
+                className="justify-start"
+                onClick={() => onToggle("noDueDate")}
+              >
+                No Due Date
+              </Button>
+            </div>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+
+      <SidebarFooter className="px-4 pb-4">
         <Button variant="ghost" className="justify-start" onClick={onReset}>
           Reset Filters
         </Button>
-      </div>
-    </aside>
+      </SidebarFooter>
+    </Sidebar>
   )
 }

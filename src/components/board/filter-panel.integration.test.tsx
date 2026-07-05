@@ -3,6 +3,7 @@
 import { fireEvent, render, screen } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 
+import { SidebarProvider } from "@/components/ui/sidebar"
 import type { FilterState } from "./filter-panel"
 import { FilterPanel } from "./filter-panel"
 import { toggleSingleSelectFilter } from "./filter-state"
@@ -12,6 +13,22 @@ const emptyFilters: FilterState = {
   today: false,
   blockedOnly: false,
   noDueDate: false,
+}
+
+if (!window.matchMedia) {
+  Object.defineProperty(window, "matchMedia", {
+    writable: true,
+    value: vi.fn().mockImplementation(() => ({
+      matches: false,
+      media: "",
+      onchange: null,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    })),
+  })
 }
 
 function FilterPanelHarness() {
@@ -28,12 +45,16 @@ function FilterPanelHarness() {
   })
 
   const { rerender } = render(
-    <FilterPanel filters={filters} onToggle={onToggle} onReset={onReset} />
+    <SidebarProvider>
+      <FilterPanel filters={filters} onToggle={onToggle} onReset={onReset} />
+    </SidebarProvider>
   )
 
   const rerenderPanel = () => {
     rerender(
-      <FilterPanel filters={filters} onToggle={onToggle} onReset={onReset} />
+      <SidebarProvider>
+        <FilterPanel filters={filters} onToggle={onToggle} onReset={onReset} />
+      </SidebarProvider>
     )
   }
 
