@@ -18,6 +18,12 @@ We are building a simple todo application called Kando. The product requires a c
 - Implementing tags in the initial release.
 - Rewriting framework, router, or database stack.
 
+## Tooling Requirements
+
+- Use `pnpm` and `pnpx` for all package management and package execution commands.
+- Do not use `npm` or `npx` in repository docs, runbooks, or implementation notes.
+- Convert third-party command examples from `npm`/`npx` to `pnpm`/`pnpx` when applying them in this repo.
+
 ## User Stories
 
 - As a user, I can view tasks on a Kanban board grouped by status.
@@ -42,8 +48,9 @@ We are building a simple todo application called Kando. The product requires a c
 - Each task card must show a visible trashcan icon action for deletion.
 - Deleting a task must require a confirmation dialog before the delete mutation is executed.
 - Theme control must be placed under the app bar.
-- Date picking fields must use a shadcn Calendar-based picker.
+- Date picking fields must use a shadcn date picker-based picker.
 - Dropdown-style choice fields should prefer combobox with a clear option over select.
+- Package management and package execution commands must use pnpm/pnpx conventions.
 - Each swimlane must provide a create-task button pinned to the bottom of the lane.
 - The create-task button must open the same task dialog used for editing.
 - The shared task dialog must support both modes:
@@ -69,7 +76,7 @@ We are building a simple todo application called Kando. The product requires a c
 - Confirming deletion removes the task and persists the change.
 - Canceling deletion closes the confirmation dialog and leaves the task unchanged.
 - Theme mode control is rendered under the app bar.
-- Date picking fields render a shadcn Calendar-based picker.
+- Date picking fields render a shadcn date picker-based picker.
 - Dropdown-style controls prefer combobox with a clear option over select.
 - Submitting the dialog in create mode creates a new task in the intended swimlane.
 - Submitting the dialog in edit mode updates the existing task.

@@ -35,9 +35,13 @@ This design defines Kando as a simple Kanban todo application using packages alr
 
 - Always prefer shadcn components for app UI composition.
 - Use shadcn button, input, dialog, and sidebar patterns as the baseline for new features.
+- Do not import `@base-ui/*` components directly in feature code, route code, or app-level composition files.
+- Always use `@/components/ui/*` component wrappers for UI primitives in app code.
+- Direct `@base-ui/*` usage is only allowed inside `src/components/ui/*` when building or maintaining shared UI wrappers.
 - Date picking fields should use shadcn Date Picker-based interactions rather than native date inputs. Documentation can be found here: https://ui.shadcn.com/docs/components/base/date-picker
 - For dropdown-style choices, prefer a combobox with a clear option over select. Documentation can be found here: https://ui.shadcn.com/docs/components/base/combobox#clear-button
-- shadcn components must be added through the command-line workflow (for example: `npx shadcn@latest add <component>`).
+- shadcn components must be added through the command-line workflow (for example: `pnpx shadcn@latest add <component>`).
+- If a required UI component is missing from `src/components/ui`, add it through the shadcn CLI command and then consume it from `@/components/ui/*`.
 - Do not hand-generate or manually scaffold shadcn component files.
 - If CLI-based addition is blocked by environment constraints, get explicit user approval before any alternative approach and record it in spec/task notes.
 - Do not modify shadcn component source implementations from their recommended patterns unless explicitly approved by the user.
@@ -77,6 +81,13 @@ This design defines Kando as a simple Kanban todo application using packages alr
 - Any runtime/local environment file (for example: `.env`, `.env.local`, `.env.development`, `.env.production`) must not be committed.
 - Repository `.gitignore` must enforce this with a broad `.env*` ignore rule and an explicit exception for `.env.example`.
 - If additional environment template files are needed in the future, they require explicit user approval and a spec/task note.
+
+## Package Manager Standard
+
+- Use `pnpm` and `pnpx` for all package management and package-execution commands.
+- Do not use `npm` or `npx` in project documentation, scripts, runbooks, or implementation notes.
+- Command examples in specs and tasks must use `pnpm`/`pnpx` equivalents.
+- If an upstream third-party document shows `npm`/`npx`, convert examples to `pnpm`/`pnpx` when applying them in this repository.
 
 ## VS Code Tooling Standard
 

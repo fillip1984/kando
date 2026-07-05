@@ -1,6 +1,3 @@
-import { format } from "date-fns"
-import { Check, ChevronDown } from "lucide-react"
-
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import {
@@ -11,11 +8,23 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import { Textarea } from "@/components/ui/textarea"
+import { cn } from "@/lib/utils"
 import type { TaskStatus } from "@/server/functions/todos"
-import { Swimlanes } from "@/server/functions/todos"
-import { Combobox } from "@base-ui/react/combobox"
+import { format } from "date-fns"
+import { CalendarIcon } from "lucide-react"
 
 type TaskDialogProps = {
   open: boolean
@@ -40,6 +49,8 @@ const laneTitles: Record<TaskStatus, string> = {
   done: "Done",
 }
 
+const statusOptions: TaskStatus[] = ["todo", "in_progress", "blocked", "done"]
+
 export function TaskDialog({
   open,
   mode,
@@ -57,6 +68,10 @@ export function TaskDialog({
 }: TaskDialogProps) {
   const submitLabel = mode === "create" ? "Create Task" : "Save Changes"
   const selectedDueDate = dueDate ? new Date(`${dueDate}T00:00:00`) : undefined
+
+  const handleDueDateSelect = (value: Date | undefined) => {
+    onDueDateChange(value ? format(value, "yyyy-MM-dd") : "")
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -97,106 +112,88 @@ export function TaskDialog({
           </div>
 
           <div className="grid gap-1.5">
-            <label htmlFor="task-due-date" className="text-sm font-medium">
-              Due date
-            </label>
-            <div
-              id="task-due-date"
-              className="rounded-md border border-border/70"
-            >
-              <Calendar
-                mode="single"
-                selected={selectedDueDate}
-                month={selectedDueDate}
-                onSelect={(value) =>
-                  onDueDateChange(value ? format(value, "yyyy-MM-dd") : "")
-                }
-              />
-            </div>
+            <span className="text-sm font-medium">Due Date</span>
+            <Popover>
+              <PopoverTrigger
+                aria-label="Open due date picker"
+                render={<Button variant="outline" />}
+              >
+                <CalendarIcon className="size-4" />
+                <span
+                  className={cn(
+                    "truncate",
+                    !selectedDueDate && "text-muted-foreground"
+                  )}
+                >
+                  {selectedDueDate
+                    ? format(selectedDueDate, "PPP")
+                    : "Pick a due date"}
+                </span>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={selectedDueDate}
+                  onSelect={handleDueDateSelect}
+                  defaultMonth={selectedDueDate ?? new Date()}
+                />
+              </PopoverContent>
+            </Popover>
             <div className="flex items-center justify-between text-xs text-muted-foreground">
               <span>
                 {dueDate ? `Selected ${dueDate}` : "No due date selected"}
               </span>
-              {dueDate ? (
-                <Button
-                  variant="ghost"
-                  size="xs"
-                  aria-label="Clear due date"
-                  onClick={() => onDueDateChange("")}
-                >
-                  Clear
-                </Button>
-              ) : null}
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => onDueDateChange("")}
+                disabled={!dueDate}
+                aria-label="Clear due date"
+              >
+                Clear due date
+              </Button>
             </div>
           </div>
 
           <div className="grid gap-1.5">
-            <label htmlFor="task-status" className="text-sm font-medium">
-              Status
-            </label>
-            <div className="grid gap-2" id="task-status">
-              <Combobox.Root
-                value={status || null}
-                onValueChange={(value) => onStatusChange(value ?? "")}
+            <span className="text-sm font-medium">Status</span>
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                aria-label="Open status options"
+                className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm"
               >
-                <div className="flex items-center gap-2">
-                  <Combobox.Input
-                    placeholder="Choose status"
-                    className="h-8 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-input/50 disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 md:text-sm dark:bg-input/30 dark:disabled:bg-input/80 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40"
-                  />
-                  <Combobox.Trigger
-                    render={
-                      <Button
-                        variant="outline"
-                        size="icon-sm"
-                        aria-label="Open status options"
-                      />
-                    }
+                {status ? laneTitles[status] : "Select status"}
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-full">
+                {statusOptions.map((value) => (
+                  <DropdownMenuItem
+                    key={value}
+                    role="option"
+                    aria-selected={status === value}
+                    onClick={() => onStatusChange(value)}
                   >
-                    <ChevronDown className="size-4" />
-                  </Combobox.Trigger>
-                </div>
-                <Combobox.Portal>
-                  <Combobox.Positioner className="z-50" sideOffset={4}>
-                    <Combobox.Popup className="max-h-60 w-(--anchor-width) overflow-y-auto rounded-lg bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-none">
-                      <Combobox.List className="grid gap-1">
-                        {Swimlanes.map((lane) => (
-                          <Combobox.Item
-                            key={lane}
-                            value={lane}
-                            className="relative flex cursor-default items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground"
-                          >
-                            <Combobox.ItemIndicator className="text-primary">
-                              <Check className="size-3.5" />
-                            </Combobox.ItemIndicator>
-                            {laneTitles[lane]}
-                          </Combobox.Item>
-                        ))}
-                      </Combobox.List>
-                      <Combobox.Empty className="px-2 py-1.5 text-xs text-muted-foreground">
-                        No matching status
-                      </Combobox.Empty>
-                    </Combobox.Popup>
-                  </Combobox.Positioner>
-                </Combobox.Portal>
-              </Combobox.Root>
-              <div className="flex items-center justify-between text-xs text-muted-foreground">
-                <span>
-                  {status
-                    ? `Selected ${laneTitles[status]}`
-                    : "No status selected"}
-                </span>
-                {status ? (
-                  <Button
-                    variant="ghost"
-                    size="xs"
-                    aria-label="Clear status"
-                    onClick={() => onStatusChange("")}
-                  >
-                    Clear
-                  </Button>
-                ) : null}
-              </div>
+                    {laneTitles[value]}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <div className="flex items-center justify-between text-xs text-muted-foreground">
+              <span>
+                {status
+                  ? `Selected ${laneTitles[status]}`
+                  : "No status selected"}
+              </span>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => onStatusChange("")}
+                disabled={!status}
+                aria-label="Clear status"
+              >
+                Clear status
+              </Button>
             </div>
           </div>
         </div>

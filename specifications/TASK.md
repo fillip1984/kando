@@ -33,7 +33,7 @@
 - [x] Verify task edit updates persist and immediately reflect on the board.
 - [x] Verify task create from each swimlane defaults to that swimlane status.
 - [x] Verify all new task form controls are shadcn components and no custom wrappers were introduced without approval.
-- [x] Verify shadcn components were added via CLI workflow (for example: `npx shadcn@latest add ...`) and not manually scaffolded.
+- [x] Verify shadcn components were added via CLI workflow (for example: `pnpx shadcn@latest add ...`) and not manually scaffolded.
 - [x] Verify dark mode follows shadcn TanStack Start docs (hydration-safe, light/dark/system toggle).
 - [x] Verify `.vscode/settings.json` enforces format on save.
 - [x] Verify `.vscode/settings.json` sets Prettier as default formatter.
@@ -42,6 +42,7 @@
 - [x] Verify today filter only includes tasks due on current date.
 - [x] Verify filter behavior is single-select: enabling one filter disables the previous one, and clicking the active filter toggles it off.
 - [x] Verify drag-and-drop status changes persist across refresh.
+- [x] Verify package and CLI commands use `pnpm`/`pnpx` and not `npm`/`npx` in task and validation notes.
 - [x] `pnpm typecheck`
 - [x] `pnpm lint`
 - [x] `pnpm test`
@@ -114,11 +115,11 @@
 
 - Date: 2026-07-05
   Area: Date field component standard
-  Expected: Date picking fields should use shadcn Calendar-based picker interactions.
+  Expected: Date picking fields should use shadcn date picker-based picker interactions.
   Actual: Task due date input currently uses a native date input field.
   Reason: Initial task dialog implementation prioritized a minimal form control setup.
-  Resolution: Design/spec updated to require shadcn Calendar picker usage; implementation update deferred.
-  Follow-up task: Replace native date input with shadcn Calendar picker and validate create/edit flows.
+  Resolution: Design/spec updated to require shadcn date picker picker usage; implementation update deferred.
+  Follow-up task: Replace native date input with shadcn date picker picker and validate create/edit flows.
 
 - Date: 2026-07-05
   Area: Dropdown component preference
@@ -127,6 +128,22 @@
   Reason: Earlier implementation did not formalize a dropdown preference policy.
   Resolution: Implemented combobox-based status selection and clear action in task dialog.
   Follow-up task: Continue using combobox-with-clear for future dropdown-like fields.
+
+- Date: 2026-07-05
+  Area: Task dialog date picker dependency integrity
+  Expected: Task dialog should render a shadcn date picker-based due-date field with valid `@/components/ui/*` imports.
+  Actual: `task-dialog.tsx` imports `@/components/ui/calendar`, but that file is missing, causing compile/type errors.
+  Reason: Date picker migration was partially applied after UI component removal, leaving unresolved imports.
+  Resolution: Reopen date picker implementation and validation tasks; complete migration with an available shadcn-compatible date picker pattern and passing checks.
+  Follow-up task: Implement a non-broken shadcn date picker flow in task dialog and rerun lint/typecheck/tests.
+
+- Date: 2026-07-05
+  Area: Task dialog date picker dependency integrity
+  Expected: Task dialog should render a shadcn date picker-based due-date field with valid `@/components/ui/*` imports.
+  Actual: Due date now uses a shadcn-style date picker pattern (button + popover + calendar) with valid UI wrappers.
+  Reason: Missing UI dependency was restored and the dialog date field was migrated to a working date-picker interaction.
+  Resolution: Added shadcn `calendar` and `popover` components through `pnpx`, updated task dialog, and validated with `pnpm typecheck`, `pnpm lint`, and `pnpm test`.
+  Follow-up task: Keep date picker behavior covered when modifying task dialog inputs.
 
 ## Follow-up Tasks
 
@@ -141,8 +158,8 @@
 - [x] Add integration coverage for delete confirm and delete cancel behaviors.
 - [x] Move theme mode control under the app bar.
 - [x] Add validation coverage for theme control placement in responsive layouts.
-- [x] Replace task due date native input with a shadcn Calendar-based picker.
-- [x] Add validation coverage for Calendar date picking in create and edit dialogs.
+- [x] Replace task due date native input with a shadcn date picker-based picker.
+- [x] Add validation coverage for date picker date picking in create and edit dialogs.
 - [x] Prefer combobox with clear option for future dropdown-like task fields instead of select.
 
 ## Spec-Derived Delivery Tasks (Next Slice)
@@ -155,8 +172,8 @@
 - [x] Add a delete confirmation dialog that requires explicit confirm before deletion.
 - [x] Wire delete confirmation to persisted deletion via existing server mutation flow.
 - [x] Move theme mode control under the app bar region in the board layout.
-- [x] Replace due-date native input with shadcn Calendar picker in task dialog.
-- [x] Maintain create and edit dialog parity after Calendar migration.
+- [x] Replace due-date native input with shadcn date picker picker in task dialog.
+- [x] Maintain create and edit dialog parity after date picker migration.
 - [x] Introduce combobox-with-clear pattern for dropdown-like choice fields when a dropdown control is needed.
 
 ### Validation
@@ -166,5 +183,18 @@
 - [x] Add integration tests for delete confirmation confirm path (task removed and persisted).
 - [x] Add integration tests for delete confirmation cancel path (task unchanged).
 - [x] Add responsive layout checks for theme control placement under app bar.
-- [x] Add create/edit dialog tests for Calendar date selection and clearing behavior.
+- [x] Add create/edit dialog tests for date picker date selection and clearing behavior.
 - [x] Verify lint, typecheck, and tests pass after the slice (`pnpm lint`, `pnpm typecheck`, `pnpm test`).
+
+## Reopened Tasks (2026-07-05)
+
+### Implementation
+
+- [x] Re-implement due date input with a working shadcn date picker pattern in `task-dialog.tsx` without broken UI imports.
+- [x] Ensure date picker implementation uses only supported `@/components/ui/*` wrappers and matches the current spec wording.
+
+### Validation
+
+- [x] Run `pnpm typecheck` and confirm no unresolved UI imports.
+- [x] Run `pnpm lint` and resolve any task-dialog-related issues.
+- [x] Run `pnpm test` (or focused task dialog tests) to confirm date selection and clear behavior still pass.

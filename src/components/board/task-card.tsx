@@ -34,7 +34,7 @@ export function TaskCard({
       <div className="flex items-start justify-between gap-2">
         <p className="line-clamp-2 text-sm font-medium">{task.title}</p>
         <Button
-          variant="ghost"
+          variant="destructive"
           size="icon-xs"
           aria-label="Delete task"
           onClick={(event) => {

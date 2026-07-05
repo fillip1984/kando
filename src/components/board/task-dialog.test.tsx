@@ -66,6 +66,9 @@ describe("TaskDialog", () => {
 
     render(<TaskDialog {...props} dueDate="2026-07-04" />)
 
+    fireEvent.click(
+      screen.getByRole("button", { name: "Open due date picker" })
+    )
     fireEvent.click(screen.getByRole("button", { name: /july 15th, 2026/i }))
     expect(props.onDueDateChange).toHaveBeenCalledWith("2026-07-15")
 
