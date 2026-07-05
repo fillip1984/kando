@@ -26,6 +26,9 @@ We are building a simple todo application called Kando. The product requires a c
 - As a user, I can edit an existing task in a dialog without leaving the board context.
 - As a user, I can create a task from a button pinned to the bottom of each swimlane.
 - As a user, I can use the same task dialog for both creating and editing tasks.
+- As a user, I can delete a task from its card using a visible trashcan action.
+- As a user, I must confirm task deletion in a dialog before the task is removed.
+- As a user, I can control theme from a control placed under the app bar.
 - As a developer, I can rely on the schema fields for task behavior and rendering.
 - As a maintainer, I can evolve toward tags and multiple boards without reworking core flows.
 
@@ -35,6 +38,12 @@ We are building a simple todo application called Kando. The product requires a c
 - Kanban columns map to schema status values: todo, in_progress, blocked, done.
 - Todo cards use schema fields from src/server/db/schema.ts: title, description, status, dueDate, position.
 - Editing a task must be performed through a dialog-based form.
+- Editing must be initiated by clicking the task card surface.
+- Each task card must show a visible trashcan icon action for deletion.
+- Deleting a task must require a confirmation dialog before the delete mutation is executed.
+- Theme control must be placed under the app bar.
+- Date picking fields must use a shadcn Calendar-based picker.
+- Dropdown-style choice fields should prefer combobox with a clear option over select.
 - Each swimlane must provide a create-task button pinned to the bottom of the lane.
 - The create-task button must open the same task dialog used for editing.
 - The shared task dialog must support both modes:
@@ -54,7 +63,14 @@ We are building a simple todo application called Kando. The product requires a c
 - Board UI renders columns for todo, in_progress, blocked, and done.
 - Each swimlane has a create button pinned to the bottom of the column.
 - Clicking the pinned create button opens the shared task dialog in create mode.
-- Clicking edit on an existing task opens the same shared task dialog in edit mode with pre-filled values.
+- Clicking an existing task card opens the shared task dialog in edit mode with pre-filled values.
+- Each task card visibly renders a trashcan icon delete action.
+- Clicking the trashcan action opens a confirmation dialog before deletion.
+- Confirming deletion removes the task and persists the change.
+- Canceling deletion closes the confirmation dialog and leaves the task unchanged.
+- Theme mode control is rendered under the app bar.
+- Date picking fields render a shadcn Calendar-based picker.
+- Dropdown-style controls prefer combobox with a clear option over select.
 - Submitting the dialog in create mode creates a new task in the intended swimlane.
 - Submitting the dialog in edit mode updates the existing task.
 - Dragging a card to another column updates its status and persists the change.

@@ -88,9 +88,83 @@
   Resolution: Added single-select filter state transition logic and integration coverage for interaction flow.
   Follow-up task: Complete manual verification for overdue/today correctness against real board data.
 
+- Date: 2026-07-05
+  Area: Task edit trigger interaction
+  Expected: Editing a task should be initiated by clicking the task card surface.
+  Actual: Editing is currently initiated by a dedicated edit icon button on the task card.
+  Reason: Earlier interaction model used explicit edit affordance and did not require full-card click behavior.
+  Resolution: Specification updated to require card-click edit trigger; implementation update deferred.
+  Follow-up task: Replace edit-icon-only trigger with card-click edit interaction and validate drag-and-click behavior coexistence.
+
+- Date: 2026-07-05
+  Area: Task deletion UX
+  Expected: Task cards should show a visible trashcan icon, and deletion should require dialog confirmation.
+  Actual: Task card deletion affordance and confirmation dialog flow are not implemented in the current board UI.
+  Reason: Earlier slices prioritized create/edit, filtering, and drag-and-drop.
+  Resolution: Specification updated to require delete affordance and confirmation; implementation update deferred.
+  Follow-up task: Add visible task-card trash action, confirm dialog, and persisted delete flow.
+
+- Date: 2026-07-05
+  Area: Theme control placement
+  Expected: Theme control should be placed under the app bar.
+  Actual: Theme control is currently rendered in the header row, not under an app bar region.
+  Reason: Earlier dark mode implementation prioritized adding a visible toggle without app-bar placement constraints.
+  Resolution: Specification updated to require app-bar-adjacent placement; implementation update deferred.
+  Follow-up task: Move theme control under app bar and verify layout behavior across desktop and mobile.
+
+- Date: 2026-07-05
+  Area: Date field component standard
+  Expected: Date picking fields should use shadcn Calendar-based picker interactions.
+  Actual: Task due date input currently uses a native date input field.
+  Reason: Initial task dialog implementation prioritized a minimal form control setup.
+  Resolution: Design/spec updated to require shadcn Calendar picker usage; implementation update deferred.
+  Follow-up task: Replace native date input with shadcn Calendar picker and validate create/edit flows.
+
+- Date: 2026-07-05
+  Area: Dropdown component preference
+  Expected: Dropdown-style choices should prefer a combobox with clear option over select.
+  Actual: No combobox standard is currently enforced in board form controls.
+  Reason: Earlier implementation did not formalize a dropdown preference policy.
+  Resolution: Design/spec updated with combobox preference guidance.
+  Follow-up task: Apply combobox-with-clear pattern when introducing or migrating dropdown-like fields.
+
 ## Follow-up Tasks
 
 - [x] Add the optional `done recently` filter described in the design doc.
 - [x] Resolve the open question about whether overdue and today filters should include done tasks when the due date matches.
 - [x] Decide whether task position should remain ordered per status column or be made globally ordered.
 - [x] Add focused tests for any new filter behavior before shipping the next board iteration.
+- [ ] Implement task editing via task card click and preserve drag-and-drop usability.
+- [ ] Add integration coverage for task-card click-to-edit behavior.
+- [ ] Add a visible trashcan icon on each task card to initiate deletion.
+- [ ] Add a delete confirmation dialog and require confirmation before deletion mutation.
+- [ ] Add integration coverage for delete confirm and delete cancel behaviors.
+- [ ] Move theme mode control under the app bar.
+- [ ] Add validation coverage for theme control placement in responsive layouts.
+- [ ] Replace task due date native input with a shadcn Calendar-based picker.
+- [ ] Add validation coverage for Calendar date picking in create and edit dialogs.
+- [ ] Prefer combobox with clear option for future dropdown-like task fields instead of select.
+
+## Spec-Derived Delivery Tasks (Next Slice)
+
+### Implementation
+
+- [ ] Replace task-card edit-icon-only interaction with click-on-card edit behavior.
+- [ ] Ensure card click-to-edit does not interfere with drag-and-drop start and drop interactions.
+- [ ] Add a visible trashcan icon action to every task card.
+- [ ] Add a delete confirmation dialog that requires explicit confirm before deletion.
+- [ ] Wire delete confirmation to persisted deletion via existing server mutation flow.
+- [ ] Move theme mode control under the app bar region in the board layout.
+- [ ] Replace due-date native input with shadcn Calendar picker in task dialog.
+- [ ] Maintain create and edit dialog parity after Calendar migration.
+- [ ] Introduce combobox-with-clear pattern for dropdown-like choice fields when a dropdown control is needed.
+
+### Validation
+
+- [ ] Add integration tests for task-card click-to-edit behavior.
+- [ ] Add interaction tests proving drag-and-drop still works after card-click edit change.
+- [ ] Add integration tests for delete confirmation confirm path (task removed and persisted).
+- [ ] Add integration tests for delete confirmation cancel path (task unchanged).
+- [ ] Add responsive layout checks for theme control placement under app bar.
+- [ ] Add create/edit dialog tests for Calendar date selection and clearing behavior.
+- [ ] Verify lint, typecheck, and tests pass after the slice (`pnpm lint`, `pnpm typecheck`, `pnpm test`).

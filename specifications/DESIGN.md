@@ -25,12 +25,18 @@ This design defines Kando as a simple Kanban todo application using packages alr
 - Shared UI components in `src/components/ui` provide consistent interaction patterns.
 - Interactive UI should use shadcn components by default (for example: dialog, input, button, sidebar, dropdown-menu, select, tooltip, sheet).
 - Main board view renders four status columns: todo, in_progress, blocked, done.
+- Theme mode control is placed under the app bar.
+- Task edit interaction is triggered by clicking a task card, which opens the shared task dialog in edit mode.
+- Task cards include a visible trashcan icon action for deletion.
+- Delete action opens a confirmation dialog; mutation only runs after user confirms.
 - Sidebar presents filters for overdue and today, plus optional filters listed below.
 
 ## UI Component Standard
 
 - Always prefer shadcn components for app UI composition.
 - Use shadcn button, input, dialog, and sidebar patterns as the baseline for new features.
+- Date picking fields should use shadcn Calendar-based interactions rather than native date inputs.
+- For dropdown-style choices, prefer a combobox with a clear option over select.
 - shadcn components must be added through the command-line workflow (for example: `npx shadcn@latest add <component>`).
 - Do not hand-generate or manually scaffold shadcn component files.
 - If CLI-based addition is blocked by environment constraints, get explicit user approval before any alternative approach and record it in spec/task notes.
