@@ -23,7 +23,11 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import type { TaskStatus, TaskSummaryType } from "@/server/functions/todos"
+import type {
+  TaskPriority,
+  TaskStatus,
+  TaskSummaryType,
+} from "@/server/functions/todos"
 import {
   Swimlanes,
   createTaskFn,
@@ -71,6 +75,7 @@ function App() {
     description: "",
     dueDate: "",
     status: "todo",
+    priority: "",
   })
   const [isSavingTask, setIsSavingTask] = useState(false)
   const [isSavingMove, setIsSavingMove] = useState(false)
@@ -141,10 +146,10 @@ function App() {
   function getTaskDueLabel(task: TaskSummaryType): string {
     const dueDate = parseDueDate(task.dueDate)
     if (!dueDate) {
-      return "No due date"
+      return "No date"
     }
 
-    return `Due ${dueDate.toLocaleDateString()}`
+    return dueDate.toLocaleDateString()
   }
 
   function openCreateDialog(targetLane: TaskStatus) {
@@ -158,6 +163,7 @@ function App() {
       description: task.description ?? "",
       dueDate: formatDateInput(task.dueDate),
       status: task.status,
+      priority: task.priority ?? "",
     })
     setDialogState({ open: true, mode: "edit", taskId: task.id })
   }
@@ -183,6 +189,7 @@ function App() {
     const dueDateValue = taskForm.dueDate
       ? new Date(`${taskForm.dueDate}T00:00:00`)
       : null
+    const priorityValue: TaskPriority | null = taskForm.priority || null
 
     setIsSavingTask(true)
     try {
@@ -195,6 +202,7 @@ function App() {
             description: taskForm.description.trim() || null,
             dueDate: dueDateValue,
             status: selectedStatus,
+            priority: priorityValue,
             position: nextPosition,
           },
         })
@@ -215,6 +223,7 @@ function App() {
           description: taskForm.description.trim() || null,
           dueDate: dueDateValue,
           status: selectedStatus,
+          priority: priorityValue,
         }
 
         setTasks((current) =>
@@ -340,6 +349,7 @@ function App() {
             description={taskForm.description}
             dueDate={taskForm.dueDate}
             status={taskForm.status}
+            priority={taskForm.priority}
             saving={isSavingTask}
             onOpenChange={setDialogOpen}
             onTitleChange={(value) => setTaskFormValue("title", value)}
@@ -348,6 +358,7 @@ function App() {
             }
             onDueDateChange={(value) => setTaskFormValue("dueDate", value)}
             onStatusChange={(value) => setTaskFormValue("status", value)}
+            onPriorityChange={(value) => setTaskFormValue("priority", value)}
             onSubmit={saveTaskFromDialog}
           />
 

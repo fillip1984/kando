@@ -203,52 +203,52 @@
 
 ### Implementation
 
-- [ ] Add nullable `priority` field support across todo data contracts.
-- [ ] Constrain priority values to `important`, `urgent`, and `frantic` when present.
-- [ ] Extend create/edit task dialog flows to set and clear priority.
+- [x] Add nullable `priority` field support across todo data contracts.
+- [x] Constrain priority values to `important`, `urgent`, and `frantic` when present.
+- [x] Extend create/edit task dialog flows to set and clear priority.
 
 ### Validation
 
-- [ ] Add tests covering null priority and each allowed priority value.
-- [ ] Verify create and edit mutations persist priority correctly.
-- [ ] Verify `pnpm typecheck`, `pnpm lint`, and `pnpm test` pass after priority implementation.
+- [x] Add tests covering null priority and each allowed priority value.
+- [x] Verify create and edit mutations persist priority correctly.
+- [x] Verify `pnpm typecheck`, `pnpm lint`, and `pnpm test` pass after priority implementation.
 
 ## Task Card Metadata Badge Tasks (2026-07-05)
 
 ### Implementation
 
-- [ ] Render due date metadata on task cards using shadcn badge components.
-- [ ] Render priority metadata on task cards using shadcn badge components when priority is set.
-- [ ] Use icons (not text labels such as "Due" or "Priority") to indicate badge meaning.
+- [x] Render due date metadata on task cards using shadcn badge components.
+- [x] Render priority metadata on task cards using shadcn badge components when priority is set.
+- [x] Use icons (not text labels such as "Due" or "Priority") to indicate badge meaning.
 
 ### Validation
 
-- [ ] Add task-card tests verifying due date badge rendering with icon indicators.
-- [ ] Add task-card tests verifying priority badge rendering with icon indicators and null-priority behavior.
-- [ ] Verify `pnpm typecheck`, `pnpm lint`, and `pnpm test` pass after task-card badge implementation.
+- [x] Add task-card tests verifying due date badge rendering with icon indicators.
+- [x] Add task-card tests verifying priority badge rendering with icon indicators and null-priority behavior.
+- [x] Verify `pnpm typecheck`, `pnpm lint`, and `pnpm test` pass after task-card badge implementation.
 
 ## Task Dialog Compactness Tasks (2026-07-05)
 
 ### Implementation
 
-- [ ] Refactor task dialog inputs to a compact layout without standalone text labels.
-- [ ] Use placeholders and/or icon input groups to communicate field meaning in task dialog.
-- [ ] Preserve create/edit behavior parity and field accessibility while adopting compact patterns.
+- [x] Refactor task dialog inputs to a compact layout without standalone text labels.
+- [x] Use placeholders and/or icon input groups to communicate field meaning in task dialog.
+- [x] Preserve create/edit behavior parity and field accessibility while adopting compact patterns.
 
 ### Validation
 
-- [ ] Add task-dialog tests covering compact placeholder/icon-driven field rendering.
-- [ ] Verify task dialog interactions (create/edit, clear actions, submit rules) still work after compact layout updates.
-- [ ] Verify `pnpm typecheck`, `pnpm lint`, and `pnpm test` pass after compact task-dialog implementation.
+- [x] Add task-dialog tests covering compact placeholder/icon-driven field rendering.
+- [x] Verify task dialog interactions (create/edit, clear actions, submit rules) still work after compact layout updates.
+- [x] Verify `pnpm typecheck`, `pnpm lint`, and `pnpm test` pass after compact task-dialog implementation.
 
 ## Date Picker Clear Affordance Tasks (2026-07-05)
 
 ### Implementation
 
-- [ ] Add inline `span` `X` clear affordance inside date-picker display controls.
-- [ ] Align date-picker clear behavior with combobox clear interaction patterns.
+- [x] Add inline `span` `X` clear affordance inside date-picker display controls.
+- [x] Align date-picker clear behavior with combobox clear interaction patterns.
 
 ### Validation
 
-- [ ] Add tests validating date picker clear via inline `span` `X` affordance.
-- [ ] Verify `pnpm typecheck`, `pnpm lint`, and `pnpm test` pass after date picker clear-affordance updates.
+- [x] Add tests validating date picker clear via inline `span` `X` affordance.
+- [x] Verify `pnpm typecheck`, `pnpm lint`, and `pnpm test` pass after date picker clear-affordance updates.

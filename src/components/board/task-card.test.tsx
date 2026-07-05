@@ -18,18 +18,57 @@ function createTask(): TaskSummaryType {
     description: "Details",
     status: "todo",
     dueDate: new Date(2026, 6, 5),
+    priority: "urgent",
     position: 0,
   } as TaskSummaryType
 }
 
 describe("TaskCard interactions", () => {
+  it("renders due date and priority badges with icon indicators", () => {
+    render(
+      <TaskCard
+        task={createTask()}
+        dueLabel="7/5/2026"
+        isOverdue={false}
+        onEdit={vi.fn()}
+        onRequestDelete={vi.fn()}
+        onDragStart={vi.fn()}
+        onDragEnd={vi.fn()}
+      />
+    )
+
+    expect(screen.getByLabelText("Due date 7/5/2026")).toBeDefined()
+    expect(screen.getByTestId("due-date-icon")).toBeDefined()
+    expect(screen.getByLabelText("Priority urgent")).toBeDefined()
+    expect(screen.getByTestId("priority-icon")).toBeDefined()
+  })
+
+  it("does not render a priority badge when priority is null", () => {
+    const task = createTask()
+    task.priority = null
+
+    render(
+      <TaskCard
+        task={task}
+        dueLabel="7/5/2026"
+        isOverdue={false}
+        onEdit={vi.fn()}
+        onRequestDelete={vi.fn()}
+        onDragStart={vi.fn()}
+        onDragEnd={vi.fn()}
+      />
+    )
+
+    expect(screen.queryByTestId("priority-icon")).toBeNull()
+  })
+
   it("opens edit when task card surface is clicked", () => {
     const onEdit = vi.fn()
 
     render(
       <TaskCard
         task={createTask()}
-        dueLabel="Due 7/5/2026"
+        dueLabel="7/5/2026"
         isOverdue={false}
         onEdit={onEdit}
         onRequestDelete={vi.fn()}
@@ -50,7 +89,7 @@ describe("TaskCard interactions", () => {
     render(
       <TaskCard
         task={createTask()}
-        dueLabel="Due 7/5/2026"
+        dueLabel="7/5/2026"
         isOverdue={false}
         onEdit={onEdit}
         onRequestDelete={onRequestDelete}

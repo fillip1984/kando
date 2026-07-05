@@ -5,12 +5,15 @@ import { todos } from "../db/schema"
 
 export const Swimlanes = ["todo", "in_progress", "blocked", "done"] as const
 export type TaskStatus = (typeof Swimlanes)[number]
+export const TaskPriorities = ["important", "urgent", "frantic"] as const
+export type TaskPriority = (typeof TaskPriorities)[number]
 
 export type CreateTaskInput = {
   title: string
   description?: string | null
   dueDate?: Date | null
   status?: TaskStatus
+  priority?: TaskPriority | null
   position?: number
 }
 
@@ -20,6 +23,7 @@ export type UpdateTaskInput = {
   description?: string | null
   dueDate?: Date | null
   status: TaskStatus
+  priority: TaskPriority | null
   position: number
 }
 
@@ -43,6 +47,7 @@ export const createTaskFn = createServerFn({ method: "POST" })
         description: data.description ?? null,
         dueDate: data.dueDate ?? null,
         status: data.status ?? "todo",
+        priority: data.priority ?? null,
         position: data.position ?? 0,
       })
       .returning()
@@ -74,6 +79,7 @@ export const updateTaskFn = createServerFn({ method: "POST" })
         description: data.description ?? null,
         dueDate: data.dueDate ?? null,
         status: data.status,
+        priority: data.priority ?? null,
         position: data.position,
       })
       .where(eq(todos.id, data.id))

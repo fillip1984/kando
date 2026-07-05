@@ -21,6 +21,7 @@ function createTask(partial: {
     title: partial.title,
     description: partial.description ?? null,
     dueDate: partial.dueDate ?? null,
+    priority: null,
     status: partial.status,
     position: partial.position,
     createdAt: new Date("2026-07-04T00:00:00.000Z"),
@@ -41,6 +42,7 @@ describe("task mutations", () => {
       description: "Updated description",
       dueDate,
       status: "in_progress",
+      priority: "urgent",
     })
 
     expect(next[0]).toMatchObject({
@@ -48,6 +50,7 @@ describe("task mutations", () => {
       description: "Updated description",
       dueDate,
       status: "in_progress",
+      priority: "urgent",
     })
   })
 
@@ -60,6 +63,7 @@ describe("task mutations", () => {
         description: null,
         dueDate,
         status: "done",
+        priority: "frantic",
       })
     ).toEqual({
       id: "task-1",
@@ -67,6 +71,7 @@ describe("task mutations", () => {
       description: null,
       dueDate,
       status: "done",
+      priority: "frantic",
       position: 3,
     })
   })

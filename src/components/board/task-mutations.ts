@@ -1,5 +1,6 @@
 import type {
   MoveTaskInput,
+  TaskPriority,
   TaskStatus,
   TaskSummaryType,
   UpdateTaskInput,
@@ -10,6 +11,7 @@ type TaskEditValues = {
   description: string | null
   dueDate: Date | null
   status: TaskStatus
+  priority: TaskPriority | null
 }
 
 export function applyTaskEditLocally(
@@ -25,6 +27,7 @@ export function applyTaskEditLocally(
           description: values.description,
           dueDate: values.dueDate,
           status: values.status,
+          priority: values.priority,
         }
       : task
   )
@@ -41,6 +44,7 @@ export function createUpdateTaskInput(
     description: values.description,
     dueDate: values.dueDate,
     status: values.status,
+    priority: values.priority,
     position,
   }
 }

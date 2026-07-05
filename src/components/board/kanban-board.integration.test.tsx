@@ -60,6 +60,7 @@ describe("KanbanBoard integration", () => {
       description: "Details",
       status: "todo",
       dueDate: new Date(2026, 6, 5),
+      priority: "important",
       position: 0,
     } as TaskSummaryType
 

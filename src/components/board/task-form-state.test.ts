@@ -12,6 +12,7 @@ describe("createTaskFormForLane", () => {
         description: "",
         dueDate: "",
         status: lane,
+        priority: "",
       })
     }
   })

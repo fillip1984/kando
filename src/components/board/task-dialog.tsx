@@ -22,9 +22,9 @@ import {
 } from "@/components/ui/popover"
 import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
-import type { TaskStatus } from "@/server/functions/todos"
+import type { TaskPriority, TaskStatus } from "@/server/functions/todos"
 import { format } from "date-fns"
-import { CalendarIcon } from "lucide-react"
+import { AlignLeft, CalendarIcon, Flag, Text, Workflow } from "lucide-react"
 
 type TaskDialogProps = {
   open: boolean
@@ -33,12 +33,14 @@ type TaskDialogProps = {
   description: string
   dueDate: string
   status: TaskStatus | ""
+  priority: TaskPriority | ""
   saving: boolean
   onOpenChange: (open: boolean) => void
   onTitleChange: (value: string) => void
   onDescriptionChange: (value: string) => void
   onDueDateChange: (value: string) => void
   onStatusChange: (status: TaskStatus | "") => void
+  onPriorityChange: (priority: TaskPriority | "") => void
   onSubmit: () => void
 }
 
@@ -50,6 +52,13 @@ const laneTitles: Record<TaskStatus, string> = {
 }
 
 const statusOptions: TaskStatus[] = ["todo", "in_progress", "blocked", "done"]
+const priorityOptions: TaskPriority[] = ["important", "urgent", "frantic"]
+
+const priorityTitles: Record<TaskPriority, string> = {
+  important: "Important",
+  urgent: "Urgent",
+  frantic: "Frantic",
+}
 
 export function TaskDialog({
   open,
@@ -58,12 +67,14 @@ export function TaskDialog({
   description,
   dueDate,
   status,
+  priority,
   saving,
   onOpenChange,
   onTitleChange,
   onDescriptionChange,
   onDueDateChange,
   onStatusChange,
+  onPriorityChange,
   onSubmit,
 }: TaskDialogProps) {
   const submitLabel = mode === "create" ? "Create Task" : "Save Changes"
@@ -87,48 +98,60 @@ export function TaskDialog({
         </DialogHeader>
 
         <div className="grid gap-3">
-          <div className="grid gap-1.5">
-            <label htmlFor="task-title" className="text-sm font-medium">
-              Title
-            </label>
+          <div className="relative">
+            <Text className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              id="task-title"
+              aria-label="Task title"
               value={title}
               onChange={(event) => onTitleChange(event.target.value)}
               placeholder="Task title"
+              className="pl-9"
             />
           </div>
 
-          <div className="grid gap-1.5">
-            <label htmlFor="task-description" className="text-sm font-medium">
-              Description
-            </label>
+          <div className="relative">
+            <AlignLeft className="pointer-events-none absolute top-3 left-3 size-4 text-muted-foreground" />
             <Textarea
-              id="task-description"
+              aria-label="Task description"
               value={description}
               onChange={(event) => onDescriptionChange(event.target.value)}
               placeholder="Description (optional)"
+              className="min-h-20 pl-9"
             />
           </div>
 
-          <div className="grid gap-1.5">
-            <span className="text-sm font-medium">Due Date</span>
+          <div className="grid gap-2 sm:grid-cols-3">
             <Popover>
               <PopoverTrigger
                 aria-label="Open due date picker"
-                render={<Button variant="outline" />}
+                render={<Button variant="outline" className="justify-between" />}
               >
-                <CalendarIcon className="size-4" />
-                <span
-                  className={cn(
-                    "truncate",
-                    !selectedDueDate && "text-muted-foreground"
-                  )}
-                >
-                  {selectedDueDate
-                    ? format(selectedDueDate, "PPP")
-                    : "Pick a due date"}
+                <span className="flex min-w-0 items-center gap-2">
+                  <CalendarIcon className="size-4" />
+                  <span
+                    className={cn(
+                      "truncate",
+                      !selectedDueDate && "text-muted-foreground"
+                    )}
+                  >
+                    {selectedDueDate
+                      ? format(selectedDueDate, "PPP")
+                      : "Due date"}
+                  </span>
                 </span>
+                {selectedDueDate ? (
+                  <span
+                    aria-label="Clear due date"
+                    className="ml-2 rounded px-1 text-xs text-muted-foreground hover:bg-muted"
+                    onClick={(event) => {
+                      event.preventDefault()
+                      event.stopPropagation()
+                      onDueDateChange("")
+                    }}
+                  >
+                    X
+                  </span>
+                ) : null}
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
                 <Calendar
@@ -139,31 +162,31 @@ export function TaskDialog({
                 />
               </PopoverContent>
             </Popover>
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <span>
-                {dueDate ? `Selected ${dueDate}` : "No due date selected"}
-              </span>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => onDueDateChange("")}
-                disabled={!dueDate}
-                aria-label="Clear due date"
-              >
-                Clear due date
-              </Button>
-            </div>
-          </div>
 
-          <div className="grid gap-1.5">
-            <span className="text-sm font-medium">Status</span>
             <DropdownMenu>
               <DropdownMenuTrigger
                 aria-label="Open status options"
-                className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm"
+                className="flex h-9 items-center justify-between gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm"
               >
-                {status ? laneTitles[status] : "Select status"}
+                <span className="flex min-w-0 items-center gap-2">
+                  <Workflow className="size-4" />
+                  <span className={cn("truncate", !status && "text-muted-foreground") }>
+                    {status ? laneTitles[status] : "Status"}
+                  </span>
+                </span>
+                {status ? (
+                  <span
+                    aria-label="Clear status"
+                    className="ml-2 rounded px-1 text-xs text-muted-foreground hover:bg-muted"
+                    onClick={(event) => {
+                      event.preventDefault()
+                      event.stopPropagation()
+                      onStatusChange("")
+                    }}
+                  >
+                    X
+                  </span>
+                ) : null}
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-full">
                 {statusOptions.map((value) => (
@@ -178,23 +201,47 @@ export function TaskDialog({
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <span>
-                {status
-                  ? `Selected ${laneTitles[status]}`
-                  : "No status selected"}
-              </span>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => onStatusChange("")}
-                disabled={!status}
-                aria-label="Clear status"
+
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                aria-label="Open priority options"
+                className="flex h-9 items-center justify-between gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm"
               >
-                Clear status
-              </Button>
-            </div>
+                <span className="flex min-w-0 items-center gap-2">
+                  <Flag className="size-4" />
+                  <span
+                    className={cn("truncate", !priority && "text-muted-foreground")}
+                  >
+                    {priority ? priorityTitles[priority] : "Priority"}
+                  </span>
+                </span>
+                {priority ? (
+                  <span
+                    aria-label="Clear priority"
+                    className="ml-2 rounded px-1 text-xs text-muted-foreground hover:bg-muted"
+                    onClick={(event) => {
+                      event.preventDefault()
+                      event.stopPropagation()
+                      onPriorityChange("")
+                    }}
+                  >
+                    X
+                  </span>
+                ) : null}
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-full">
+                {priorityOptions.map((value) => (
+                  <DropdownMenuItem
+                    key={value}
+                    role="option"
+                    aria-selected={priority === value}
+                    onClick={() => onPriorityChange(value)}
+                  >
+                    {priorityTitles[value]}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
 

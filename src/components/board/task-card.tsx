@@ -1,5 +1,6 @@
-import { Trash2 } from "lucide-react"
+import { CalendarClock, Flag, Trash2 } from "lucide-react"
 
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import type { TaskSummaryType } from "@/server/functions/todos"
 
@@ -22,6 +23,13 @@ export function TaskCard({
   onDragStart,
   onDragEnd,
 }: TaskCardProps) {
+  const priorityBadgeVariant =
+    task.priority === "frantic"
+      ? "destructive"
+      : task.priority === "urgent"
+        ? "default"
+        : "secondary"
+
   return (
     <div
       key={task.id}
@@ -50,12 +58,23 @@ export function TaskCard({
           {task.description}
         </p>
       ) : null}
-      <div className="mt-2 flex items-center gap-2 text-xs">
-        <span
-          className={isOverdue ? "text-destructive" : "text-muted-foreground"}
+      <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
+        <Badge
+          variant={isOverdue ? "destructive" : "outline"}
+          aria-label={`Due date ${dueLabel}`}
         >
-          {dueLabel}
-        </span>
+          <CalendarClock data-testid="due-date-icon" />
+          <span>{dueLabel}</span>
+        </Badge>
+        {task.priority ? (
+          <Badge
+            variant={priorityBadgeVariant}
+            aria-label={`Priority ${task.priority}`}
+          >
+            <Flag data-testid="priority-icon" />
+            <span className="capitalize">{task.priority}</span>
+          </Badge>
+        ) : null}
       </div>
     </div>
   )
