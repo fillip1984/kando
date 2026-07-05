@@ -1,4 +1,7 @@
+import { format } from "date-fns"
+
 import { Button } from "@/components/ui/button"
+import { Calendar } from "@/components/ui/calendar"
 import {
   Dialog,
   DialogContent,
@@ -51,6 +54,7 @@ export function TaskDialog({
   onSubmit,
 }: TaskDialogProps) {
   const submitLabel = mode === "create" ? "Create Task" : "Save Changes"
+  const selectedDueDate = dueDate ? new Date(`${dueDate}T00:00:00`) : undefined
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -94,12 +98,33 @@ export function TaskDialog({
             <label htmlFor="task-due-date" className="text-sm font-medium">
               Due date
             </label>
-            <Input
+            <div
               id="task-due-date"
-              type="date"
-              value={dueDate}
-              onChange={(event) => onDueDateChange(event.target.value)}
-            />
+              className="rounded-md border border-border/70"
+            >
+              <Calendar
+                mode="single"
+                selected={selectedDueDate}
+                month={selectedDueDate}
+                onSelect={(value) =>
+                  onDueDateChange(value ? format(value, "yyyy-MM-dd") : "")
+                }
+              />
+            </div>
+            <div className="flex items-center justify-between text-xs text-muted-foreground">
+              <span>
+                {dueDate ? `Selected ${dueDate}` : "No due date selected"}
+              </span>
+              {dueDate ? (
+                <Button
+                  variant="ghost"
+                  size="xs"
+                  onClick={() => onDueDateChange("")}
+                >
+                  Clear
+                </Button>
+              ) : null}
+            </div>
           </div>
 
           <div className="grid gap-1.5">

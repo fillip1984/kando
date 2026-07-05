@@ -16,21 +16,19 @@ const emptyFilters: FilterState = {
   noDueDate: false,
 }
 
-if (!window.matchMedia) {
-  Object.defineProperty(window, "matchMedia", {
-    writable: true,
-    value: vi.fn().mockImplementation(() => ({
-      matches: false,
-      media: "",
-      onchange: null,
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    })),
-  })
-}
+Object.defineProperty(window, "matchMedia", {
+  writable: true,
+  value: vi.fn().mockImplementation(() => ({
+    matches: false,
+    media: "",
+    onchange: null,
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  })),
+})
 
 function FilterPanelHarness() {
   let filters = { ...emptyFilters }
@@ -40,10 +38,10 @@ function FilterPanelHarness() {
     rerenderPanel()
   }
 
-  const onReset = vi.fn(() => {
+  const onReset = () => {
     filters = { ...emptyFilters }
     rerenderPanel()
-  })
+  }
 
   const { rerender } = render(
     <SidebarProvider>

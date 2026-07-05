@@ -1,4 +1,5 @@
 import { DeleteTaskDialog } from "@/components/board/delete-task-dialog"
+import { BoardHeader } from "@/components/board/board-header"
 import type { FilterState } from "@/components/board/filter-panel"
 import { FilterPanel } from "@/components/board/filter-panel"
 import { toggleSingleSelectFilter } from "@/components/board/filter-state"
@@ -17,7 +18,6 @@ import {
   createMoveUpdate,
   createUpdateTaskInput,
 } from "@/components/board/task-mutations"
-import { ModeToggle } from "@/components/theme/mode-toggle"
 import {
   SidebarInset,
   SidebarProvider,
@@ -312,27 +312,14 @@ function App() {
       <SidebarInset className="md:peer-data-[variant=inset]:m-0 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-none md:peer-data-[variant=inset]:shadow-none">
         <main className="min-h-svh bg-linear-to-br from-emerald-50 via-background to-teal-50 p-4 md:p-6">
           <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 md:gap-6">
-            <header className="rounded-xl border border-border/70 bg-background/85 p-4 shadow-sm backdrop-blur md:p-5">
-              <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
-                <div>
-                  <div className="mb-2 md:hidden">
-                    <SidebarTrigger aria-label="Open filters" />
-                  </div>
-                  <h1 className="font-heading text-2xl tracking-tight">
-                    Kando
-                  </h1>
-                  <p className="text-sm text-muted-foreground">
-                    Single-board Kanban for focused task flow.
-                  </p>
+            <BoardHeader
+              totalShown={totalShown}
+              mobileLeading={
+                <div className="mb-2 md:hidden">
+                  <SidebarTrigger aria-label="Open filters" />
                 </div>
-                <div className="flex items-center gap-2">
-                  <p className="text-sm text-muted-foreground">
-                    Showing {totalShown} task{totalShown === 1 ? "" : "s"}
-                  </p>
-                  <ModeToggle />
-                </div>
-              </div>
-            </header>
+              }
+            />
 
             <KanbanBoard
               tasksByLane={tasksByLane}

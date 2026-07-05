@@ -52,6 +52,19 @@ describe("TaskDialog", () => {
     expect(screen.getByRole("heading", { name: "Edit Task" })).toBeDefined()
     expect(screen.getByDisplayValue("Existing title")).toBeDefined()
     expect(screen.getByDisplayValue("Existing description")).toBeDefined()
-    expect(screen.getByDisplayValue("2026-07-04")).toBeDefined()
+    expect(screen.getByText("Selected 2026-07-04")).toBeDefined()
+    expect(screen.getByRole("button", { name: "Clear" })).toBeDefined()
+  })
+
+  it("updates due date through calendar day selection and clear", () => {
+    const props = createBaseProps()
+
+    render(<TaskDialog {...props} dueDate="2026-07-04" />)
+
+    fireEvent.click(screen.getByRole("button", { name: /july 15th, 2026/i }))
+    expect(props.onDueDateChange).toHaveBeenCalledWith("2026-07-15")
+
+    fireEvent.click(screen.getByRole("button", { name: "Clear" }))
+    expect(props.onDueDateChange).toHaveBeenCalledWith("")
   })
 })

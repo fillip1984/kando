@@ -138,12 +138,11 @@
 - [ ] Add integration coverage for task-card click-to-edit behavior.
 - [x] Add a visible trashcan icon on each task card to initiate deletion.
 - [x] Add a delete confirmation dialog and require confirmation before deletion mutation.
-- [ ] Add integration coverage for delete confirm and delete cancel behaviors.
 - [x] Add integration coverage for delete confirm and delete cancel behaviors.
-- [ ] Move theme mode control under the app bar.
-- [ ] Add validation coverage for theme control placement in responsive layouts.
-- [ ] Replace task due date native input with a shadcn Calendar-based picker.
-- [ ] Add validation coverage for Calendar date picking in create and edit dialogs.
+- [x] Move theme mode control under the app bar.
+- [x] Add validation coverage for theme control placement in responsive layouts.
+- [x] Replace task due date native input with a shadcn Calendar-based picker.
+- [x] Add validation coverage for Calendar date picking in create and edit dialogs.
 - [ ] Prefer combobox with clear option for future dropdown-like task fields instead of select.
 
 ## Spec-Derived Delivery Tasks (Next Slice)
@@ -155,9 +154,9 @@
 - [x] Add a visible trashcan icon action to every task card.
 - [x] Add a delete confirmation dialog that requires explicit confirm before deletion.
 - [x] Wire delete confirmation to persisted deletion via existing server mutation flow.
-- [ ] Move theme mode control under the app bar region in the board layout.
-- [ ] Replace due-date native input with shadcn Calendar picker in task dialog.
-- [ ] Maintain create and edit dialog parity after Calendar migration.
+- [x] Move theme mode control under the app bar region in the board layout.
+- [x] Replace due-date native input with shadcn Calendar picker in task dialog.
+- [x] Maintain create and edit dialog parity after Calendar migration.
 - [ ] Introduce combobox-with-clear pattern for dropdown-like choice fields when a dropdown control is needed.
 
 ### Validation
@@ -166,6 +165,6 @@
 - [ ] Add interaction tests proving drag-and-drop still works after card-click edit change.
 - [x] Add integration tests for delete confirmation confirm path (task removed and persisted).
 - [x] Add integration tests for delete confirmation cancel path (task unchanged).
-- [ ] Add responsive layout checks for theme control placement under app bar.
-- [ ] Add create/edit dialog tests for Calendar date selection and clearing behavior.
-- [ ] Verify lint, typecheck, and tests pass after the slice (`pnpm lint`, `pnpm typecheck`, `pnpm test`).
+- [x] Add responsive layout checks for theme control placement under app bar.
+- [x] Add create/edit dialog tests for Calendar date selection and clearing behavior.
+- [x] Verify lint, typecheck, and tests pass after the slice (`pnpm lint`, `pnpm typecheck`, `pnpm test`).
