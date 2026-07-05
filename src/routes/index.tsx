@@ -286,7 +286,9 @@ function App() {
                   <div className="mb-2 md:hidden">
                     <SidebarTrigger aria-label="Open filters" />
                   </div>
-                  <h1 className="font-heading text-2xl tracking-tight">Kando</h1>
+                  <h1 className="font-heading text-2xl tracking-tight">
+                    Kando
+                  </h1>
                   <p className="text-sm text-muted-foreground">
                     Single-board Kanban for focused task flow.
                   </p>
