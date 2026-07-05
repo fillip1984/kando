@@ -14,7 +14,7 @@ export default function StyledDatePicker({
   value,
   handleSetValue,
 }: {
-  value: Date | undefined
+  value: Date | undefined | ""
   handleSetValue: (value: Date | undefined) => void
 }) {
   const [isOpen, setIsOpen] = useState(false)
@@ -30,9 +30,9 @@ export default function StyledDatePicker({
         <PopoverTrigger
           render={
             <InputGroupInput
-              className="w-auto text-left"
+              className="w-full min-w-0 text-left"
               id="date-required"
-              value={value ? format(value, "yyyy-MM-dd") : ""}
+              value={value && value !== "" ? format(value, "yyyy-MM-dd") : ""}
               // TODO: placeholder isn't working, it isn't visible
               placeholder="Due date"
               onKeyDown={(e) => {
@@ -79,7 +79,7 @@ export default function StyledDatePicker({
             aria-label="Select due date"
             variant="ghost"
             size={"icon-xs"}
-            onClick={(event) => {
+            onClick={() => {
               setIsOpen((prev) => !prev)
             }}
             className="group-has-data-[slot=combobox-clear]/input-group:hidden data-pressed:bg-transparent"
