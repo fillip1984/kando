@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
 import {
   Combobox,
   ComboboxContent,
@@ -16,16 +15,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
 import { Textarea } from "@/components/ui/textarea"
-import { cn } from "@/lib/utils"
 import type { TaskPriority, TaskStatus } from "@/server/functions/todos"
 import { format } from "date-fns"
-import { AlignLeft, Flag, GoalIcon, Kanban, Type, X } from "lucide-react"
+import { AlignLeft, Flag, Kanban, Type } from "lucide-react"
+import StyledDatePicker from "../custom-ui/styled-date-picker"
+import { Field } from "../ui/field"
 import { InputGroupAddon } from "../ui/input-group"
 
 type TaskDialogProps = {
@@ -126,53 +121,12 @@ export function TaskDialog({
           </div>
 
           <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
-            <Popover>
-              <PopoverTrigger
-                aria-label="Open due date picker"
-                render={
-                  <Button
-                    variant="outline"
-                    className="relative justify-start"
-                  />
-                }
-              >
-                <span className="flex min-w-0 items-center gap-2">
-                  <GoalIcon className="size-4 text-muted-foreground" />
-                  <span
-                    className={cn(
-                      "truncate",
-                      !selectedDueDate && "text-muted-foreground"
-                    )}
-                  >
-                    {selectedDueDate
-                      ? format(selectedDueDate, "M/d/yyyy")
-                      : "Due date"}
-                  </span>
-                </span>
-                {selectedDueDate ? (
-                  <span
-                    aria-label="Clear due date"
-                    // className="ml-2 rounded px-1 text-xs text-muted-foreground hover:bg-muted"
-                    className="absolute right-2 text-muted-foreground"
-                    onClick={(event) => {
-                      event.preventDefault()
-                      event.stopPropagation()
-                      onDueDateChange("")
-                    }}
-                  >
-                    <X data-testid="date-clear-icon" className="size-4" />
-                  </span>
-                ) : null}
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={selectedDueDate}
-                  onSelect={handleDueDateSelect}
-                  defaultMonth={selectedDueDate ?? new Date()}
-                />
-              </PopoverContent>
-            </Popover>
+            <Field className="mx-auto w-full">
+              <StyledDatePicker
+                value={selectedDueDate}
+                handleSetValue={handleDueDateSelect}
+              />
+            </Field>
 
             <Combobox
               value={status || null}
@@ -191,7 +145,7 @@ export function TaskDialog({
                   <Kanban data-testid="status-icon" className="size-4" />
                 </InputGroupAddon>
               </ComboboxInput>
-              <ComboboxContent className="w-full">
+              <ComboboxContent className="w-full" align="center">
                 <ComboboxList>
                   {statusOptions.map((value) => (
                     <ComboboxItem key={value} value={value}>
@@ -219,7 +173,7 @@ export function TaskDialog({
                   <Flag data-testid="priority-field-icon" className="size-4" />
                 </InputGroupAddon>
               </ComboboxInput>
-              <ComboboxContent className="w-full">
+              <ComboboxContent className="w-full" align="center">
                 <ComboboxList>
                   {priorityOptions.map((value) => (
                     <ComboboxItem key={value} value={value}>

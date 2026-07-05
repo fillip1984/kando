@@ -1,4 +1,12 @@
 {
   "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "js/ts.preferences.autoImportFileExcludePatterns": [
+    "@base-ui/*",
+    "**/@radix-ui/*"
+  ],
+  "js/ts.preferences.autoImportSpecifierExcludeRegexes": [
+    "^@base-ui",
+    "**/@radix-ui/*"
+  ]
 }

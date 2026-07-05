@@ -313,6 +313,16 @@
 
 - [x] Verify due-date icon consistency in task-dialog and task-card rendering/tests.
 
+## Styled Date Picker Standardization Tasks (2026-07-05)
+
+### Implementation
+
+- [x] Add spec/design policy requiring the shared styled date-picker component for future date-picker usage.
+
+### Validation
+
+- [x] Verify `SPEC.md` and `DESIGN.md` both reference the shared styled date-picker standard.
+
 ## Spec Drift Tasks (2026-07-05)
 
 ### Implementation

@@ -56,6 +56,7 @@ We are building a simple todo application called Kando. The product requires a c
 - Deleting a task must require a confirmation dialog before the delete mutation is executed.
 - Theme control must be placed under the app bar.
 - Date picking fields must use a shadcn date picker-based picker.
+- Date picker fields in app features must use the shared styled date-picker component in `src/components/custom-ui/styled-date-picker.tsx`.
 - Due-date indicators must use a consistent icon treatment between task-dialog date fields and task-card due-date badges.
 - Date picker display controls must include an inline `span` with an `X` affordance for clearing selected values, similar to combobox clear interactions.
 - Date-picker clear affordances must use the lucide `X` icon.
@@ -98,6 +99,7 @@ We are building a simple todo application called Kando. The product requires a c
 - Canceling deletion closes the confirmation dialog and leaves the task unchanged.
 - Theme mode control is rendered under the app bar.
 - Date picking fields render a shadcn date picker-based picker.
+- Date picking fields in app features use the shared styled date-picker component.
 - Due-date indicators use a consistent icon treatment across task-dialog and task-card contexts.
 - Date picker selected-value displays include an inline `X` clear affordance rendered as a `span` inside the display control.
 - Date-picker clear affordances render with the lucide `X` icon.

@@ -47,6 +47,8 @@ This design defines Kando as a simple Kanban todo application using packages alr
 - Always use `@/components/ui/*` component wrappers for UI primitives in app code.
 - Direct `@base-ui/*` usage is only allowed inside `src/components/ui/*` when building or maintaining shared UI wrappers.
 - Date picking fields should use shadcn Date Picker-based interactions rather than native date inputs. Documentation can be found here: https://ui.shadcn.com/docs/components/base/date-picker
+- Use the shared styled date-picker component at `src/components/custom-ui/styled-date-picker.tsx` as the default date-picker implementation for app features.
+- New date-picker UI in feature code should compose through this shared styled date-picker component instead of re-implementing ad hoc `Popover + Calendar` trigger layouts.
 - Date picker display controls should include an inline `span` containing `X` to clear the current value, matching the clear affordance pattern used by combobox controls.
 - Date-picker clear affordances should use the lucide `X` icon for consistency with other clear controls.
 - For dropdown-style choices, prefer a combobox with a clear option over select. Documentation can be found here: https://ui.shadcn.com/docs/components/base/combobox#clear-button
@@ -110,6 +112,8 @@ This design defines Kando as a simple Kanban todo application using packages alr
 - Saving files is required to allow import organization behavior from the configured Prettier/import tooling.
 - Workspace VS Code settings should enforce automatic formatting on save.
 - Workspace VS Code settings should set Prettier as the default formatter.
+- Workspace VS Code settings should exclude Base UI and Radix UI packages from JS/TS auto-import suggestions in app code.
+- Use both file-pattern and specifier-regex exclusions so editors consistently avoid suggesting `@base-ui/*` and `@radix-ui/*` imports in feature files.
 - Project setup should include recommended VS Code extensions via `.vscode/extensions.json`.
 - Required recommended extensions should include at least Prettier, ESLint, and Tailwind CSS IntelliSense.
 - Additional recommended extensions for this project should include Chat Customizations Evaluations, ES7 React snippets, and Pretty TypeScript Errors.
@@ -133,7 +137,15 @@ This design defines Kando as a simple Kanban todo application using packages alr
 ```json
 {
   "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "js/ts.preferences.autoImportFileExcludePatterns": [
+    "@base-ui/*",
+    "**/@radix-ui/*"
+  ],
+  "js/ts.preferences.autoImportSpecifierExcludeRegexes": [
+    "^@base-ui",
+    "^@radix-ui"
+  ]
 }
 ```
 
