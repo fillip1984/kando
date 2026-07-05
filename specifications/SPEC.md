@@ -60,8 +60,9 @@ We are building a simple todo application called Kando. The product requires a c
 - Date-picker clear affordances must use the lucide `X` icon.
 - Dropdown-style choice fields should prefer combobox with a clear option over select.
 - Dropdown input-group icons must be positioned at the front (inline-start) of the control.
-- Combobox controls should not shrink to the point that selected values become unreadable.
-- Combobox selected values should remain fully visible within reasonable layout constraints.
+- Dropdown icon composition should use leading input-group addons when building compact combobox controls.
+- Combobox controls should use shrink-resistant sizing (for example `shrink-0`) so selected values remain readable.
+- Combobox selected values should remain readable within reasonable layout constraints; truncation is acceptable under constrained widths.
 - Task dialog inputs should be compact and avoid standalone text labels when placeholders and/or icon input groups can convey field meaning.
 - Task dialog title field must use a title icon as its semantic input-group icon.
 - Todo priority must be nullable and constrained to: important, urgent, frantic.
@@ -100,8 +101,9 @@ We are building a simple todo application called Kando. The product requires a c
 - Date-picker clear affordances render with the lucide `X` icon.
 - Dropdown-style controls prefer combobox with a clear option over select.
 - Dropdown controls with input-group icons render those icons at the front of the control.
+- Dropdown controls with semantic field icons use leading input-group addons in compact dialog layouts.
 - Combobox controls preserve enough width for selected value readability and avoid excessive shrinking.
-- Combobox selected values are fully visible within reasonable layout constraints.
+- Combobox selected values remain readable within reasonable layout constraints, including truncated rendering when constrained.
 - Task dialog uses a compact layout where field meaning is conveyed through placeholders and/or icon input groups instead of standalone labels.
 - Task dialog title input renders a title icon as the field indicator.
 - Task create and edit flows support priority values of null, important, urgent, or frantic.

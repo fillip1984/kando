@@ -145,6 +145,14 @@
   Resolution: Added shadcn `calendar` and `popover` components through `pnpx`, updated task dialog, and validated with `pnpm typecheck`, `pnpm lint`, and `pnpm test`.
   Follow-up task: Keep date picker behavior covered when modifying task dialog inputs.
 
+- Date: 2026-07-05
+  Area: Combobox compact sizing validation
+  Expected: Validation should enforce readable combobox sizing without coupling to stale class names.
+  Actual: `task-dialog.tsx` now uses `shrink-0` sizing without `min-w-44`, but `task-dialog.test.tsx` still asserts `min-w-44`, causing a failing test.
+  Reason: Recent compact layout edits changed sizing strategy while test assertions remained tied to a previous min-width utility class.
+  Resolution: Reopen combobox visibility validation task to update test expectations to the current sizing contract.
+  Follow-up task: Update combobox visibility tests to assert shrink-resistant/readable behavior without requiring `min-w-44`.
+
 ## Follow-up Tasks
 
 - [x] Add the optional `done recently` filter described in the design doc.

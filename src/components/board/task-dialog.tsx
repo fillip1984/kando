@@ -26,6 +26,7 @@ import { cn } from "@/lib/utils"
 import type { TaskPriority, TaskStatus } from "@/server/functions/todos"
 import { format } from "date-fns"
 import { AlignLeft, CalendarIcon, Flag, Kanban, Type, X } from "lucide-react"
+import { InputGroupAddon } from "../ui/input-group"
 
 type TaskDialogProps = {
   open: boolean
@@ -133,7 +134,7 @@ export function TaskDialog({
                 }
               >
                 <span className="flex min-w-0 items-center gap-2">
-                  <CalendarIcon className="size-4" />
+                  <CalendarIcon className="size-4 text-muted-foreground" />
                   <span
                     className={cn(
                       "truncate",
@@ -141,7 +142,7 @@ export function TaskDialog({
                     )}
                   >
                     {selectedDueDate
-                      ? format(selectedDueDate, "PPP")
+                      ? format(selectedDueDate, "M/d/yyyy")
                       : "Due date"}
                   </span>
                 </span>
@@ -155,7 +156,7 @@ export function TaskDialog({
                       onDueDateChange("")
                     }}
                   >
-                    <X data-testid="date-clear-icon" className="size-3" />
+                    <X data-testid="date-clear-icon" className="size-4" />
                   </span>
                 ) : null}
               </PopoverTrigger>
@@ -180,9 +181,11 @@ export function TaskDialog({
                 showTrigger
                 value={status ? laneTitles[status] : ""}
                 placeholder="Status"
-                className="h-9 w-full max-w-full min-w-44 shrink-0"
+                className="shrink-0"
               >
-                <Kanban data-testid="status-icon" className="size-4" />
+                <InputGroupAddon>
+                  <Kanban data-testid="status-icon" className="size-4" />
+                </InputGroupAddon>
               </ComboboxInput>
               <ComboboxContent className="w-full">
                 <ComboboxList>
@@ -206,9 +209,11 @@ export function TaskDialog({
                 showTrigger
                 value={priority ? priorityTitles[priority] : ""}
                 placeholder="Priority"
-                className="h-9 w-full max-w-full min-w-44 shrink-0"
+                className="shrink-0"
               >
-                <Flag data-testid="priority-field-icon" className="size-4" />
+                <InputGroupAddon>
+                  <Flag data-testid="priority-field-icon" className="size-4" />
+                </InputGroupAddon>
               </ComboboxInput>
               <ComboboxContent className="w-full">
                 <ComboboxList>

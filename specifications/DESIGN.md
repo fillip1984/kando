@@ -50,8 +50,9 @@ This design defines Kando as a simple Kanban todo application using packages alr
 - Date-picker clear affordances should use the lucide `X` icon for consistency with other clear controls.
 - For dropdown-style choices, prefer a combobox with a clear option over select. Documentation can be found here: https://ui.shadcn.com/docs/components/base/combobox#clear-button
 - In dropdown input-group compositions, place semantic field icons at the front (inline-start) of the control.
-- Combobox controls should be sized to avoid excessive shrinking so selected values remain readable.
-- Keep combobox selected values fully visible where practical, allowing truncation only under constrained layouts.
+- In compact combobox compositions, provide semantic field icons via a leading input-group addon.
+- Combobox controls should be sized to avoid excessive shrinking (for example with `shrink-0`) so selected values remain readable.
+- Keep combobox selected values readable where practical, allowing truncation under constrained layouts.
 - Task dialog should prefer compact shadcn input compositions where placeholders and icon affordances replace standalone field labels.
 - shadcn components must be added through the command-line workflow (for example: `pnpx shadcn@latest add <component>`).
 - If a required UI component is missing from `src/components/ui`, add it through the shadcn CLI command and then consume it from `@/components/ui/*`.

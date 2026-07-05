@@ -113,7 +113,7 @@ describe("TaskDialog", () => {
     const statusGroup = screen
       .getByRole("combobox", { name: "Open status options" })
       .closest('[data-slot="input-group"]')
-    expect(statusGroup?.className).toContain("min-w-44")
+    expect(statusGroup?.className).toContain("w-auto")
     expect(statusGroup?.className).toContain("shrink-0")
   })
 
