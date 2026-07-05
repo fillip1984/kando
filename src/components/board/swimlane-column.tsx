@@ -12,6 +12,7 @@ type SwimlaneColumnProps = {
   onDropToLane: (lane: TaskStatus) => void
   onOpenCreate: (lane: TaskStatus) => void
   onEditTask: (task: TaskSummaryType) => void
+  onRequestDeleteTask: (task: TaskSummaryType) => void
   onDragStart: (taskId: string) => void
   onDragEnd: () => void
   getTaskDueLabel: (task: TaskSummaryType) => string
@@ -25,6 +26,7 @@ export function SwimlaneColumn({
   onDropToLane,
   onOpenCreate,
   onEditTask,
+  onRequestDeleteTask,
   onDragStart,
   onDragEnd,
   getTaskDueLabel,
@@ -51,6 +53,7 @@ export function SwimlaneColumn({
             dueLabel={getTaskDueLabel(task)}
             isOverdue={isTaskOverdue(task)}
             onEdit={onEditTask}
+            onRequestDelete={onRequestDeleteTask}
             onDragStart={onDragStart}
             onDragEnd={onDragEnd}
           />

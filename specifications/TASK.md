@@ -134,10 +134,10 @@
 - [x] Resolve the open question about whether overdue and today filters should include done tasks when the due date matches.
 - [x] Decide whether task position should remain ordered per status column or be made globally ordered.
 - [x] Add focused tests for any new filter behavior before shipping the next board iteration.
-- [ ] Implement task editing via task card click and preserve drag-and-drop usability.
+- [x] Implement task editing via task card click and preserve drag-and-drop usability.
 - [ ] Add integration coverage for task-card click-to-edit behavior.
-- [ ] Add a visible trashcan icon on each task card to initiate deletion.
-- [ ] Add a delete confirmation dialog and require confirmation before deletion mutation.
+- [x] Add a visible trashcan icon on each task card to initiate deletion.
+- [x] Add a delete confirmation dialog and require confirmation before deletion mutation.
 - [ ] Add integration coverage for delete confirm and delete cancel behaviors.
 - [ ] Move theme mode control under the app bar.
 - [ ] Add validation coverage for theme control placement in responsive layouts.
@@ -149,11 +149,11 @@
 
 ### Implementation
 
-- [ ] Replace task-card edit-icon-only interaction with click-on-card edit behavior.
-- [ ] Ensure card click-to-edit does not interfere with drag-and-drop start and drop interactions.
-- [ ] Add a visible trashcan icon action to every task card.
-- [ ] Add a delete confirmation dialog that requires explicit confirm before deletion.
-- [ ] Wire delete confirmation to persisted deletion via existing server mutation flow.
+- [x] Replace task-card edit-icon-only interaction with click-on-card edit behavior.
+- [x] Ensure card click-to-edit does not interfere with drag-and-drop start and drop interactions.
+- [x] Add a visible trashcan icon action to every task card.
+- [x] Add a delete confirmation dialog that requires explicit confirm before deletion.
+- [x] Wire delete confirmation to persisted deletion via existing server mutation flow.
 - [ ] Move theme mode control under the app bar region in the board layout.
 - [ ] Replace due-date native input with shadcn Calendar picker in task dialog.
 - [ ] Maintain create and edit dialog parity after Calendar migration.

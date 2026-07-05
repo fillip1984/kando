@@ -1,4 +1,4 @@
-import { Pencil } from "lucide-react"
+import { Trash2 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import type { TaskSummaryType } from "@/server/functions/todos"
@@ -8,6 +8,7 @@ type TaskCardProps = {
   dueLabel: string
   isOverdue: boolean
   onEdit: (task: TaskSummaryType) => void
+  onRequestDelete: (task: TaskSummaryType) => void
   onDragStart: (taskId: string) => void
   onDragEnd: () => void
 }
@@ -17,6 +18,7 @@ export function TaskCard({
   dueLabel,
   isOverdue,
   onEdit,
+  onRequestDelete,
   onDragStart,
   onDragEnd,
 }: TaskCardProps) {
@@ -26,17 +28,21 @@ export function TaskCard({
       draggable
       onDragStart={() => onDragStart(task.id)}
       onDragEnd={onDragEnd}
-      className="rounded-lg border border-border/80 bg-background p-3"
+      onClick={() => onEdit(task)}
+      className="cursor-pointer rounded-lg border border-border/80 bg-background p-3"
     >
       <div className="flex items-start justify-between gap-2">
         <p className="line-clamp-2 text-sm font-medium">{task.title}</p>
         <Button
           variant="ghost"
           size="icon-xs"
-          aria-label="Edit task"
-          onClick={() => onEdit(task)}
+          aria-label="Delete task"
+          onClick={(event) => {
+            event.stopPropagation()
+            onRequestDelete(task)
+          }}
         >
-          <Pencil className="size-3" />
+          <Trash2 className="size-3" />
         </Button>
       </div>
       {task.description ? (

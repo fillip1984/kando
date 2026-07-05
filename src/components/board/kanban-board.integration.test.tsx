@@ -25,6 +25,7 @@ describe("KanbanBoard integration", () => {
         onDropToLane={vi.fn()}
         onOpenCreate={onOpenCreate}
         onEditTask={vi.fn()}
+        onRequestDeleteTask={vi.fn()}
         onDragStart={vi.fn()}
         onDragEnd={vi.fn()}
         getTaskDueLabel={() => "No due date"}

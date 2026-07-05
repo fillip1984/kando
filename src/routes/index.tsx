@@ -1,3 +1,4 @@
+import { DeleteTaskDialog } from "@/components/board/delete-task-dialog"
 import type { FilterState } from "@/components/board/filter-panel"
 import { FilterPanel } from "@/components/board/filter-panel"
 import { toggleSingleSelectFilter } from "@/components/board/filter-state"
@@ -26,6 +27,7 @@ import type { TaskStatus, TaskSummaryType } from "@/server/functions/todos"
 import {
   Swimlanes,
   createTaskFn,
+  deleteTaskFn,
   moveTaskFn,
   readTasksFn,
   updateTaskFn,
@@ -72,6 +74,9 @@ function App() {
   })
   const [isSavingTask, setIsSavingTask] = useState(false)
   const [isSavingMove, setIsSavingMove] = useState(false)
+  const [isDeletingTask, setIsDeletingTask] = useState(false)
+  const [pendingDeleteTask, setPendingDeleteTask] =
+    useState<TaskSummaryType | null>(null)
 
   const now = new Date()
 
@@ -273,6 +278,27 @@ function App() {
     }
   }
 
+  async function confirmDeleteTask() {
+    if (!pendingDeleteTask || isDeletingTask) {
+      return
+    }
+
+    const targetId = pendingDeleteTask.id
+    const previousTasks = tasks
+
+    setIsDeletingTask(true)
+    setTasks((current) => current.filter((task) => task.id !== targetId))
+
+    try {
+      await deleteTaskFn({ data: { id: targetId } })
+      setPendingDeleteTask(null)
+    } catch {
+      setTasks(previousTasks)
+    } finally {
+      setIsDeletingTask(false)
+    }
+  }
+
   const isTaskOverdue = (task: TaskSummaryType) => isOverdue(task, now)
 
   return (
@@ -313,6 +339,7 @@ function App() {
               onDropToLane={onDropToLane}
               onOpenCreate={openCreateDialog}
               onEditTask={openEditDialog}
+              onRequestDeleteTask={setPendingDeleteTask}
               onDragStart={setDraggedTaskId}
               onDragEnd={() => setDraggedTaskId(null)}
               getTaskDueLabel={getTaskDueLabel}
@@ -336,6 +363,18 @@ function App() {
             onDueDateChange={(value) => setTaskFormValue("dueDate", value)}
             onStatusChange={(value) => setTaskFormValue("status", value)}
             onSubmit={saveTaskFromDialog}
+          />
+
+          <DeleteTaskDialog
+            open={pendingDeleteTask !== null}
+            title={pendingDeleteTask?.title ?? ""}
+            deleting={isDeletingTask}
+            onOpenChange={(open) => {
+              if (!open && !isDeletingTask) {
+                setPendingDeleteTask(null)
+              }
+            }}
+            onConfirm={confirmDeleteTask}
           />
         </main>
       </SidebarInset>

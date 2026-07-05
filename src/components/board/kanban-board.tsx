@@ -15,6 +15,7 @@ type KanbanBoardProps = {
   onDropToLane: (lane: TaskStatus) => void
   onOpenCreate: (lane: TaskStatus) => void
   onEditTask: (task: TaskSummaryType) => void
+  onRequestDeleteTask: (task: TaskSummaryType) => void
   onDragStart: (taskId: string) => void
   onDragEnd: () => void
   getTaskDueLabel: (task: TaskSummaryType) => string
@@ -26,6 +27,7 @@ export function KanbanBoard({
   onDropToLane,
   onOpenCreate,
   onEditTask,
+  onRequestDeleteTask,
   onDragStart,
   onDragEnd,
   getTaskDueLabel,
@@ -42,6 +44,7 @@ export function KanbanBoard({
           onDropToLane={onDropToLane}
           onOpenCreate={onOpenCreate}
           onEditTask={onEditTask}
+          onRequestDeleteTask={onRequestDeleteTask}
           onDragStart={onDragStart}
           onDragEnd={onDragEnd}
           getTaskDueLabel={getTaskDueLabel}
