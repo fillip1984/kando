@@ -1,8 +1,4 @@
-import { BoardHeader } from "@/components/board/board-header"
 import { DeleteTaskDialog } from "@/components/board/delete-task-dialog"
-import type { FilterState } from "@/components/board/filter-panel"
-import { FilterPanel } from "@/components/board/filter-panel"
-import { toggleSingleSelectFilter } from "@/components/board/filter-state"
 import { KanbanBoard } from "@/components/board/kanban-board"
 import { TaskDialog } from "@/components/board/task-dialog"
 import {
@@ -18,11 +14,6 @@ import {
   createMoveUpdate,
   createUpdateTaskInput,
 } from "@/components/board/task-mutations"
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar"
 import type {
   TaskPriority,
   TaskStatus,
@@ -36,6 +27,7 @@ import {
   readTasksFn,
   updateTaskFn,
 } from "@/server/functions/todos"
+import { useTaskStore } from "@/server/stores/task-store"
 import { createFileRoute } from "@tanstack/react-router"
 import { useMemo, useState } from "react"
 
@@ -43,14 +35,6 @@ export const Route = createFileRoute("/")({
   loader: async () => await readTasksFn(),
   component: App,
 })
-
-const emptyFilters: FilterState = {
-  overdue: false,
-  today: false,
-  doneRecently: false,
-  blockedOnly: false,
-  noDueDate: false,
-}
 
 type TaskDialogMode = "create" | "edit"
 
@@ -63,7 +47,7 @@ type TaskDialogState = {
 function App() {
   const initialTasks = Route.useLoaderData()
   const [tasks, setTasks] = useState<TaskSummaryType[]>(initialTasks)
-  const [filters, setFilters] = useState<FilterState>(emptyFilters)
+  const { taskFilter } = useTaskStore()
   const [draggedTaskId, setDraggedTaskId] = useState<string | null>(null)
   const [dialogState, setDialogState] = useState<TaskDialogState>({
     open: false,
@@ -87,29 +71,29 @@ function App() {
 
   const filteredTasks = useMemo(() => {
     return tasks.filter((task) => {
-      if (filters.overdue && !isOverdue(task, now)) {
+      if (taskFilter === "overdue" && !isOverdue(task, now)) {
         return false
       }
 
-      if (filters.today && !isToday(task, now)) {
+      if (taskFilter === "today" && !isToday(task, now)) {
         return false
       }
 
-      if (filters.doneRecently && !isDoneRecently(task, now)) {
+      if (taskFilter === "doneRecently" && !isDoneRecently(task, now)) {
         return false
       }
 
-      if (filters.blockedOnly && task.status !== "blocked") {
+      if (taskFilter === "blockedOnly" && task.status !== "blocked") {
         return false
       }
 
-      if (filters.noDueDate && parseDueDate(task.dueDate) !== null) {
+      if (taskFilter === "noDueDate" && parseDueDate(task.dueDate) !== null) {
         return false
       }
 
       return true
     })
-  }, [filters, now, tasks])
+  }, [taskFilter, now, tasks])
 
   const tasksByLane = useMemo(() => {
     return Swimlanes.reduce(
@@ -131,8 +115,6 @@ function App() {
       }
     )
   }, [filteredTasks])
-
-  const totalShown = filteredTasks.length
 
   function formatDateInput(value: unknown): string {
     const dueDate = parseDueDate(value)
@@ -250,10 +232,6 @@ function App() {
     }
   }
 
-  function toggleFilter(key: keyof FilterState) {
-    setFilters((current) => toggleSingleSelectFilter(current, key))
-  }
-
   async function onDropToLane(targetLane: TaskStatus) {
     if (!draggedTaskId || isSavingMove) {
       return
@@ -310,71 +288,52 @@ function App() {
   const isTaskOverdue = (task: TaskSummaryType) => isOverdue(task, now)
 
   return (
-    <SidebarProvider>
-      <FilterPanel
-        filters={filters}
-        onToggle={toggleFilter}
-        onReset={() => setFilters(emptyFilters)}
+    <>
+      <main className="min-h-svh p-4 md:p-6">
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 md:gap-6">
+          <KanbanBoard
+            tasksByLane={tasksByLane}
+            onDropToLane={onDropToLane}
+            onOpenCreate={openCreateDialog}
+            onEditTask={openEditDialog}
+            onRequestDeleteTask={setPendingDeleteTask}
+            onDragStart={setDraggedTaskId}
+            onDragEnd={() => setDraggedTaskId(null)}
+            getTaskDueLabel={getTaskDueLabel}
+            isTaskOverdue={isTaskOverdue}
+          />
+        </div>
+      </main>
+
+      <TaskDialog
+        open={dialogState.open}
+        mode={dialogState.mode}
+        title={taskForm.title}
+        description={taskForm.description}
+        dueDate={taskForm.dueDate}
+        status={taskForm.status}
+        priority={taskForm.priority}
+        saving={isSavingTask}
+        onOpenChange={setDialogOpen}
+        onTitleChange={(value) => setTaskFormValue("title", value)}
+        onDescriptionChange={(value) => setTaskFormValue("description", value)}
+        onDueDateChange={(value) => setTaskFormValue("dueDate", value)}
+        onStatusChange={(value) => setTaskFormValue("status", value)}
+        onPriorityChange={(value) => setTaskFormValue("priority", value)}
+        onSubmit={saveTaskFromDialog}
       />
 
-      <SidebarInset className="md:peer-data-[variant=inset]:m-0 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-none md:peer-data-[variant=inset]:shadow-none">
-        <main className="min-h-svh bg-linear-to-br from-emerald-50 via-background to-teal-50 p-4 md:p-6">
-          <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 md:gap-6">
-            <BoardHeader
-              totalShown={totalShown}
-              mobileLeading={
-                <div className="mb-2 md:hidden">
-                  <SidebarTrigger aria-label="Open filters" />
-                </div>
-              }
-            />
-
-            <KanbanBoard
-              tasksByLane={tasksByLane}
-              onDropToLane={onDropToLane}
-              onOpenCreate={openCreateDialog}
-              onEditTask={openEditDialog}
-              onRequestDeleteTask={setPendingDeleteTask}
-              onDragStart={setDraggedTaskId}
-              onDragEnd={() => setDraggedTaskId(null)}
-              getTaskDueLabel={getTaskDueLabel}
-              isTaskOverdue={isTaskOverdue}
-            />
-          </div>
-
-          <TaskDialog
-            open={dialogState.open}
-            mode={dialogState.mode}
-            title={taskForm.title}
-            description={taskForm.description}
-            dueDate={taskForm.dueDate}
-            status={taskForm.status}
-            priority={taskForm.priority}
-            saving={isSavingTask}
-            onOpenChange={setDialogOpen}
-            onTitleChange={(value) => setTaskFormValue("title", value)}
-            onDescriptionChange={(value) =>
-              setTaskFormValue("description", value)
-            }
-            onDueDateChange={(value) => setTaskFormValue("dueDate", value)}
-            onStatusChange={(value) => setTaskFormValue("status", value)}
-            onPriorityChange={(value) => setTaskFormValue("priority", value)}
-            onSubmit={saveTaskFromDialog}
-          />
-
-          <DeleteTaskDialog
-            open={pendingDeleteTask !== null}
-            title={pendingDeleteTask?.title ?? ""}
-            deleting={isDeletingTask}
-            onOpenChange={(open) => {
-              if (!open && !isDeletingTask) {
-                setPendingDeleteTask(null)
-              }
-            }}
-            onConfirm={confirmDeleteTask}
-          />
-        </main>
-      </SidebarInset>
-    </SidebarProvider>
+      <DeleteTaskDialog
+        open={pendingDeleteTask !== null}
+        title={pendingDeleteTask?.title ?? ""}
+        deleting={isDeletingTask}
+        onOpenChange={(open) => {
+          if (!open && !isDeletingTask) {
+            setPendingDeleteTask(null)
+          }
+        }}
+        onConfirm={confirmDeleteTask}
+      />
+    </>
   )
 }

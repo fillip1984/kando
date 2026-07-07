@@ -3,6 +3,10 @@ import { TanStackDevtools } from "@tanstack/react-devtools"
 import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router"
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
 
+import AppSidebar from "@/components/nav/app-sidebar"
+import AppTopbar from "@/components/nav/app-topbar"
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
+import { TooltipProvider } from "@/components/ui/tooltip"
 import appCss from "../styles.css?url"
 
 export const Route = createRootRoute({
@@ -52,7 +56,19 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <ThemeProvider defaultTheme="system" storageKey="theme">
-          {children}
+          <TooltipProvider>
+            <SidebarProvider>
+              {/*       <SidebarInset className="md:peer-data-[variant=inset]:m-0 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-none md:peer-data-[variant=inset]:shadow-none">
+               */}
+              <AppSidebar />
+              <SidebarInset>
+                <div>
+                  <AppTopbar />
+                  {children}
+                </div>
+              </SidebarInset>
+            </SidebarProvider>
+          </TooltipProvider>
           <TanStackDevtools
             config={{
               position: "bottom-right",
