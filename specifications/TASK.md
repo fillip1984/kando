@@ -47,7 +47,7 @@
 - [x] `pnpm lint`
 - [x] `pnpm test`
 
-## Spec Drift Log
+## Spec Drift Log Addendum (2026-07-07)
 
 - Date: 2026-07-04
   Area: Task create/edit UX
@@ -295,13 +295,54 @@
 ### Implementation
 
 - [x] Add inline `span` `X` clear affordance inside date-picker display controls.
+- [x] Add inline `X` clear affordance inside date-picker display controls.
 - [x] Align date-picker clear behavior with combobox clear interaction patterns.
 
 ### Validation
 
-- [x] Add tests validating date picker clear via inline `span` `X` affordance.
+- [x] Add tests validating date picker clear behavior via inline `X` affordance.
 - [x] Verify `pnpm typecheck`, `pnpm lint`, and `pnpm test` pass after date picker clear-affordance updates.
 - [x] Verify date-picker clear affordance uses lucide `X` icon.
+
+## Refactor Drift Tasks (2026-07-07)
+
+### Implementation
+
+- [x] Align board/dialog tests to the refactored store-driven component contracts.
+- [x] Update task-card tests to use schema-aligned `dueDate` string values instead of `Date` objects.
+- [x] Update spec/design language for date-picker clear controls from `span`-specific wording to clear-control wording.
+- [ ] Reintroduce drag-and-drop lane-move persistence (`moveTaskFn`) in board/task-card interactions.
+
+### Validation
+
+- [x] Verify `pnpm test` passes after test-contract alignment.
+- [ ] Add/update integration coverage for persisted drag-and-drop lane movement once restored.
+
+## Spec Drift Log
+
+- Date: 2026-07-07
+  Area: Component contract refactor
+  Expected: Board/task dialogs and tests used prop-driven callback contracts.
+  Actual: Components now use shared Zustand store actions plus direct server-function hooks.
+  Reason: Manual refactor centralized UI orchestration to reduce prop drilling.
+  Resolution: Updated tests to mock/store-drive interactions and validate mutation payload behavior.
+  Follow-up task: Keep new component tests aligned with store contracts when evolving UI behavior.
+
+- Date: 2026-07-07
+  Area: Task card dueDate test fixtures
+  Expected: Tests previously passed `Date` objects for due-date display assertions.
+  Actual: Data contracts use `string | null` dueDate values from server schema.
+  Reason: Refactor tightened schema alignment and exposed stale fixtures.
+  Resolution: Updated tests to use string due-date fixtures and current badge labels.
+  Follow-up task: Avoid non-schema fixture types in component tests.
+
+- Date: 2026-07-07
+  Area: Drag-and-drop persistence
+  Expected: Dragging cards between lanes updates/persists status and ordering.
+  Actual: Cards remain draggable, but drag/drop mutation wiring is currently deferred.
+  Reason: Refactor prioritized dialog/store cleanup and test recovery first.
+  Resolution: Reopened drag/drop persistence task for a follow-up implementation slice.
+  Follow-up task: Restore lane drop handlers and `moveTaskFn` persistence with integration coverage.
 
 ## Due-Date Icon Consistency Tasks (2026-07-05)
 

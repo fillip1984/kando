@@ -60,8 +60,9 @@ We are building a simple todo application called Kando. The product requires a c
 - The shared styled date-picker component must support a configurable leading icon for field-specific semantics.
 - The shared styled date-picker component must support a configurable placeholder for field-specific empty-state guidance.
 - Due-date indicators must use a consistent icon treatment between task-dialog date fields and task-card due-date badges.
-- Date picker display controls must include an inline `span` with an `X` affordance for clearing selected values, similar to combobox clear interactions.
+- Date picker display controls must include an inline clear affordance with an `X` icon for clearing selected values, similar to combobox clear interactions.
 - Date-picker clear affordances must use the lucide `X` icon.
+- Drag-and-drop is temporarily deferred in the current refactor branch and must be re-introduced before release to satisfy Kanban movement requirements.
 - Dropdown-style choice fields should prefer combobox over select.
 - Required fields implemented as comboboxes must not enable clear actions.
 - Optional fields implemented as comboboxes may enable clear actions.
@@ -106,7 +107,7 @@ We are building a simple todo application called Kando. The product requires a c
 - Date picking fields in app features use the shared styled date-picker component.
 - Styled date-picker usage supports customizable leading icon and placeholder text per field context.
 - Due-date indicators use a consistent icon treatment across task-dialog and task-card contexts.
-- Date picker selected-value displays include an inline `X` clear affordance rendered as a `span` inside the display control.
+- Date picker selected-value displays include an inline `X` clear affordance rendered inside the display control.
 - Date-picker clear affordances render with the lucide `X` icon.
 - Dropdown-style controls prefer combobox over select.
 - Required combobox fields render without clear actions.
@@ -121,6 +122,7 @@ We are building a simple todo application called Kando. The product requires a c
 - Submitting the dialog in create mode creates a new task in the intended swimlane.
 - Submitting the dialog in edit mode updates the existing task.
 - Dragging a card to another column updates its status and persists the change.
+- Current refactor branch keeps cards draggable but does not yet persist drag/drop lane moves; this remains an open delivery item.
 - Sidebar provides overdue and today filters that correctly derive from dueDate.
 - Only one sidebar filter can be active at a time.
 - Activating one filter automatically deactivates the previously active filter.

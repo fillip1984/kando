@@ -7,8 +7,19 @@ import type { TaskSummaryType } from "@/server/functions/todos"
 
 import { TaskCard } from "./task-card"
 
+const mockOpenTaskDialog = vi.fn()
+const mockOpenDeleteTaskConfirmation = vi.fn()
+
+vi.mock("@/server/stores/task-store", () => ({
+  useTaskStore: () => ({
+    openTaskDialog: mockOpenTaskDialog,
+    openDeleteTaskConfirmation: mockOpenDeleteTaskConfirmation,
+  }),
+}))
+
 afterEach(() => {
   cleanup()
+  vi.clearAllMocks()
 })
 
 function createTask(): TaskSummaryType {
@@ -17,7 +28,7 @@ function createTask(): TaskSummaryType {
     title: "Sample task",
     description: "Details",
     status: "todo",
-    dueDate: new Date(2026, 6, 5),
+    dueDate: "2026-07-05",
     priority: "urgent",
     position: 0,
   } as TaskSummaryType
@@ -25,19 +36,9 @@ function createTask(): TaskSummaryType {
 
 describe("TaskCard interactions", () => {
   it("renders due date and priority badges with icon indicators", () => {
-    render(
-      <TaskCard
-        task={createTask()}
-        dueLabel="7/5/2026"
-        isOverdue={false}
-        onEdit={vi.fn()}
-        onRequestDelete={vi.fn()}
-        onDragStart={vi.fn()}
-        onDragEnd={vi.fn()}
-      />
-    )
+    render(<TaskCard task={createTask()} />)
 
-    expect(screen.getByLabelText("Due date 7/5/2026")).toBeDefined()
+    expect(screen.getByLabelText("Due date 2026-07-05")).toBeDefined()
     expect(screen.getByTestId("due-date-icon")).toBeDefined()
     expect(screen.getByLabelText("Priority urgent")).toBeDefined()
     expect(screen.getByTestId("priority-icon")).toBeDefined()
@@ -47,17 +48,7 @@ describe("TaskCard interactions", () => {
     const task = createTask()
     task.priority = null
 
-    render(
-      <TaskCard
-        task={task}
-        dueLabel="7/5/2026"
-        isOverdue={false}
-        onEdit={vi.fn()}
-        onRequestDelete={vi.fn()}
-        onDragStart={vi.fn()}
-        onDragEnd={vi.fn()}
-      />
-    )
+    render(<TaskCard task={task} />)
 
     expect(screen.queryByTestId("priority-icon")).toBeNull()
   })
@@ -66,61 +57,30 @@ describe("TaskCard interactions", () => {
     const task = createTask()
     task.dueDate = null
 
-    render(
-      <TaskCard
-        task={task}
-        dueLabel="No date"
-        isOverdue={false}
-        onEdit={vi.fn()}
-        onRequestDelete={vi.fn()}
-        onDragStart={vi.fn()}
-        onDragEnd={vi.fn()}
-      />
-    )
+    render(<TaskCard task={task} />)
 
     expect(screen.queryByTestId("due-date-icon")).toBeNull()
   })
 
   it("opens edit when task card surface is clicked", () => {
-    const onEdit = vi.fn()
-
-    render(
-      <TaskCard
-        task={createTask()}
-        dueLabel="7/5/2026"
-        isOverdue={false}
-        onEdit={onEdit}
-        onRequestDelete={vi.fn()}
-        onDragStart={vi.fn()}
-        onDragEnd={vi.fn()}
-      />
-    )
+    const task = createTask()
+    render(<TaskCard task={task} />)
 
     fireEvent.click(screen.getByText("Sample task"))
 
-    expect(onEdit).toHaveBeenCalledTimes(1)
+    expect(mockOpenTaskDialog).toHaveBeenCalledTimes(1)
+    expect(mockOpenTaskDialog).toHaveBeenCalledWith({ mode: "edit", task })
   })
 
   it("triggers delete request without opening edit when trash icon is clicked", () => {
-    const onEdit = vi.fn()
-    const onRequestDelete = vi.fn()
-
-    render(
-      <TaskCard
-        task={createTask()}
-        dueLabel="7/5/2026"
-        isOverdue={false}
-        onEdit={onEdit}
-        onRequestDelete={onRequestDelete}
-        onDragStart={vi.fn()}
-        onDragEnd={vi.fn()}
-      />
-    )
+    const task = createTask()
+    render(<TaskCard task={task} />)
 
     const deleteButton = screen.getByRole("button", { name: "Delete task" })
     fireEvent.click(deleteButton)
 
-    expect(onRequestDelete).toHaveBeenCalledTimes(1)
-    expect(onEdit).not.toHaveBeenCalled()
+    expect(mockOpenDeleteTaskConfirmation).toHaveBeenCalledTimes(1)
+    expect(mockOpenDeleteTaskConfirmation).toHaveBeenCalledWith(task)
+    expect(mockOpenTaskDialog).not.toHaveBeenCalled()
   })
 })

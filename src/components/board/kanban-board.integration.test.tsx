@@ -1,37 +1,33 @@
 // @vitest-environment jsdom
 
 import { fireEvent, render, screen } from "@testing-library/react"
-import { describe, expect, it, vi } from "vitest"
+import { beforeEach, describe, expect, it, vi } from "vitest"
 
-import type { TaskStatus, TaskSummaryType } from "@/server/functions/todos"
+import type { TaskSummaryType } from "@/server/functions/todos"
 import { Swimlanes } from "@/server/functions/todos"
 
 import { KanbanBoard } from "./kanban-board"
 
-const emptyTasksByLane: Record<TaskStatus, TaskSummaryType[]> = {
-  todo: [],
-  in_progress: [],
-  blocked: [],
-  done: [],
-}
+const mockOpenTaskDialog = vi.fn()
+const mockOpenDeleteTaskConfirmation = vi.fn()
+const mockSetTasksShownCount = vi.fn()
+
+vi.mock("@/server/stores/task-store", () => ({
+  useTaskStore: () => ({
+    taskFilter: null,
+    setTasksShownCount: mockSetTasksShownCount,
+    openTaskDialog: mockOpenTaskDialog,
+    openDeleteTaskConfirmation: mockOpenDeleteTaskConfirmation,
+  }),
+}))
+
+beforeEach(() => {
+  vi.clearAllMocks()
+})
 
 describe("KanbanBoard integration", () => {
   it("wires each swimlane create button to its lane and keeps create action in anchored lane layout", () => {
-    const onOpenCreate = vi.fn()
-
-    render(
-      <KanbanBoard
-        tasksByLane={emptyTasksByLane}
-        onDropToLane={vi.fn()}
-        onOpenCreate={onOpenCreate}
-        onEditTask={vi.fn()}
-        onRequestDeleteTask={vi.fn()}
-        onDragStart={vi.fn()}
-        onDragEnd={vi.fn()}
-        getTaskDueLabel={() => "No due date"}
-        isTaskOverdue={() => false}
-      />
-    )
+    render(<KanbanBoard tasks={[]} />)
 
     const addButtons = screen.getAllByRole("button", { name: "Add Task" })
     expect(addButtons).toHaveLength(4)
@@ -40,7 +36,6 @@ describe("KanbanBoard integration", () => {
       const laneContainer = button.closest("article")
       expect(laneContainer?.className).toContain("flex")
       expect(laneContainer?.className).toContain("flex-col")
-      expect(laneContainer?.className).toContain("min-h-80")
       expect(
         laneContainer?.querySelector(".grid.flex-1.content-start.gap-2")
       ).toBeTruthy()
@@ -50,57 +45,36 @@ describe("KanbanBoard integration", () => {
       fireEvent.click(button)
     }
 
-    expect(onOpenCreate.mock.calls.map((call) => call[0])).toEqual(Swimlanes)
+    expect(
+      mockOpenTaskDialog.mock.calls.map((call) => call[0].status)
+    ).toEqual(Swimlanes)
+    expect(mockSetTasksShownCount).toHaveBeenCalledWith(0)
   })
 
-  it("opens edit on card click and still wires drag start/end handlers", () => {
+  it("opens edit on card click and routes delete to confirmation", () => {
     const task: TaskSummaryType = {
       id: "task-1",
       title: "Sample Task",
       description: "Details",
       status: "todo",
-      dueDate: new Date(2026, 6, 5),
+      dueDate: "2026-07-05",
       priority: "important",
       position: 0,
     } as TaskSummaryType
 
-    const tasksByLane: Record<TaskStatus, TaskSummaryType[]> = {
-      todo: [task],
-      in_progress: [],
-      blocked: [],
-      done: [],
-    }
-
-    const onEditTask = vi.fn()
-    const onDragStart = vi.fn()
-    const onDragEnd = vi.fn()
-
-    render(
-      <KanbanBoard
-        tasksByLane={tasksByLane}
-        onDropToLane={vi.fn()}
-        onOpenCreate={vi.fn()}
-        onEditTask={onEditTask}
-        onRequestDeleteTask={vi.fn()}
-        onDragStart={onDragStart}
-        onDragEnd={onDragEnd}
-        getTaskDueLabel={() => "Due 7/5/2026"}
-        isTaskOverdue={() => false}
-      />
-    )
+    render(<KanbanBoard tasks={[task]} />)
 
     fireEvent.click(screen.getByText("Sample Task"))
-    expect(onEditTask).toHaveBeenCalledTimes(1)
-    expect(onEditTask).toHaveBeenCalledWith(task)
+    expect(mockOpenTaskDialog).toHaveBeenCalledTimes(1)
+    expect(mockOpenTaskDialog).toHaveBeenCalledWith({ mode: "edit", task })
 
     const card = screen.getByText("Sample Task").closest('[draggable="true"]')
     expect(card).toBeTruthy()
 
-    fireEvent.dragStart(card as HTMLElement)
-    fireEvent.dragEnd(card as HTMLElement)
+    fireEvent.click(screen.getByRole("button", { name: "Delete task" }))
 
-    expect(onDragStart).toHaveBeenCalledTimes(1)
-    expect(onDragStart).toHaveBeenCalledWith("task-1")
-    expect(onDragEnd).toHaveBeenCalledTimes(1)
+    expect(mockOpenDeleteTaskConfirmation).toHaveBeenCalledTimes(1)
+    expect(mockOpenDeleteTaskConfirmation).toHaveBeenCalledWith(task)
+    expect(mockSetTasksShownCount).toHaveBeenCalledWith(1)
   })
 })

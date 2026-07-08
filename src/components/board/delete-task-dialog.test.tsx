@@ -1,49 +1,73 @@
 // @vitest-environment jsdom
 
-import { fireEvent, render, screen } from "@testing-library/react"
-import { describe, expect, it, vi } from "vitest"
+import { fireEvent, render, screen, waitFor } from "@testing-library/react"
+import { beforeEach, describe, expect, it, vi } from "vitest"
 
 import { DeleteTaskDialog } from "./delete-task-dialog"
 
-describe("DeleteTaskDialog", () => {
-  it("calls onConfirm when delete is confirmed", () => {
-    const onOpenChange = vi.fn()
-    const onConfirm = vi.fn()
+const mockCloseDeleteTaskConfirmation = vi.fn()
+const mockDeleteTask = vi.fn().mockResolvedValue(undefined)
+const mockInvalidate = vi.fn()
 
-    render(
-      <DeleteTaskDialog
-        open
-        title="Task to delete"
-        deleting={false}
-        onOpenChange={onOpenChange}
-        onConfirm={onConfirm}
-      />
-    )
+vi.mock("@/server/stores/task-store", () => ({
+  useTaskStore: () => ({
+    closeDeleteTaskConfirmation: mockCloseDeleteTaskConfirmation,
+  }),
+}))
+
+vi.mock("@tanstack/react-router", () => ({
+  useRouter: () => ({
+    invalidate: mockInvalidate,
+  }),
+}))
+
+vi.mock("@tanstack/react-start", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@tanstack/react-start")>()
+  return {
+    ...actual,
+    useServerFn: () => mockDeleteTask,
+  }
+})
+
+function createTask() {
+  return {
+    id: "task-1",
+    title: "Task to delete",
+    description: null,
+    status: "todo",
+    dueDate: null,
+    priority: null,
+    position: 0,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  } as const
+}
+
+beforeEach(() => {
+  vi.clearAllMocks()
+})
+
+describe("DeleteTaskDialog", () => {
+  it("calls delete server function when delete is confirmed", async () => {
+    const task = createTask()
+
+    render(<DeleteTaskDialog open task={task} />)
 
     fireEvent.click(screen.getByRole("button", { name: "Delete" }))
 
-    expect(onConfirm).toHaveBeenCalledTimes(1)
-    expect(onOpenChange).not.toHaveBeenCalled()
+    await waitFor(() => {
+      expect(mockDeleteTask).toHaveBeenCalledWith({ data: { id: task.id } })
+    })
+    expect(mockCloseDeleteTaskConfirmation).toHaveBeenCalledTimes(1)
+    expect(mockInvalidate).toHaveBeenCalledTimes(1)
   })
 
-  it("calls onOpenChange(false) and does not confirm when cancel is clicked", () => {
-    const onOpenChange = vi.fn()
-    const onConfirm = vi.fn()
-
-    render(
-      <DeleteTaskDialog
-        open
-        title="Task to keep"
-        deleting={false}
-        onOpenChange={onOpenChange}
-        onConfirm={onConfirm}
-      />
-    )
+  it("closes confirmation and does not call delete when cancel is clicked", () => {
+    render(<DeleteTaskDialog open task={createTask()} />)
 
     fireEvent.click(screen.getByRole("button", { name: "Cancel" }))
 
-    expect(onOpenChange).toHaveBeenCalledTimes(1)
-    expect(onOpenChange).toHaveBeenCalledWith(false)
-    expect(onConfirm).not.toHaveBeenCalled()
+    expect(mockCloseDeleteTaskConfirmation).toHaveBeenCalledTimes(1)
+    expect(mockDeleteTask).not.toHaveBeenCalled()
   })
 })

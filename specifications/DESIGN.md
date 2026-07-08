@@ -25,6 +25,7 @@ This design defines Kando as a simple Kanban todo application using packages alr
 - Shared UI components in `src/components/ui` provide consistent interaction patterns.
 - Interactive UI should use shadcn components by default (for example: dialog, input, button, sidebar, dropdown-menu, select, tooltip, sheet).
 - Main board view renders four status columns: todo, in_progress, blocked, done.
+- Board and dialog interactions are orchestrated through the shared Zustand task store (`useTaskStore`) rather than prop-drilled callbacks.
 - Theme mode control is placed under the app bar.
 - Task edit interaction is triggered by clicking a task card, which opens the shared task dialog in edit mode.
 - Task cards include a visible trashcan icon action for deletion.
@@ -53,7 +54,7 @@ This design defines Kando as a simple Kanban todo application using packages alr
 - The shared styled date-picker should accept an optional `placeholder` prop to support field-specific empty-state text.
 - When `leadingIcon` is omitted, the shared styled date-picker should default to a calendar icon.
 - When `placeholder` is omitted, the shared styled date-picker should default to a generic date placeholder.
-- Date picker display controls should include an inline `span` containing `X` to clear the current value, matching the clear affordance pattern used by combobox controls.
+- Date picker display controls should include an inline clear control containing `X` to clear the current value, matching the clear affordance pattern used by combobox controls.
 - Date-picker clear affordances should use the lucide `X` icon for consistency with other clear controls.
 - For dropdown-style choices, prefer combobox over select. Documentation can be found here: https://ui.shadcn.com/docs/components/base/combobox#clear-button
 - Required combobox fields must not expose clear actions.
@@ -162,7 +163,8 @@ This design defines Kando as a simple Kanban todo application using packages alr
 
 - Route loaders/actions and server functions in `src/server/functions` implement business behavior.
 - Utility helpers remain in `src/lib`.
-- Drag-and-drop interactions are handled in the board UI and call server functions to persist status and ordering.
+- Dialog components currently execute create/update/delete server mutations directly and invalidate routes after completion.
+- Drag-and-drop persistence is currently deferred in the refactor branch and should be reintroduced through board-level mutation wiring.
 
 3. Data layer:
 
