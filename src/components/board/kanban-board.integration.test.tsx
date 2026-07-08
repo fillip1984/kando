@@ -45,9 +45,9 @@ describe("KanbanBoard integration", () => {
       fireEvent.click(button)
     }
 
-    expect(
-      mockOpenTaskDialog.mock.calls.map((call) => call[0].status)
-    ).toEqual(Swimlanes)
+    expect(mockOpenTaskDialog.mock.calls.map((call) => call[0].status)).toEqual(
+      Swimlanes
+    )
     expect(mockSetTasksShownCount).toHaveBeenCalledWith(0)
   })
 
