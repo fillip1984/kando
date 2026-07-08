@@ -16,29 +16,24 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import type { TaskPriority, TaskStatus } from "@/server/functions/todos"
-import { format } from "date-fns"
+import type {
+  TaskPriority,
+  TaskStatus,
+  TaskSummaryType,
+} from "@/server/functions/todos"
+import { createTaskFn, updateTaskFn } from "@/server/functions/todos"
+import { useTaskStore } from "@/server/stores/task-store"
+import { useRouter } from "@tanstack/react-router"
+import { useServerFn } from "@tanstack/react-start"
 import { AlignLeft, Flag, GoalIcon, Kanban, Type } from "lucide-react"
+import { useEffect, useState } from "react"
 import StyledDatePicker from "../custom-ui/styled-date-picker"
 import { Field } from "../ui/field"
 import { InputGroupAddon } from "../ui/input-group"
 
 type TaskDialogProps = {
   open: boolean
-  mode: "create" | "edit"
-  title: string
-  description: string
-  dueDate: string
-  status: TaskStatus | ""
-  priority: TaskPriority | ""
-  saving: boolean
-  onOpenChange: (open: boolean) => void
-  onTitleChange: (value: string) => void
-  onDescriptionChange: (value: string) => void
-  onDueDateChange: (value: string) => void
-  onStatusChange: (status: TaskStatus | "") => void
-  onPriorityChange: (priority: TaskPriority | "") => void
-  onSubmit: () => void
+  task: TaskSummaryType | null
 }
 
 const laneTitles: Record<TaskStatus, string> = {
@@ -57,40 +52,77 @@ const priorityTitles: Record<TaskPriority, string> = {
   frantic: "Frantic",
 }
 
-export function TaskDialog({
-  open,
-  mode,
-  title,
-  description,
-  dueDate,
-  status,
-  priority,
-  saving,
-  onOpenChange,
-  onTitleChange,
-  onDescriptionChange,
-  onDueDateChange,
-  onStatusChange,
-  onPriorityChange,
-  onSubmit,
-}: TaskDialogProps) {
-  const submitLabel = mode === "create" ? "Create Task" : "Save Changes"
-  const selectedDueDate = dueDate ? new Date(`${dueDate}T00:00:00`) : undefined
+export function TaskDialog({ open, task }: TaskDialogProps) {
+  const { closeTaskDialog } = useTaskStore()
 
-  const handleDueDateSelect = (value: Date | undefined) => {
-    onDueDateChange(value ? format(value, "yyyy-MM-dd") : "")
+  // init form state
+  const isNew = task?.id === undefined
+  const [title, setTitle] = useState("")
+  const [description, setDescription] = useState("")
+  const [dueDate, setDueDate] = useState("")
+  const [status, setStatus] = useState<TaskStatus | "">("")
+  const [priority, setPriority] = useState<TaskPriority | "">("")
+  const [position, setPosition] = useState(9999)
+  const [saving, setSaving] = useState(false)
+  useEffect(() => {
+    if (open) {
+      console.log({ task })
+      setTitle(task?.title || "")
+      setDescription(task?.description || "")
+      setDueDate(task?.dueDate || "")
+      setStatus(task?.status || "")
+      setPriority(task?.priority || "")
+      setPosition(task?.position ?? 9999)
+    }
+  }, [open])
+
+  const router = useRouter()
+  const createTask = useServerFn(createTaskFn)
+  const updateTask = useServerFn(updateTaskFn)
+  const handleSubmit = async () => {
+    try {
+      setSaving(true)
+      if (isNew) {
+        await createTask({
+          data: {
+            title,
+            description: description || null,
+            dueDate,
+            status: status as TaskStatus,
+            priority: priority || null,
+            position,
+          },
+        })
+      } else {
+        await updateTask({
+          data: {
+            id: task.id,
+            title,
+            description: description || null,
+            dueDate: dueDate || null,
+            status: status as TaskStatus,
+            priority: priority || null,
+            position,
+          },
+        })
+      }
+    } finally {
+      // TODO: this may cause issues if the server function fails
+      // TODO: to make this perfect we should wait for the dialog to close then set saving to false
+      closeTaskDialog()
+      router.invalidate()
+      setSaving(false)
+    }
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>
-            {mode === "create" ? "Create Task" : "Edit Task"}
-          </DialogTitle>
+          <DialogTitle>{isNew ? "Create Task" : "Edit Task"}</DialogTitle>
           <DialogDescription>
             Use this form to{" "}
-            {mode === "create" ? "create a new task" : "update task details"}.
+            {isNew ? "create a new task" : "update task details"}.
           </DialogDescription>
         </DialogHeader>
 
@@ -103,7 +135,7 @@ export function TaskDialog({
             <Input
               aria-label="Task title"
               value={title}
-              onChange={(event) => onTitleChange(event.target.value)}
+              onChange={(event) => setTitle(event.target.value)}
               placeholder="Task title"
               className="pl-9"
             />
@@ -114,7 +146,7 @@ export function TaskDialog({
             <Textarea
               aria-label="Task description"
               value={description}
-              onChange={(event) => onDescriptionChange(event.target.value)}
+              onChange={(event) => setDescription(event.target.value)}
               placeholder="Description (optional)"
               className="min-h-20 pl-9"
             />
@@ -123,8 +155,8 @@ export function TaskDialog({
           <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
             <Field className="mx-auto w-full">
               <StyledDatePicker
-                value={selectedDueDate}
-                handleSetValue={handleDueDateSelect}
+                value={dueDate}
+                handleOnChange={(value) => setDueDate(value)}
                 leadingIcon={<GoalIcon data-testid="due-date-icon" />}
                 placeholder="Due date"
               />
@@ -133,7 +165,7 @@ export function TaskDialog({
             <Combobox
               value={status || null}
               items={statusOptions}
-              onValueChange={(next) => onStatusChange(next ?? "")}
+              onValueChange={(next) => setStatus(next ?? "")}
             >
               <ComboboxInput
                 aria-label="Open status options"
@@ -160,7 +192,7 @@ export function TaskDialog({
             <Combobox
               value={priority || null}
               items={priorityOptions}
-              onValueChange={(next) => onPriorityChange(next ?? "")}
+              onValueChange={(next) => setPriority(next ?? "")}
             >
               <ComboboxInput
                 aria-label="Open priority options"
@@ -188,14 +220,14 @@ export function TaskDialog({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button variant="outline" onClick={closeTaskDialog}>
             Cancel
           </Button>
           <Button
             disabled={saving || !title.trim() || !status}
-            onClick={onSubmit}
+            onClick={handleSubmit}
           >
-            {saving ? "Saving..." : submitLabel}
+            {saving ? "Saving..." : isNew ? "Create Task" : "Save Changes"}
           </Button>
         </DialogFooter>
       </DialogContent>

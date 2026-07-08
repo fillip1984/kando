@@ -1,7 +1,15 @@
 import type { TaskStatus, TaskSummaryType } from "@/server/functions/todos"
 import { Swimlanes } from "@/server/functions/todos"
 
+import { useTaskStore } from "@/server/stores/task-store"
+import { useEffect, useMemo } from "react"
 import { SwimlaneColumn } from "./swimlane-column"
+import {
+  isDoneRecently,
+  isOverdue,
+  isToday,
+  parseDueDate,
+} from "./task-filters"
 
 const laneTitles: Record<TaskStatus, string> = {
   todo: "Todo",
@@ -10,29 +18,94 @@ const laneTitles: Record<TaskStatus, string> = {
   done: "Done",
 }
 
-type KanbanBoardProps = {
-  tasksByLane: Record<TaskStatus, TaskSummaryType[]>
-  onDropToLane: (lane: TaskStatus) => void
-  onOpenCreate: (lane: TaskStatus) => void
-  onEditTask: (task: TaskSummaryType) => void
-  onRequestDeleteTask: (task: TaskSummaryType) => void
-  onDragStart: (taskId: string) => void
-  onDragEnd: () => void
-  getTaskDueLabel: (task: TaskSummaryType) => string
-  isTaskOverdue: (task: TaskSummaryType) => boolean
-}
+// type KanbanBoardProps = {
+//   tasksByLane: Record<TaskStatus, TaskSummaryType[]>
+//   onDropToLane: (lane: TaskStatus) => void
+//   onOpenCreate: (lane: TaskStatus) => void
+//   onEditTask: (task: TaskSummaryType) => void
+//   onRequestDeleteTask: (task: TaskSummaryType) => void
+//   onDragStart: (taskId: string) => void
+//   onDragEnd: () => void
+//   getTaskDueLabel: (task: TaskSummaryType) => string
+//   isTaskOverdue: (task: TaskSummaryType) => boolean
+// }
 
-export function KanbanBoard({
-  tasksByLane,
-  onDropToLane,
-  onOpenCreate,
-  onEditTask,
-  onRequestDeleteTask,
-  onDragStart,
-  onDragEnd,
-  getTaskDueLabel,
-  isTaskOverdue,
-}: KanbanBoardProps) {
+export function KanbanBoard(
+  { tasks }: { tasks: TaskSummaryType[] }
+  //   {
+  //   tasksByLane,
+  //   onDropToLane,
+  //   onOpenCreate,
+  //   onEditTask,
+  //   onRequestDeleteTask,
+  //   onDragStart,
+  //   onDragEnd,
+  //   getTaskDueLabel,
+  //   isTaskOverdue,
+  // }: KanbanBoardProps
+) {
+  const { taskFilter, setTasksShownCount } = useTaskStore()
+  useEffect(() => {
+    setTasksShownCount(tasks.length)
+  }, [tasks.length, setTasksShownCount])
+
+  const now = new Date()
+  // const readTasks = useServerFn(readTasksFn)
+  // const [tasks, setTasks] = useState<TaskSummaryType[]>([])
+  // useEffect(() => {
+  //   readTasks().then((data) => {
+  //     setTasks(data)
+  //     setTasksShownCount(data.length)
+  //   })
+  // }, [readTasks, setTasksShownCount])
+
+  const filteredTasks = useMemo(() => {
+    return tasks.filter((task) => {
+      if (taskFilter === "overdue" && !isOverdue(task, now)) {
+        return false
+      }
+
+      if (taskFilter === "today" && !isToday(task, now)) {
+        return false
+      }
+
+      if (taskFilter === "doneRecently" && !isDoneRecently(task, now)) {
+        return false
+      }
+
+      if (taskFilter === "blockedOnly" && task.status !== "blocked") {
+        return false
+      }
+
+      if (taskFilter === "noDueDate" && parseDueDate(task.dueDate) !== null) {
+        return false
+      }
+
+      return true
+    })
+  }, [taskFilter, now, tasks])
+
+  const tasksByLane = useMemo(() => {
+    return Swimlanes.reduce(
+      (acc, lane) => {
+        acc[lane] = filteredTasks
+          .filter((task) => task.status === lane)
+          .sort(
+            (a, b) =>
+              (a.position ?? Number.MAX_SAFE_INTEGER) -
+              (b.position ?? Number.MAX_SAFE_INTEGER)
+          )
+        return acc
+      },
+      {
+        todo: [] as TaskSummaryType[],
+        in_progress: [] as TaskSummaryType[],
+        blocked: [] as TaskSummaryType[],
+        done: [] as TaskSummaryType[],
+      }
+    )
+  }, [filteredTasks])
+
   return (
     <section className="grid gap-3 overflow-x-auto md:grid-cols-2 xl:grid-cols-4">
       {Swimlanes.map((lane) => (
@@ -41,14 +114,14 @@ export function KanbanBoard({
           lane={lane}
           title={laneTitles[lane]}
           tasks={tasksByLane[lane]}
-          onDropToLane={onDropToLane}
-          onOpenCreate={onOpenCreate}
-          onEditTask={onEditTask}
-          onRequestDeleteTask={onRequestDeleteTask}
-          onDragStart={onDragStart}
-          onDragEnd={onDragEnd}
-          getTaskDueLabel={getTaskDueLabel}
-          isTaskOverdue={isTaskOverdue}
+          // onDropToLane={onDropToLane}
+          // onOpenCreate={onOpenCreate}
+          // onEditTask={onEditTask}
+          // onRequestDeleteTask={onRequestDeleteTask}
+          // onDragStart={onDragStart}
+          // onDragEnd={onDragEnd}
+          // getTaskDueLabel={getTaskDueLabel}
+          // isTaskOverdue={isTaskOverdue}
         />
       ))}
     </section>

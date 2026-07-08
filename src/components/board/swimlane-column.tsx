@@ -3,39 +3,42 @@ import { Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import type { TaskStatus, TaskSummaryType } from "@/server/functions/todos"
 
+import { useTaskStore } from "@/server/stores/task-store"
 import { TaskCard } from "./task-card"
 
 type SwimlaneColumnProps = {
   lane: TaskStatus
   title: string
   tasks: TaskSummaryType[]
-  onDropToLane: (lane: TaskStatus) => void
-  onOpenCreate: (lane: TaskStatus) => void
-  onEditTask: (task: TaskSummaryType) => void
-  onRequestDeleteTask: (task: TaskSummaryType) => void
-  onDragStart: (taskId: string) => void
-  onDragEnd: () => void
-  getTaskDueLabel: (task: TaskSummaryType) => string
-  isTaskOverdue: (task: TaskSummaryType) => boolean
+  // onDropToLane: (lane: TaskStatus) => void
+  // onOpenCreate: (lane: TaskStatus) => void
+  // onEditTask: (task: TaskSummaryType) => void
+  // onRequestDeleteTask: (task: TaskSummaryType) => void
+  // onDragStart: (taskId: string) => void
+  // onDragEnd: () => void
+  // getTaskDueLabel: (task: TaskSummaryType) => string
+  // isTaskOverdue: (task: TaskSummaryType) => boolean
 }
 
 export function SwimlaneColumn({
   lane,
   title,
   tasks,
-  onDropToLane,
-  onOpenCreate,
-  onEditTask,
-  onRequestDeleteTask,
-  onDragStart,
-  onDragEnd,
-  getTaskDueLabel,
-  isTaskOverdue,
+  // onDropToLane,
+  // onOpenCreate,
+  // onEditTask,
+  // onRequestDeleteTask,
+  // onDragStart,
+  // onDragEnd,
+  // getTaskDueLabel,
+  // isTaskOverdue,
 }: SwimlaneColumnProps) {
+  const { openTaskDialog } = useTaskStore()
+
   return (
     <article
       onDragOver={(event) => event.preventDefault()}
-      onDrop={() => onDropToLane(lane)}
+      // onDrop={() => onDropToLane(lane)}
       className="flex min-h-80 flex-col rounded-xl border border-border/70 bg-card p-3 shadow-sm"
     >
       <header className="mb-2 flex items-center justify-between">
@@ -50,12 +53,12 @@ export function SwimlaneColumn({
           <TaskCard
             key={task.id}
             task={task}
-            dueLabel={getTaskDueLabel(task)}
-            isOverdue={isTaskOverdue(task)}
-            onEdit={onEditTask}
-            onRequestDelete={onRequestDeleteTask}
-            onDragStart={onDragStart}
-            onDragEnd={onDragEnd}
+            // dueLabel={getTaskDueLabel(task)}
+            // isOverdue={isTaskOverdue(task)}
+            // onEdit={onEditTask}
+            // onRequestDelete={onRequestDeleteTask}
+            // onDragStart={onDragStart}
+            // onDragEnd={onDragEnd}
           />
         ))}
 
@@ -69,7 +72,13 @@ export function SwimlaneColumn({
       <Button
         variant="outline"
         className="mt-3 w-full justify-start"
-        onClick={() => onOpenCreate(lane)}
+        onClick={() =>
+          openTaskDialog({
+            mode: "create",
+            status: lane,
+            position: tasks.length,
+          })
+        }
       >
         <Plus className="size-4" />
         Add Task

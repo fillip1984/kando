@@ -1,4 +1,4 @@
-import { format } from "date-fns"
+import { format, parse } from "date-fns"
 import { CalendarIcon, ChevronDownIcon, XIcon } from "lucide-react"
 import { useState } from "react"
 import { Calendar } from "../ui/calendar"
@@ -12,12 +12,12 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
 
 export default function StyledDatePicker({
   value,
-  handleSetValue,
+  handleOnChange,
   leadingIcon,
   placeholder,
 }: {
-  value: Date | undefined
-  handleSetValue: (value: Date | undefined) => void
+  value: string
+  handleOnChange: (value: string) => void
   leadingIcon?: React.ReactNode
   placeholder?: string
 }) {
@@ -31,12 +31,13 @@ export default function StyledDatePicker({
 
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger
+          nativeButton={false}
           render={
             <InputGroupInput
               className="w-full min-w-0 text-left"
               id="date-required"
-              value={value ? format(value, "yyyy-MM-dd") : ""}
-              // TODO: placeholder isn't working, it isn't visible
+              value={value}
+              // onChange={(e) => onChange(e.target.value)}
               placeholder={placeholder || "Select date"}
               onKeyDown={(e) => {
                 if (e.key === "ArrowDown") {
@@ -50,12 +51,17 @@ export default function StyledDatePicker({
         <PopoverContent className="w-auto overflow-hidden p-0" align="center">
           <Calendar
             mode="single"
-            selected={value}
+            selected={
+              value !== "" ? parse(value, "yyyy-MM-dd", new Date()) : undefined
+            }
             onSelect={(date) => {
-              handleSetValue(date)
+              console.log({ d: date ? format(date, "yyyy-MM-dd") : "" })
+              handleOnChange(date ? format(date, "yyyy-MM-dd") : "")
               setIsOpen(false)
             }}
-            defaultMonth={value ?? new Date()}
+            defaultMonth={
+              value !== "" ? parse(value, "yyyy-MM-dd", new Date()) : undefined
+            }
           />
         </PopoverContent>
       </Popover>
@@ -68,7 +74,7 @@ export default function StyledDatePicker({
             onClick={(event) => {
               event.preventDefault()
               event.stopPropagation()
-              handleSetValue(undefined)
+              handleOnChange("")
             }}
             className="group-has-data-[slot=combobox-clear]/input-group:hidden data-pressed:bg-transparent"
           >

@@ -11,7 +11,7 @@ export type TaskPriority = (typeof TaskPriorities)[number]
 export type CreateTaskInput = {
   title: string
   description?: string | null
-  dueDate?: Date | null
+  dueDate?: string | null
   status?: TaskStatus
   priority?: TaskPriority | null
   position?: number
@@ -21,7 +21,7 @@ export type UpdateTaskInput = {
   id: string
   title: string
   description?: string | null
-  dueDate?: Date | null
+  dueDate?: string | null
   status: TaskStatus
   priority: TaskPriority | null
   position: number
@@ -57,7 +57,11 @@ export const createTaskFn = createServerFn({ method: "POST" })
 
 export const readTasksFn = createServerFn({ method: "GET" }).handler(
   async () => {
-    return await db.query.todos.findMany()
+    return await db.query.todos.findMany({
+      orderBy: {
+        position: "asc",
+      },
+    })
   }
 )
 

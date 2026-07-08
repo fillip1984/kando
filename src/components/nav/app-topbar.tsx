@@ -1,7 +1,8 @@
+import { useTaskStore } from "@/server/stores/task-store"
 import { SidebarTrigger } from "../ui/sidebar"
 
 export default function AppTopbar() {
-  const totalShown = 5 // TODO: get this from the board state
+  const { tasksShownCount: totalShown } = useTaskStore()
   return (
     <header className="flex items-center justify-between gap-2 border-b border-border bg-background p-2">
       <SidebarTrigger aria-label="Open filters" />

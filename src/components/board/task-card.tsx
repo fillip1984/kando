@@ -3,25 +3,23 @@ import { Flag, GoalIcon, Trash2 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import type { TaskSummaryType } from "@/server/functions/todos"
+import { useTaskStore } from "@/server/stores/task-store"
+import { isOverdue } from "./task-filters"
 
 type TaskCardProps = {
   task: TaskSummaryType
-  dueLabel: string
-  isOverdue: boolean
-  onEdit: (task: TaskSummaryType) => void
-  onRequestDelete: (task: TaskSummaryType) => void
-  onDragStart: (taskId: string) => void
-  onDragEnd: () => void
+  // dueLabel: string
+  // isOverdue: boolean
+  // onEdit: (task: TaskSummaryType) => void
+  // onRequestDelete: (task: TaskSummaryType) => void
+  // onDragStart: (taskId: string) => void
+  // onDragEnd: () => void
 }
 
 export function TaskCard({
   task,
-  dueLabel,
-  isOverdue,
-  onEdit,
-  onRequestDelete,
-  onDragStart,
-  onDragEnd,
+  // onDragStart,
+  // onDragEnd,
 }: TaskCardProps) {
   const priorityBadgeVariant =
     task.priority === "frantic"
@@ -30,13 +28,15 @@ export function TaskCard({
         ? "default"
         : "secondary"
 
+  const { openTaskDialog, openDeleteTaskConfirmation } = useTaskStore()
+
   return (
     <div
       key={task.id}
       draggable
-      onDragStart={() => onDragStart(task.id)}
-      onDragEnd={onDragEnd}
-      onClick={() => onEdit(task)}
+      // onDragStart={() => onDragStart(task.id)}
+      // onDragEnd={onDragEnd}
+      onClick={() => openTaskDialog({ mode: "edit", task: task })}
       className="cursor-pointer rounded-lg border border-border/80 bg-background p-3"
     >
       <div className="flex items-start justify-between gap-2">
@@ -47,7 +47,7 @@ export function TaskCard({
           aria-label="Delete task"
           onClick={(event) => {
             event.stopPropagation()
-            onRequestDelete(task)
+            openDeleteTaskConfirmation(task)
           }}
         >
           <Trash2 className="size-3" />
@@ -61,11 +61,11 @@ export function TaskCard({
       <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
         {task.dueDate ? (
           <Badge
-            variant={isOverdue ? "destructive" : "outline"}
-            aria-label={`Due date ${dueLabel}`}
+            variant={isOverdue(task, new Date()) ? "destructive" : "outline"}
+            aria-label={`Due date ${task.dueDate}`}
           >
             <GoalIcon data-testid="due-date-icon" />
-            <span>{dueLabel}</span>
+            <span>{task.dueDate}</span>
           </Badge>
         ) : null}
         {task.priority ? (
