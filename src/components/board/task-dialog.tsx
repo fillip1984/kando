@@ -67,7 +67,6 @@ export function TaskDialog({ open, task }: TaskDialogProps) {
   const [saving, setSaving] = useState(false)
   useEffect(() => {
     if (open) {
-      console.log({ task })
       setTitle(task?.title || "")
       setDescription(task?.description || "")
       setDueDate(task?.dueDate || "")

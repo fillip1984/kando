@@ -58,11 +58,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <ThemeProvider defaultTheme="system" storageKey="theme">
           <TooltipProvider>
             <SidebarProvider>
-              {/*       <SidebarInset className="md:peer-data-[variant=inset]:m-0 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-none md:peer-data-[variant=inset]:shadow-none">
-               */}
               <AppSidebar />
-              <SidebarInset>
-                <div>
+              <SidebarInset className="overflow-hidden">
+                <div className="flex grow flex-col overflow-hidden">
                   <AppTopbar />
                   {children}
                 </div>

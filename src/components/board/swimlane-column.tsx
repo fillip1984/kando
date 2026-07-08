@@ -10,36 +10,15 @@ type SwimlaneColumnProps = {
   lane: TaskStatus
   title: string
   tasks: TaskSummaryType[]
-  // onDropToLane: (lane: TaskStatus) => void
-  // onOpenCreate: (lane: TaskStatus) => void
-  // onEditTask: (task: TaskSummaryType) => void
-  // onRequestDeleteTask: (task: TaskSummaryType) => void
-  // onDragStart: (taskId: string) => void
-  // onDragEnd: () => void
-  // getTaskDueLabel: (task: TaskSummaryType) => string
-  // isTaskOverdue: (task: TaskSummaryType) => boolean
 }
 
-export function SwimlaneColumn({
-  lane,
-  title,
-  tasks,
-  // onDropToLane,
-  // onOpenCreate,
-  // onEditTask,
-  // onRequestDeleteTask,
-  // onDragStart,
-  // onDragEnd,
-  // getTaskDueLabel,
-  // isTaskOverdue,
-}: SwimlaneColumnProps) {
+export function SwimlaneColumn({ lane, title, tasks }: SwimlaneColumnProps) {
   const { openTaskDialog } = useTaskStore()
 
   return (
     <article
       onDragOver={(event) => event.preventDefault()}
-      // onDrop={() => onDropToLane(lane)}
-      className="flex min-h-80 flex-col rounded-xl border border-border/70 bg-card p-3 shadow-sm"
+      className="flex w-100 shrink-0 flex-col rounded-xl border border-border/70 bg-card p-3 shadow-sm"
     >
       <header className="mb-2 flex items-center justify-between">
         <h2 className="font-heading text-base">{title}</h2>
@@ -50,16 +29,7 @@ export function SwimlaneColumn({
 
       <div className="grid flex-1 content-start gap-2">
         {tasks.map((task) => (
-          <TaskCard
-            key={task.id}
-            task={task}
-            // dueLabel={getTaskDueLabel(task)}
-            // isOverdue={isTaskOverdue(task)}
-            // onEdit={onEditTask}
-            // onRequestDelete={onRequestDeleteTask}
-            // onDragStart={onDragStart}
-            // onDragEnd={onDragEnd}
-          />
+          <TaskCard key={task.id} task={task} />
         ))}
 
         {tasks.length === 0 ? (

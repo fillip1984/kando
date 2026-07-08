@@ -40,19 +40,21 @@ export type TaskDetailType = Awaited<ReturnType<typeof readTaskFn>>
 export const createTaskFn = createServerFn({ method: "POST" })
   .validator((data: CreateTaskInput) => data)
   .handler(async ({ data }) => {
-    const createdTasks = await db
-      .insert(todos)
-      .values({
+    try {
+      console.log({ data })
+      const createdTasks = await db.insert(todos).values({
         title: data.title,
         description: data.description ?? null,
-        dueDate: data.dueDate ?? null,
+        dueDate: data.dueDate !== "" ? data.dueDate : null,
         status: data.status ?? "todo",
         priority: data.priority ?? null,
         position: data.position ?? 0,
       })
-      .returning()
 
-    return createdTasks[0]
+      console.log({ createdTasks })
+    } catch (e) {
+      console.error("Error creating task:", e)
+    }
   })
 
 export const readTasksFn = createServerFn({ method: "GET" }).handler(
@@ -81,7 +83,7 @@ export const updateTaskFn = createServerFn({ method: "POST" })
       .set({
         title: data.title,
         description: data.description ?? null,
-        dueDate: data.dueDate ?? null,
+        dueDate: data.dueDate !== "" ? data.dueDate : null,
         status: data.status,
         priority: data.priority ?? null,
         position: data.position,
