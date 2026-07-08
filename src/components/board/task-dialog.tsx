@@ -20,7 +20,7 @@ import { swimlaneLabels } from "@/lib/swimlane-utils"
 import type {
   TaskPriority,
   TaskStatus,
-  TaskSummaryType,
+  TaskType,
 } from "@/server/functions/todos"
 import { createTaskFn, updateTaskFn } from "@/server/functions/todos"
 import { useTaskStore } from "@/server/stores/task-store"
@@ -37,7 +37,7 @@ export function TaskDialog({
   task,
 }: {
   open: boolean
-  task: TaskSummaryType | null
+  task: TaskType | null
 }) {
   const { closeTaskDialog } = useTaskStore()
 

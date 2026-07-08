@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import type { TaskStatus, TaskSummaryType } from "../functions/todos"
+import type { TaskStatus, TaskType } from "../functions/todos"
 
 // export type TaskState = {
 //   overdue: boolean
@@ -29,7 +29,7 @@ type TaskFilterOption =
 type State = {
   taskFilter: TaskFilterOption | null
   tasksShownCount: number
-  currentTask: TaskSummaryType | null
+  currentTask: TaskType | null
   isDeleteTaskConfirmationOpen: boolean
   isTaskDialogOpen: boolean
 }
@@ -38,7 +38,7 @@ type Action = {
   toggleFilter: (value: TaskFilterOption) => void
   resetFilters: () => void
   setTasksShownCount: (count: number) => void
-  openDeleteTaskConfirmation: (task: TaskSummaryType) => void
+  openDeleteTaskConfirmation: (task: TaskType) => void
   closeDeleteTaskConfirmation: () => void
   openTaskDialog: ({
     mode,
@@ -54,7 +54,7 @@ type Action = {
       }
     | {
         mode: "edit"
-        task: TaskSummaryType
+        task: TaskType
         status?: never
         position?: never
       }) => void
@@ -76,7 +76,7 @@ export const useTaskStore = create<State & Action>((set) => ({
   setTasksShownCount: (count: number) => {
     set(() => ({ tasksShownCount: count }))
   },
-  openDeleteTaskConfirmation: (task: TaskSummaryType) => {
+  openDeleteTaskConfirmation: (task: TaskType) => {
     set({ isDeleteTaskConfirmationOpen: true, currentTask: task })
   },
   closeDeleteTaskConfirmation: () => {
@@ -97,14 +97,14 @@ export const useTaskStore = create<State & Action>((set) => ({
         }
       | {
           mode: "edit"
-          task: TaskSummaryType
+          task: TaskType
           status?: never
           position?: never
         }
     // mode: "create" | "edit"
     // status?: TaskStatus
     // position?: number
-    // task?: TaskSummaryType
+    // task?: TaskType
   ) => {
     set({
       isTaskDialogOpen: true,

@@ -33,28 +33,21 @@ export type MoveTaskInput = {
   position: number
 }
 
-export type TaskSummaryType = Awaited<ReturnType<typeof readTasksFn>>[0]
-export type TaskDetailType = Awaited<ReturnType<typeof readTaskFn>>
+export type TaskType = Awaited<ReturnType<typeof readTasksFn>>[0]
+// export type TaskDetailType = Awaited<ReturnType<typeof readTaskFn>>
 
 // crud
 export const createTaskFn = createServerFn({ method: "POST" })
   .validator((data: CreateTaskInput) => data)
   .handler(async ({ data }) => {
-    try {
-      console.log({ data })
-      const createdTasks = await db.insert(todos).values({
-        title: data.title,
-        description: data.description ?? null,
-        dueDate: data.dueDate !== "" ? data.dueDate : null,
-        status: data.status ?? "todo",
-        priority: data.priority ?? null,
-        position: data.position ?? 0,
-      })
-
-      console.log({ createdTasks })
-    } catch (e) {
-      console.error("Error creating task:", e)
-    }
+    await db.insert(todos).values({
+      title: data.title,
+      description: data.description ?? null,
+      status: data.status ?? "todo",
+      dueDate: data.dueDate !== "" ? data.dueDate : null,
+      priority: data.priority ?? null,
+      position: data.position ?? 0,
+    })
   })
 
 export const readTasksFn = createServerFn({ method: "GET" }).handler(
@@ -67,13 +60,13 @@ export const readTasksFn = createServerFn({ method: "GET" }).handler(
   }
 )
 
-export const readTaskFn = createServerFn({ method: "GET" })
-  .validator((data: { id: string }) => data)
-  .handler(async ({ data }) => {
-    return await db.query.todos.findFirst({
-      where: { id: data.id },
-    })
-  })
+// export const readTaskFn = createServerFn({ method: "GET" })
+//   .validator((data: { id: string }) => data)
+//   .handler(async ({ data }) => {
+//     return await db.query.todos.findFirst({
+//       where: { id: data.id },
+//     })
+//   })
 
 export const updateTaskFn = createServerFn({ method: "POST" })
   .validator((data: UpdateTaskInput) => data)
@@ -83,8 +76,8 @@ export const updateTaskFn = createServerFn({ method: "POST" })
       .set({
         title: data.title,
         description: data.description ?? null,
-        dueDate: data.dueDate !== "" ? data.dueDate : null,
         status: data.status,
+        dueDate: data.dueDate !== "" ? data.dueDate : null,
         priority: data.priority ?? null,
         position: data.position,
       })

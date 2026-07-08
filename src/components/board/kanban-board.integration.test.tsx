@@ -3,7 +3,7 @@
 import { fireEvent, render, screen } from "@testing-library/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
-import type { TaskSummaryType } from "@/server/functions/todos"
+import type { TaskType } from "@/server/functions/todos"
 import { Swimlanes } from "@/server/functions/todos"
 
 import { KanbanBoard } from "./kanban-board"
@@ -52,7 +52,7 @@ describe("KanbanBoard integration", () => {
   })
 
   it("opens edit on card click and routes delete to confirmation", () => {
-    const task: TaskSummaryType = {
+    const task: TaskType = {
       id: "task-1",
       title: "Sample Task",
       description: "Details",
@@ -60,7 +60,7 @@ describe("KanbanBoard integration", () => {
       dueDate: "2026-07-05",
       priority: "important",
       position: 0,
-    } as TaskSummaryType
+    } as TaskType
 
     render(<KanbanBoard tasks={[task]} />)
 

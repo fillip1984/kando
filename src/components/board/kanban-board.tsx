@@ -1,4 +1,4 @@
-import type { TaskSummaryType } from "@/server/functions/todos"
+import type { TaskType } from "@/server/functions/todos"
 
 import { buildSwimlanes } from "@/lib/swimlane-utils"
 import { filterTasks } from "@/lib/task-filters"
@@ -6,7 +6,7 @@ import { useTaskStore } from "@/server/stores/task-store"
 import { useEffect, useMemo } from "react"
 import { SwimlaneColumn } from "./swimlane-column"
 
-export function KanbanBoard({ tasks }: { tasks: TaskSummaryType[] }) {
+export function KanbanBoard({ tasks }: { tasks: TaskType[] }) {
   const { taskFilter, setTasksShownCount } = useTaskStore()
 
   const now = new Date()

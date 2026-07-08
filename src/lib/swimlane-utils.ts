@@ -1,4 +1,4 @@
-import type { TaskStatus, TaskSummaryType } from "@/server/functions/todos"
+import type { TaskStatus, TaskType } from "@/server/functions/todos"
 
 export const swimlaneLabels: { name: string; value: TaskStatus }[] = [
   { name: "Todo", value: "todo" },
@@ -12,13 +12,13 @@ export type SwimlaneType = {
     name: string
     value: TaskStatus
   }
-  tasks: TaskSummaryType[]
+  tasks: TaskType[]
 }
 
-export const buildSwimlanes = (tasks: TaskSummaryType[]): SwimlaneType[] => {
+export const buildSwimlanes = (tasks: TaskType[]): SwimlaneType[] => {
   const swimlanes: SwimlaneType[] = swimlaneLabels.map((label) => ({
     label,
-    tasks: [] as TaskSummaryType[],
+    tasks: [] as TaskType[],
   }))
 
   tasks.forEach((task) => {

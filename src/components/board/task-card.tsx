@@ -3,15 +3,15 @@ import { Flag, GoalIcon, Trash2 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { isOverdue } from "@/lib/task-filters"
-import type { TaskSummaryType } from "@/server/functions/todos"
+import type { TaskType } from "@/server/functions/todos"
 import { useTaskStore } from "@/server/stores/task-store"
 
 type TaskCardProps = {
-  task: TaskSummaryType
+  task: TaskType
   // dueLabel: string
   // isOverdue: boolean
-  // onEdit: (task: TaskSummaryType) => void
-  // onRequestDelete: (task: TaskSummaryType) => void
+  // onEdit: (task: TaskType) => void
+  // onRequestDelete: (task: TaskType) => void
   // onDragStart: (taskId: string) => void
   // onDragEnd: () => void
 }
@@ -37,7 +37,7 @@ export function TaskCard({
       // onDragStart={() => onDragStart(task.id)}
       // onDragEnd={onDragEnd}
       onClick={() => openTaskDialog({ mode: "edit", task: task })}
-      className="flex h-28 cursor-pointer flex-col rounded-lg border border-border/80 bg-background p-2"
+      className="flex h-28 cursor-pointer flex-col rounded-lg border bg-background p-2 transition-colors hover:bg-muted/50"
     >
       <div className="flex grow flex-col gap-1">
         <div className="flex items-start justify-between gap-2">

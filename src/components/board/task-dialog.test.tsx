@@ -9,7 +9,7 @@ import {
 } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
-import type { TaskSummaryType } from "@/server/functions/todos"
+import type { TaskType } from "@/server/functions/todos"
 
 import { TaskDialog } from "./task-dialog"
 
@@ -46,7 +46,7 @@ beforeEach(() => {
   vi.clearAllMocks()
 })
 
-function createTask(partial: Partial<TaskSummaryType>): TaskSummaryType {
+function createTask(partial: Partial<TaskType>): TaskType {
   return {
     id: "task-1",
     title: "",

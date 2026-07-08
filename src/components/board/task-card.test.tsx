@@ -3,7 +3,7 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react"
 import { afterEach, describe, expect, it, vi } from "vitest"
 
-import type { TaskSummaryType } from "@/server/functions/todos"
+import type { TaskType } from "@/server/functions/todos"
 
 import { TaskCard } from "./task-card"
 
@@ -22,7 +22,7 @@ afterEach(() => {
   vi.clearAllMocks()
 })
 
-function createTask(): TaskSummaryType {
+function createTask(): TaskType {
   return {
     id: "task-1",
     title: "Sample task",
@@ -31,7 +31,7 @@ function createTask(): TaskSummaryType {
     dueDate: "2026-07-05",
     priority: "urgent",
     position: 0,
-  } as TaskSummaryType
+  } as TaskType
 }
 
 describe("TaskCard interactions", () => {

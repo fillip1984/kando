@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import type { TaskSummaryType } from "@/server/functions/todos"
+import type { TaskType } from "@/server/functions/todos"
 import { deleteTaskFn } from "@/server/functions/todos"
 import { useTaskStore } from "@/server/stores/task-store"
 import { useRouter } from "@tanstack/react-router"
@@ -16,7 +16,7 @@ import { useState } from "react"
 
 type DeleteTaskDialogProps = {
   open: boolean
-  task: TaskSummaryType | null
+  task: TaskType | null
 }
 
 export function DeleteTaskDialog({ open, task }: DeleteTaskDialogProps) {
