@@ -9,7 +9,6 @@ import {
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -47,8 +46,8 @@ export function TaskDialog({
   const isNew = task?.id === "new"
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
-  const [dueDate, setDueDate] = useState("")
   const [status, setStatus] = useState<TaskStatus | "">("")
+  const [dueDate, setDueDate] = useState("")
   const [priority, setPriority] = useState<TaskPriority | "">("")
   const [position, setPosition] = useState(9999)
   const [saving, setSaving] = useState(false)
@@ -56,8 +55,8 @@ export function TaskDialog({
     if (open) {
       setTitle(task?.title || "")
       setDescription(task?.description || "")
-      setDueDate(task?.dueDate || "")
       setStatus(task?.status || "")
+      setDueDate(task?.dueDate || "")
       setPriority(task?.priority || "")
       setPosition(task?.position ?? 9999)
     }
@@ -74,8 +73,8 @@ export function TaskDialog({
           data: {
             title,
             description: description || null,
-            dueDate,
             status: status as TaskStatus,
+            dueDate,
             priority: priority || null,
             position,
           },
@@ -89,8 +88,8 @@ export function TaskDialog({
             id: task.id,
             title,
             description: description || null,
-            dueDate: dueDate || null,
             status: status as TaskStatus,
+            dueDate: dueDate || null,
             priority: priority || null,
             position,
           },
@@ -110,10 +109,6 @@ export function TaskDialog({
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>{isNew ? "Create Task" : "Edit Task"}</DialogTitle>
-          <DialogDescription>
-            Use this form to{" "}
-            {isNew ? "create a new task" : "update task details"}.
-          </DialogDescription>
         </DialogHeader>
 
         <div className="grid gap-3">
@@ -143,15 +138,6 @@ export function TaskDialog({
           </div>
 
           <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
-            <Field className="mx-auto w-full">
-              <StyledDatePicker
-                value={dueDate}
-                handleOnChange={(value) => setDueDate(value)}
-                leadingIcon={<GoalIcon data-testid="due-date-icon" />}
-                placeholder="Due date"
-              />
-            </Field>
-
             <Combobox
               value={status || null}
               items={swimlaneLabels.map((label) => label.value)}
@@ -173,6 +159,16 @@ export function TaskDialog({
                   <Kanban data-testid="status-icon" className="size-4" />
                 </InputGroupAddon>
               </ComboboxInput>
+
+              <Field className="mx-auto w-full">
+                <StyledDatePicker
+                  value={dueDate}
+                  handleOnChange={(value) => setDueDate(value)}
+                  leadingIcon={<GoalIcon data-testid="due-date-icon" />}
+                  placeholder="Due date"
+                />
+              </Field>
+
               <ComboboxContent className="w-full" align="center">
                 <ComboboxList>
                   {swimlaneLabels.map((label) => (
