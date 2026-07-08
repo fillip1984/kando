@@ -17,7 +17,6 @@ export function SwimlaneColumn({ swimlane }: { swimlane: SwimlaneType }) {
     type: "swimlane",
     accept: "task",
     collisionPriority: CollisionPriority.Low,
-    data: { swimlane },
   })
   const style = isDropTarget ? { backgroundColor: "#00000030" } : undefined
 

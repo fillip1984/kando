@@ -7,21 +7,7 @@ import type { TaskType } from "@/server/functions/todos"
 import { useTaskStore } from "@/server/stores/task-store"
 import { useSortable } from "@dnd-kit/react/sortable"
 
-type TaskCardProps = {
-  task: TaskType
-  // dueLabel: string
-  // isOverdue: boolean
-  // onEdit: (task: TaskType) => void
-  // onRequestDelete: (task: TaskType) => void
-  // onDragStart: (taskId: string) => void
-  // onDragEnd: () => void
-}
-
-export function TaskCard({
-  task,
-  // onDragStart,
-  // onDragEnd,
-}: TaskCardProps) {
+export function TaskCard({ task }: { task: TaskType }) {
   const priorityBadgeVariant =
     task.priority === "frantic"
       ? "destructive"
@@ -38,7 +24,6 @@ export function TaskCard({
     type: "task",
     accept: "task",
     group: task.status,
-    data: { task },
   })
 
   return (
