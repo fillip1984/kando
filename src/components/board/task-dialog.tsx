@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { priorityLabels } from "@/lib/priority-utils"
+import { swimlaneLabels } from "@/lib/swimlane-utils"
 import type {
   TaskPriority,
   TaskStatus,
@@ -31,28 +33,13 @@ import StyledDatePicker from "../custom-ui/styled-date-picker"
 import { Field } from "../ui/field"
 import { InputGroupAddon } from "../ui/input-group"
 
-type TaskDialogProps = {
+export function TaskDialog({
+  open,
+  task,
+}: {
   open: boolean
   task: TaskSummaryType | null
-}
-
-const laneTitles: Record<TaskStatus, string> = {
-  todo: "Todo",
-  in_progress: "In Progress",
-  blocked: "Blocked",
-  done: "Done",
-}
-
-const statusOptions: TaskStatus[] = ["todo", "in_progress", "blocked", "done"]
-const priorityOptions: TaskPriority[] = ["important", "urgent", "frantic"]
-
-const priorityTitles: Record<TaskPriority, string> = {
-  important: "Important",
-  urgent: "Urgent",
-  frantic: "Frantic",
-}
-
-export function TaskDialog({ open, task }: TaskDialogProps) {
+}) {
   const { closeTaskDialog } = useTaskStore()
 
   // init form state
@@ -167,13 +154,18 @@ export function TaskDialog({ open, task }: TaskDialogProps) {
 
             <Combobox
               value={status || null}
-              items={statusOptions}
+              items={swimlaneLabels.map((label) => label.value)}
               onValueChange={(next) => setStatus(next ?? "")}
             >
               <ComboboxInput
                 aria-label="Open status options"
                 showTrigger
-                value={status ? laneTitles[status] : ""}
+                value={
+                  status
+                    ? swimlaneLabels.find((label) => label.value === status)
+                        ?.name
+                    : ""
+                }
                 placeholder="Status"
                 className="shrink-0"
               >
@@ -183,9 +175,9 @@ export function TaskDialog({ open, task }: TaskDialogProps) {
               </ComboboxInput>
               <ComboboxContent className="w-full" align="center">
                 <ComboboxList>
-                  {statusOptions.map((value) => (
-                    <ComboboxItem key={value} value={value}>
-                      {laneTitles[value]}
+                  {swimlaneLabels.map((label) => (
+                    <ComboboxItem key={label.value} value={label.value}>
+                      {label.name}
                     </ComboboxItem>
                   ))}
                 </ComboboxList>
@@ -194,14 +186,19 @@ export function TaskDialog({ open, task }: TaskDialogProps) {
 
             <Combobox
               value={priority || null}
-              items={priorityOptions}
+              items={priorityLabels.map((label) => label.value)}
               onValueChange={(next) => setPriority(next ?? "")}
             >
               <ComboboxInput
                 aria-label="Open priority options"
                 showClear
                 showTrigger
-                value={priority ? priorityTitles[priority] : ""}
+                value={
+                  priority
+                    ? priorityLabels.find((label) => label.value === priority)
+                        ?.name
+                    : ""
+                }
                 placeholder="Priority"
                 className="shrink-0"
               >
@@ -211,9 +208,9 @@ export function TaskDialog({ open, task }: TaskDialogProps) {
               </ComboboxInput>
               <ComboboxContent className="w-full" align="center">
                 <ComboboxList>
-                  {priorityOptions.map((value) => (
-                    <ComboboxItem key={value} value={value}>
-                      {priorityTitles[value]}
+                  {priorityLabels.map((label) => (
+                    <ComboboxItem key={label.value} value={label.value}>
+                      {label.name}
                     </ComboboxItem>
                   ))}
                 </ComboboxList>

@@ -37,28 +37,32 @@ export function TaskCard({
       // onDragStart={() => onDragStart(task.id)}
       // onDragEnd={onDragEnd}
       onClick={() => openTaskDialog({ mode: "edit", task: task })}
-      className="cursor-pointer rounded-lg border border-border/80 bg-background p-3"
+      className="flex h-28 cursor-pointer flex-col rounded-lg border border-border/80 bg-background p-2"
     >
-      <div className="flex items-start justify-between gap-2">
-        <p className="line-clamp-2 text-sm font-medium">{task.title}</p>
-        <Button
-          variant="destructive"
-          size="icon-xs"
-          aria-label="Delete task"
-          onClick={(event) => {
-            event.stopPropagation()
-            openDeleteTaskConfirmation(task)
-          }}
-        >
-          <Trash2 className="size-3" />
-        </Button>
+      <div className="flex grow flex-col gap-1">
+        <div className="flex items-start justify-between gap-2">
+          <p className="line-clamp-2 text-sm font-medium">{task.title}</p>
+          <Button
+            variant="destructive"
+            size="icon-xs"
+            aria-label="Delete task"
+            onClick={(event) => {
+              event.stopPropagation()
+              openDeleteTaskConfirmation(task)
+            }}
+          >
+            <Trash2 className="size-3" />
+          </Button>
+        </div>
+        {task.description ? (
+          <p className="line-clamp-2 text-xs text-muted-foreground">
+            {task.description}
+          </p>
+        ) : null}
       </div>
-      {task.description ? (
-        <p className="mt-1 line-clamp-3 text-xs text-muted-foreground">
-          {task.description}
-        </p>
-      ) : null}
-      <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
+
+      {/* footer */}
+      <div className="mt-auto flex flex-wrap items-center gap-2 text-xs">
         {task.dueDate ? (
           <Badge
             variant={isOverdue(task, new Date()) ? "destructive" : "outline"}

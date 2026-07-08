@@ -1,6 +1,6 @@
-import type { TaskStatus, TaskSummaryType } from "@/server/functions/todos"
-import { Swimlanes } from "@/server/functions/todos"
+import type { TaskSummaryType } from "@/server/functions/todos"
 
+import { buildSwimlanes } from "@/lib/swimlane-utils"
 import {
   isDoneRecently,
   isOverdue,
@@ -11,20 +11,8 @@ import { useTaskStore } from "@/server/stores/task-store"
 import { useEffect, useMemo } from "react"
 import { SwimlaneColumn } from "./swimlane-column"
 
-const laneTitles: Record<TaskStatus, string> = {
-  todo: "Todo",
-  in_progress: "In Progress",
-  blocked: "Blocked",
-  done: "Done",
-}
-
 export function KanbanBoard({ tasks }: { tasks: TaskSummaryType[] }) {
   const { taskFilter, setTasksShownCount } = useTaskStore()
-
-  // TODO: this needs to be called after filteredTasks
-  useEffect(() => {
-    setTasksShownCount(tasks.length)
-  }, [tasks.length, setTasksShownCount])
 
   const now = new Date()
 
@@ -54,36 +42,18 @@ export function KanbanBoard({ tasks }: { tasks: TaskSummaryType[] }) {
     })
   }, [taskFilter, now, tasks])
 
-  const tasksByLane = useMemo(() => {
-    return Swimlanes.reduce(
-      (acc, lane) => {
-        acc[lane] = filteredTasks
-          .filter((task) => task.status === lane)
-          .sort(
-            (a, b) =>
-              (a.position ?? Number.MAX_SAFE_INTEGER) -
-              (b.position ?? Number.MAX_SAFE_INTEGER)
-          )
-        return acc
-      },
-      {
-        todo: [] as TaskSummaryType[],
-        in_progress: [] as TaskSummaryType[],
-        blocked: [] as TaskSummaryType[],
-        done: [] as TaskSummaryType[],
-      }
-    )
+  const swimlanes = useMemo(() => {
+    return buildSwimlanes(filteredTasks)
   }, [filteredTasks])
+
+  useEffect(() => {
+    setTasksShownCount(filteredTasks.length)
+  }, [filteredTasks.length, setTasksShownCount])
 
   return (
     <section className="flex grow gap-4 overflow-x-auto p-4">
-      {Swimlanes.map((lane) => (
-        <SwimlaneColumn
-          key={lane}
-          lane={lane}
-          title={laneTitles[lane]}
-          tasks={tasksByLane[lane]}
-        />
+      {swimlanes.map((lane) => (
+        <SwimlaneColumn key={lane.label.value} swimlane={lane} />
       ))}
     </section>
   )

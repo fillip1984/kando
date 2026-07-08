@@ -1,18 +1,12 @@
 import { Plus } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import type { TaskStatus, TaskSummaryType } from "@/server/functions/todos"
 
+import type { SwimlaneType } from "@/lib/swimlane-utils"
 import { useTaskStore } from "@/server/stores/task-store"
 import { TaskCard } from "./task-card"
 
-type SwimlaneColumnProps = {
-  lane: TaskStatus
-  title: string
-  tasks: TaskSummaryType[]
-}
-
-export function SwimlaneColumn({ lane, title, tasks }: SwimlaneColumnProps) {
+export function SwimlaneColumn({ swimlane }: { swimlane: SwimlaneType }) {
   const { openTaskDialog } = useTaskStore()
 
   return (
@@ -21,18 +15,18 @@ export function SwimlaneColumn({ lane, title, tasks }: SwimlaneColumnProps) {
       className="flex w-100 shrink-0 flex-col rounded-xl border border-border/70 bg-card p-3 shadow-sm"
     >
       <header className="mb-2 flex items-center justify-between">
-        <h2 className="font-heading text-base">{title}</h2>
+        <h2 className="font-heading text-base">{swimlane.label.name}</h2>
         <span className="rounded-full border border-border px-2 py-0.5 text-xs text-muted-foreground">
-          {tasks.length}
+          {swimlane.tasks.length}
         </span>
       </header>
 
       <div className="grid flex-1 content-start gap-2">
-        {tasks.map((task) => (
+        {swimlane.tasks.map((task) => (
           <TaskCard key={task.id} task={task} />
         ))}
 
-        {tasks.length === 0 ? (
+        {swimlane.tasks.length === 0 ? (
           <div className="rounded-lg border border-dashed border-border p-4 text-center text-xs text-muted-foreground">
             Drop a task here
           </div>
@@ -45,8 +39,8 @@ export function SwimlaneColumn({ lane, title, tasks }: SwimlaneColumnProps) {
         onClick={() =>
           openTaskDialog({
             mode: "create",
-            status: lane,
-            position: tasks.length,
+            status: swimlane.label.value,
+            position: swimlane.tasks.length,
           })
         }
       >
