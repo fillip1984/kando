@@ -1,3 +1,4 @@
+import type { TaskSummaryType } from "@/server/functions/todos"
 import { differenceInCalendarDays, isSameDay, startOfDay } from "date-fns"
 
 export type TaskWithDueDateStatus = {
@@ -60,4 +61,38 @@ export function isDoneRecently(
   )
 
   return daysSinceDue >= 0 && daysSinceDue <= recentDays
+}
+
+export const filterTasks = ({
+  tasks,
+  taskFilter,
+  now,
+}: {
+  tasks: TaskSummaryType[]
+  taskFilter: string | null
+  now: Date
+}) => {
+  return tasks.filter((task) => {
+    if (taskFilter === "overdue" && !isOverdue(task, now)) {
+      return false
+    }
+
+    if (taskFilter === "today" && !isToday(task, now)) {
+      return false
+    }
+
+    if (taskFilter === "doneRecently" && !isDoneRecently(task, now)) {
+      return false
+    }
+
+    if (taskFilter === "blockedOnly" && task.status !== "blocked") {
+      return false
+    }
+
+    if (taskFilter === "noDueDate" && parseDueDate(task.dueDate) !== null) {
+      return false
+    }
+
+    return true
+  })
 }
