@@ -22,9 +22,10 @@ vi.mock("@tanstack/react-router", () => ({
 }))
 
 vi.mock("@tanstack/react-start", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@tanstack/react-start")>()
+  const actual = await importOriginal()
+  const typedActual = actual as Record<string, unknown>
   return {
-    ...actual,
+    ...typedActual,
     useServerFn: () => mockDeleteTask,
   }
 })
