@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { isOverdue } from "@/lib/task-filters"
 import type { TaskType } from "@/server/functions/todos"
 import { useTaskStore } from "@/server/stores/task-store"
+import { useSortable } from "@dnd-kit/react/sortable"
 
 type TaskCardProps = {
   task: TaskType
@@ -30,12 +31,21 @@ export function TaskCard({
 
   const { openTaskDialog, openDeleteTaskConfirmation } = useTaskStore()
 
+  // dnd stuff
+  const { ref, isDragging } = useSortable({
+    id: task.id,
+    index: task.position ?? 9999,
+    type: "task",
+    accept: "task",
+    group: task.status,
+    data: { task },
+  })
+
   return (
     <div
       key={task.id}
-      draggable
-      // onDragStart={() => onDragStart(task.id)}
-      // onDragEnd={onDragEnd}
+      ref={ref}
+      data-dragging={isDragging}
       onClick={() => openTaskDialog({ mode: "edit", task: task })}
       className="flex h-28 cursor-pointer flex-col rounded-lg border bg-background p-2 transition-colors hover:bg-muted/50"
     >

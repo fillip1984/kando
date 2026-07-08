@@ -4,14 +4,27 @@ import { Button } from "@/components/ui/button"
 
 import type { SwimlaneType } from "@/lib/swimlane-utils"
 import { useTaskStore } from "@/server/stores/task-store"
+import { CollisionPriority } from "@dnd-kit/abstract"
+import { useDroppable } from "@dnd-kit/react"
 import { TaskCard } from "./task-card"
 
 export function SwimlaneColumn({ swimlane }: { swimlane: SwimlaneType }) {
   const { openTaskDialog } = useTaskStore()
 
+  // dnd stuff
+  const { isDropTarget, ref } = useDroppable({
+    id: swimlane.label.value,
+    type: "swimlane",
+    accept: "task",
+    collisionPriority: CollisionPriority.Low,
+    data: { swimlane },
+  })
+  const style = isDropTarget ? { backgroundColor: "#00000030" } : undefined
+
   return (
     <article
-      onDragOver={(event) => event.preventDefault()}
+      ref={ref}
+      style={style}
       className="flex w-100 shrink-0 flex-col rounded-xl border border-border/70 bg-card p-3 shadow-sm"
     >
       <header className="mb-2 flex items-center justify-between">
