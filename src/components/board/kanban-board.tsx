@@ -1,15 +1,15 @@
 import type { TaskStatus, TaskSummaryType } from "@/server/functions/todos"
 import { Swimlanes } from "@/server/functions/todos"
 
-import { useTaskStore } from "@/server/stores/task-store"
-import { useEffect, useMemo } from "react"
-import { SwimlaneColumn } from "./swimlane-column"
 import {
   isDoneRecently,
   isOverdue,
   isToday,
   parseDueDate,
-} from "./task-filters"
+} from "@/lib/task-filters"
+import { useTaskStore } from "@/server/stores/task-store"
+import { useEffect, useMemo } from "react"
+import { SwimlaneColumn } from "./swimlane-column"
 
 const laneTitles: Record<TaskStatus, string> = {
   todo: "Todo",

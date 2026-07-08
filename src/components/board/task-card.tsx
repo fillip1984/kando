@@ -2,9 +2,9 @@ import { Flag, GoalIcon, Trash2 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { isOverdue } from "@/lib/task-filters"
 import type { TaskSummaryType } from "@/server/functions/todos"
 import { useTaskStore } from "@/server/stores/task-store"
-import { isOverdue } from "./task-filters"
 
 type TaskCardProps = {
   task: TaskSummaryType

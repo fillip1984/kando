@@ -56,7 +56,8 @@ export function TaskDialog({ open, task }: TaskDialogProps) {
   const { closeTaskDialog } = useTaskStore()
 
   // init form state
-  const isNew = task?.id === undefined
+  // TODO: this should be done differently, but working quick to make things work for now
+  const isNew = task?.id === "new"
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [dueDate, setDueDate] = useState("")
@@ -94,6 +95,9 @@ export function TaskDialog({ open, task }: TaskDialogProps) {
           },
         })
       } else {
+        if (!task) {
+          throw new Error("Task is null when trying to update")
+        }
         await updateTask({
           data: {
             id: task.id,

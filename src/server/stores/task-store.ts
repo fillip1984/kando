@@ -118,6 +118,10 @@ export const useTaskStore = create<State & Action>((set) => ({
               description: "",
               dueDate: null,
               priority: null,
+              // TODO: make it so we don't have to fake this
+              id: "new",
+              createdAt: new Date(),
+              updatedAt: new Date(),
             },
     })
   },
