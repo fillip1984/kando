@@ -4,7 +4,6 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { isOverdue } from "@/lib/task-filters"
 import type { TaskType } from "@/server/functions/todos"
-import { useSortable } from "@dnd-kit/react/sortable"
 import { useState } from "react"
 
 import DeleteTaskConfirmation from "./delete-task-confirmation"
@@ -22,21 +21,10 @@ export function TaskCard({ task }: { task: TaskType }) {
   const [isDeleteConfirmationOpen, setIsDeleteConfirmationOpen] =
     useState(false)
 
-  // dnd stuff
-  const { ref, isDragging } = useSortable({
-    id: task.id,
-    index: task.position ?? 9999,
-    type: "task",
-    accept: "task",
-    group: task.status,
-  })
-
   return (
     <>
       <div
         key={task.id}
-        ref={ref}
-        data-dragging={isDragging}
         onClick={() => setIsOpen(true)}
         className="flex h-28 cursor-pointer flex-col rounded-lg border bg-background p-2 transition-colors hover:bg-muted/50"
       >

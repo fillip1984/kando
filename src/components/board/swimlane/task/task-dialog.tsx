@@ -1,3 +1,4 @@
+import StyledDatePicker from "@/components/custom-ui/styled-date-picker"
 import { Button } from "@/components/ui/button"
 import {
   Combobox,
@@ -14,7 +15,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { Field } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { InputGroupAddon } from "@/components/ui/input-group"
 import { Textarea } from "@/components/ui/textarea"
 import { priorityLabels } from "@/lib/priority-utils"
 import { swimlaneLabels } from "@/lib/swimlane-utils"
@@ -28,9 +31,6 @@ import { useRouter } from "@tanstack/react-router"
 import { useServerFn } from "@tanstack/react-start"
 import { AlignLeft, Flag, GoalIcon, Kanban, Type } from "lucide-react"
 import { useEffect, useState } from "react"
-import StyledDatePicker from "../../../custom-ui/styled-date-picker"
-import { Field } from "../../../ui/field"
-import { InputGroupAddon } from "../../../ui/input-group"
 
 export function TaskDialog({
   open,

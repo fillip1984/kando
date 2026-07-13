@@ -1,9 +1,3 @@
-import type { TaskType } from "@/server/functions/todos"
-import { deleteTaskFn } from "@/server/functions/todos"
-import { useRouter } from "@tanstack/react-router"
-import { useServerFn } from "@tanstack/react-start"
-import { Trash2Icon } from "lucide-react"
-import { useState } from "react"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,8 +8,14 @@ import {
   AlertDialogHeader,
   AlertDialogMedia,
   AlertDialogTitle,
-} from "../../../ui/alert-dialog"
-import { Spinner } from "../../../ui/spinner"
+} from "@/components/ui/alert-dialog"
+import { Spinner } from "@/components/ui/spinner"
+import type { TaskType } from "@/server/functions/todos"
+import { deleteTaskFn } from "@/server/functions/todos"
+import { useRouter } from "@tanstack/react-router"
+import { useServerFn } from "@tanstack/react-start"
+import { Trash2Icon } from "lucide-react"
+import { useState } from "react"
 
 export default function DeleteTaskConfirmation({
   task,
