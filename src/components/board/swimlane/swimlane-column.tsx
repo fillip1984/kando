@@ -1,13 +1,17 @@
+"use client"
+
 import { Plus } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 
 import type { SwimlaneType } from "@/lib/swimlane-utils"
-import { useTaskStore } from "@/server/stores/task-store"
+import type { TaskType } from "@/server/functions/todos"
+import { useState } from "react"
 import { TaskCard } from "./task/task-card"
+import { TaskDialog } from "./task/task-dialog"
 
 export function SwimlaneColumn({ swimlane }: { swimlane: SwimlaneType }) {
-  const { openTaskDialog } = useTaskStore()
+  const [isTaskDialogOpen, setIsTaskDialogOpen] = useState(false)
 
   return (
     <article className="flex w-100 shrink-0 flex-col rounded-xl border border-border/70 bg-card p-3 shadow-sm">
@@ -33,17 +37,27 @@ export function SwimlaneColumn({ swimlane }: { swimlane: SwimlaneType }) {
       <Button
         variant="outline"
         className="mt-3 w-full justify-start"
-        onClick={() =>
-          openTaskDialog({
-            mode: "create",
-            status: swimlane.label.value,
-            position: swimlane.tasks.length,
-          })
-        }
+        onClick={() => setIsTaskDialogOpen(true)}
       >
         <Plus className="size-4" />
         Add Task
       </Button>
+
+      <TaskDialog
+        task={
+          {
+            id: "new",
+            title: "",
+            description: "",
+            status: swimlane.label.value,
+            dueDate: "",
+            priority: null,
+            position: 9999,
+          } as TaskType
+        }
+        open={isTaskDialogOpen}
+        close={() => setIsTaskDialogOpen(false)}
+      />
     </article>
   )
 }

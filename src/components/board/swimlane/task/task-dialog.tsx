@@ -33,17 +33,17 @@ import { AlignLeft, Flag, GoalIcon, Kanban, Type } from "lucide-react"
 import { useEffect, useState } from "react"
 
 export function TaskDialog({
+  task,
   open,
   close,
-  task,
 }: {
+  task: TaskType
   open: boolean
   close: () => void
-  task: TaskType | null
 }) {
   // init form state
   // TODO: this should be done differently, but working quick to make things work for now
-  const isNew = task?.id === "new"
+  const isNew = task.id === "new"
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [status, setStatus] = useState<TaskStatus | "">("")
@@ -53,12 +53,12 @@ export function TaskDialog({
   const [saving, setSaving] = useState(false)
   useEffect(() => {
     if (open) {
-      setTitle(task?.title || "")
-      setDescription(task?.description || "")
-      setStatus(task?.status || "")
-      setDueDate(task?.dueDate || "")
-      setPriority(task?.priority || "")
-      setPosition(task?.position ?? 9999)
+      setTitle(task.title)
+      setDescription(task.description || "")
+      setStatus(task.status)
+      setDueDate(task.dueDate || "")
+      setPriority(task.priority || "")
+      setPosition(task.position ?? 9999)
     }
   }, [open])
 
@@ -80,9 +80,6 @@ export function TaskDialog({
           },
         })
       } else {
-        if (!task) {
-          throw new Error("Task is null when trying to update")
-        }
         await updateTask({
           data: {
             id: task.id,

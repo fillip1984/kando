@@ -3,7 +3,8 @@ import type { TaskType } from "@/server/functions/todos"
 import { buildSwimlanes } from "@/lib/swimlane-utils"
 import { filterTasks } from "@/lib/task-filters"
 import { useTaskStore } from "@/server/stores/task-store"
-import { useMemo } from "react"
+import { useDragAndDrop } from "@formkit/drag-and-drop/react"
+import { useEffect, useMemo } from "react"
 import { SwimlaneColumn } from "./swimlane/swimlane-column"
 
 export function KanbanBoard({ tasks }: { tasks: TaskType[] }) {
@@ -17,6 +18,14 @@ export function KanbanBoard({ tasks }: { tasks: TaskType[] }) {
 
   const swimlanes = useMemo(() => {
     return buildSwimlanes(filteredTasks)
+  }, [filteredTasks])
+
+  // DnD Stuff
+  const config = { sortable: false }
+  const [draggableTasksParentRef, draggabledTasks, setDraggabledTasks] =
+    useDragAndDrop<HTMLDivElement, TaskType>([], config)
+  useEffect(() => {
+    setDraggabledTasks(filteredTasks)
   }, [filteredTasks])
 
   return (

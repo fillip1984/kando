@@ -18,6 +18,7 @@
     "@base-ui/react": "^1.6.0",
     "@fontsource-variable/geist": "^5.2.9",
     "@fontsource-variable/noto-sans": "^5.2.10",
+    "@formkit/drag-and-drop": "^0.6.1",
     "@paralleldrive/cuid2": "^3.3.0",
     "@tailwindcss/vite": "^4",
     "@tanstack/react-devtools": "latest",
