@@ -4,8 +4,11 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { isOverdue } from "@/lib/task-filters"
 import type { TaskType } from "@/server/functions/todos"
-import { useTaskStore } from "@/server/stores/task-store"
 import { useSortable } from "@dnd-kit/react/sortable"
+import { useState } from "react"
+
+import DeleteTaskConfirmation from "./delete-task-confirmation"
+import { TaskDialog } from "./task-dialog"
 
 export function TaskCard({ task }: { task: TaskType }) {
   const priorityBadgeVariant =
@@ -15,7 +18,9 @@ export function TaskCard({ task }: { task: TaskType }) {
         ? "default"
         : "secondary"
 
-  const { openTaskDialog, openDeleteTaskConfirmation } = useTaskStore()
+  const [isOpen, setIsOpen] = useState(false)
+  const [isDeleteConfirmationOpen, setIsDeleteConfirmationOpen] =
+    useState(false)
 
   // dnd stuff
   const { ref, isDragging } = useSortable({
@@ -27,56 +32,65 @@ export function TaskCard({ task }: { task: TaskType }) {
   })
 
   return (
-    <div
-      key={task.id}
-      ref={ref}
-      data-dragging={isDragging}
-      onClick={() => openTaskDialog({ mode: "edit", task: task })}
-      className="flex h-28 cursor-pointer flex-col rounded-lg border bg-background p-2 transition-colors hover:bg-muted/50"
-    >
-      <div className="flex grow flex-col gap-1">
-        <div className="flex items-start justify-between gap-2">
-          <p className="line-clamp-2 text-sm font-medium">{task.title}</p>
-          <Button
-            variant="destructive"
-            size="icon-xs"
-            aria-label="Delete task"
-            onClick={(event) => {
-              event.stopPropagation()
-              openDeleteTaskConfirmation(task)
-            }}
-          >
-            <Trash2 className="size-3" />
-          </Button>
+    <>
+      <div
+        key={task.id}
+        ref={ref}
+        data-dragging={isDragging}
+        onClick={() => setIsOpen(true)}
+        className="flex h-28 cursor-pointer flex-col rounded-lg border bg-background p-2 transition-colors hover:bg-muted/50"
+      >
+        <div className="flex grow flex-col gap-1">
+          <div className="flex items-start justify-between gap-2">
+            <p className="line-clamp-2 text-sm font-medium">{task.title}</p>
+            <Button
+              variant="destructive"
+              size="icon-xs"
+              aria-label="Delete task"
+              onClick={(event) => {
+                event.stopPropagation()
+                setIsDeleteConfirmationOpen(true)
+              }}
+            >
+              <Trash2 className="size-3" />
+            </Button>
+          </div>
+          {task.description ? (
+            <p className="line-clamp-2 text-xs text-muted-foreground">
+              {task.description}
+            </p>
+          ) : null}
         </div>
-        {task.description ? (
-          <p className="line-clamp-2 text-xs text-muted-foreground">
-            {task.description}
-          </p>
-        ) : null}
+
+        {/* footer */}
+        <div className="mt-auto flex flex-wrap items-center gap-2 text-xs">
+          {task.dueDate ? (
+            <Badge
+              variant={isOverdue(task, new Date()) ? "destructive" : "outline"}
+              aria-label={`Due date ${task.dueDate}`}
+            >
+              <GoalIcon data-testid="due-date-icon" />
+              <span>{task.dueDate}</span>
+            </Badge>
+          ) : null}
+          {task.priority ? (
+            <Badge
+              variant={priorityBadgeVariant}
+              aria-label={`Priority ${task.priority}`}
+            >
+              <Flag data-testid="priority-icon" />
+              <span className="capitalize">{task.priority}</span>
+            </Badge>
+          ) : null}
+        </div>
       </div>
 
-      {/* footer */}
-      <div className="mt-auto flex flex-wrap items-center gap-2 text-xs">
-        {task.dueDate ? (
-          <Badge
-            variant={isOverdue(task, new Date()) ? "destructive" : "outline"}
-            aria-label={`Due date ${task.dueDate}`}
-          >
-            <GoalIcon data-testid="due-date-icon" />
-            <span>{task.dueDate}</span>
-          </Badge>
-        ) : null}
-        {task.priority ? (
-          <Badge
-            variant={priorityBadgeVariant}
-            aria-label={`Priority ${task.priority}`}
-          >
-            <Flag data-testid="priority-icon" />
-            <span className="capitalize">{task.priority}</span>
-          </Badge>
-        ) : null}
-      </div>
-    </div>
+      <TaskDialog task={task} open={isOpen} close={() => setIsOpen(false)} />
+      <DeleteTaskConfirmation
+        task={task}
+        open={isDeleteConfirmationOpen}
+        close={() => setIsDeleteConfirmationOpen(false)}
+      />
+    </>
   )
 }

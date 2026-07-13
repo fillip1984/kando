@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/combobox"
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogFooter,
   DialogHeader,
@@ -23,7 +24,6 @@ import type {
   TaskType,
 } from "@/server/functions/todos"
 import { createTaskFn, updateTaskFn } from "@/server/functions/todos"
-import { useTaskStore } from "@/server/stores/task-store"
 import { useRouter } from "@tanstack/react-router"
 import { useServerFn } from "@tanstack/react-start"
 import { AlignLeft, Flag, GoalIcon, Kanban, Type } from "lucide-react"
@@ -34,13 +34,13 @@ import { InputGroupAddon } from "../ui/input-group"
 
 export function TaskDialog({
   open,
+  close,
   task,
 }: {
   open: boolean
+  close: () => void
   task: TaskType | null
 }) {
-  const { closeTaskDialog } = useTaskStore()
-
   // init form state
   // TODO: this should be done differently, but working quick to make things work for now
   const isNew = task?.id === "new"
@@ -98,14 +98,14 @@ export function TaskDialog({
     } finally {
       // TODO: this may cause issues if the server function fails
       // TODO: to make this perfect we should wait for the dialog to close then set saving to false
-      closeTaskDialog()
+      close()
       router.invalidate()
       setSaving(false)
     }
   }
 
   return (
-    <Dialog open={open}>
+    <Dialog open={open} onOpenChange={(open) => open === false && close()}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>{isNew ? "Create Task" : "Edit Task"}</DialogTitle>
@@ -216,9 +216,7 @@ export function TaskDialog({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={closeTaskDialog}>
-            Cancel
-          </Button>
+          <DialogClose render={<Button variant="outline">Cancel</Button>} />
           <Button
             disabled={saving || !title.trim() || !status}
             onClick={handleSubmit}
