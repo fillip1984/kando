@@ -28,9 +28,9 @@ import { useRouter } from "@tanstack/react-router"
 import { useServerFn } from "@tanstack/react-start"
 import { AlignLeft, Flag, GoalIcon, Kanban, Type } from "lucide-react"
 import { useEffect, useState } from "react"
-import StyledDatePicker from "../custom-ui/styled-date-picker"
-import { Field } from "../ui/field"
-import { InputGroupAddon } from "../ui/input-group"
+import StyledDatePicker from "../../../custom-ui/styled-date-picker"
+import { Field } from "../../../ui/field"
+import { InputGroupAddon } from "../../../ui/input-group"
 
 export function TaskDialog({
   open,

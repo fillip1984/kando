@@ -8,7 +8,7 @@ import { move } from "@dnd-kit/helpers"
 import { DragDropProvider } from "@dnd-kit/react"
 import { useServerFn } from "@tanstack/react-start"
 import { useEffect, useMemo, useState } from "react"
-import { SwimlaneColumn } from "./swimlane-column"
+import { SwimlaneColumn } from "./swimlane/swimlane-column"
 
 export function KanbanBoard({ tasks }: { tasks: TaskType[] }) {
   const { taskFilter, setTasksShownCount } = useTaskStore()

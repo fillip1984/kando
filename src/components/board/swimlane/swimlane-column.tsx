@@ -6,7 +6,7 @@ import type { SwimlaneType } from "@/lib/swimlane-utils"
 import { useTaskStore } from "@/server/stores/task-store"
 import { CollisionPriority } from "@dnd-kit/abstract"
 import { useDroppable } from "@dnd-kit/react"
-import { TaskCard } from "./task-card"
+import { TaskCard } from "./task/task-card"
 
 export function SwimlaneColumn({ swimlane }: { swimlane: SwimlaneType }) {
   const { openTaskDialog } = useTaskStore()

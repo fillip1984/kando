@@ -14,8 +14,8 @@ import {
   AlertDialogHeader,
   AlertDialogMedia,
   AlertDialogTitle,
-} from "../ui/alert-dialog"
-import { Spinner } from "../ui/spinner"
+} from "../../../ui/alert-dialog"
+import { Spinner } from "../../../ui/spinner"
 
 export default function DeleteTaskConfirmation({
   task,

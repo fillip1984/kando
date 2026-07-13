@@ -6,6 +6,7 @@ export default [
   ...tanstackConfig,
   {
     rules: {
+      "no-shadow": "off",
       "import/no-cycle": "off",
       "import/order": "off",
       "sort-imports": "off",
