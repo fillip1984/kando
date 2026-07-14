@@ -26,11 +26,11 @@ export function TaskCard({ task }: { task: TaskType }) {
       <div
         key={task.id}
         onClick={() => setIsOpen(true)}
-        className="flex h-24 shrink-0 cursor-pointer flex-col rounded-lg border bg-background p-2 transition-colors select-none hover:bg-muted/50"
+        className="flex h-26 shrink-0 cursor-pointer flex-col rounded-lg border bg-background p-2 transition-colors select-none hover:bg-muted/50"
       >
         <div className="flex grow flex-col gap-1">
           <div className="flex items-start justify-between gap-2">
-            <p className="line-clamp-2 text-sm font-medium">{task.title}</p>
+            <p className="line-clamp-1 text-sm font-medium">{task.title}</p>
             <Button
               variant="destructive"
               size="icon-xs"
@@ -48,7 +48,6 @@ export function TaskCard({ task }: { task: TaskType }) {
               {task.description}
             </p>
           ) : null}
-          {task.position}
         </div>
 
         {/* footer */}

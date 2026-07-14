@@ -22,7 +22,7 @@ export function Swimlane({
 
   return (
     <>
-      <div className="flex min-w-90 grow flex-col overflow-hidden rounded-xl border border-border/70 bg-card shadow-sm">
+      <div className="flex w-90 grow flex-col overflow-hidden rounded-xl border border-border/70 bg-card shadow-sm">
         <header className="mb-2 flex items-center justify-between p-2">
           <h2 className="font-heading text-base">{label}</h2>
           <span className="rounded-full border border-border px-2 py-0.5 text-xs text-muted-foreground">
