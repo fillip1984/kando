@@ -387,3 +387,18 @@
 - [x] Add or update task-dialog tests to validate combobox-with-clear behavior for status and priority.
 - [ ] Verify migration or push path applies `priority` schema changes successfully in the target database. (Deferred: user requested skipping db push checks in this pass.)
 - [x] Verify `pnpm typecheck`, `pnpm lint`, and `pnpm test` pass after drift remediation changes.
+
+## Email Drop-To-Task Tasks (2026-07-14)
+
+### Implementation
+
+- [x] Support dropping `.msg` email files onto any swimlane to create a new task.
+- [x] Parse dropped Outlook `.msg` files with `@kenjiuno/msgreader`.
+- [x] Map email subject to task title and email body to task description.
+- [x] Create dropped-email tasks directly in the target swimlane with lane-local position ordering.
+
+### Validation
+
+- [x] Verify `pnpm typecheck` passes after email-drop implementation.
+- [x] Verify `pnpm lint` passes after email-drop implementation.
+- [x] Verify `pnpm test` passes after email-drop implementation.

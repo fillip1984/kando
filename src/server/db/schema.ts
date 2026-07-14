@@ -22,3 +22,22 @@ export const todos = baseSchema.table("todos", (t) => ({
   dueDate: t.date("dueDate", { mode: "string" }),
   position: t.integer("position"),
 }))
+
+export const todoTags = baseSchema.table("todo_tag", (t) => ({
+  ...baseFields,
+  todoId: t
+    .text("todoId")
+    .notNull()
+    .references(() => todos.id),
+  tagId: t
+    .text("tagId")
+    .notNull()
+    .references(() => tags.id),
+}))
+
+export const tags = baseSchema.table("tag", (t) => ({
+  ...baseFields,
+  name: t.text("name").notNull(),
+  description: t.text("description"),
+  color: t.text("color"),
+}))

@@ -6,6 +6,7 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
 import AppSidebar from "@/components/nav/app-sidebar"
 import AppTopbar from "@/components/nav/app-topbar"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
+import { Toaster } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import appCss from "../styles.css?url"
 
@@ -65,6 +66,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
               </SidebarInset>
             </SidebarProvider>
           </TooltipProvider>
+          <Toaster />
           <TanStackDevtools
             config={{
               position: "bottom-right",
