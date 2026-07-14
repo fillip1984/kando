@@ -4,10 +4,11 @@ import { Button } from "@/components/ui/button"
 import { parseOutlookMsg } from "@/server/functions/email"
 import type { TaskStatus, TaskType } from "@/server/functions/todos"
 import { createTaskFn } from "@/server/functions/todos"
+import { useRouter } from "@tanstack/react-router"
 import { useServerFn } from "@tanstack/react-start"
-import { PlusIcon } from "lucide-react"
+import { CloudUploadIcon, PlusIcon } from "lucide-react"
 import type { ChangeEvent, DragEvent } from "react"
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { TaskCard } from "./task/task-card"
 import { TaskDialog } from "./task/task-dialog"
 
@@ -26,7 +27,7 @@ export function Swimlane({
 
   return (
     <>
-      <div className="flex w-90 shrink-0 grow flex-col overflow-hidden rounded-xl border border-border/70 bg-card shadow-sm">
+      <div className="relative flex w-90 shrink-0 grow flex-col overflow-hidden rounded-xl border border-border/70 bg-card shadow-sm">
         <header className="mb-2 flex items-center justify-between p-2">
           <h2 className="font-heading text-base">{label}</h2>
           <span className="rounded-full border border-border px-2 py-0.5 text-xs text-muted-foreground">
@@ -54,7 +55,7 @@ export function Swimlane({
             Add Task
           </Button>
         </div>
-        <NewTask tasks={tasks} lane={lane} />
+        <NewTaskFromOutlookOverlay tasks={tasks} lane={lane} />
       </div>
 
       <TaskDialog
@@ -76,46 +77,71 @@ export function Swimlane({
   )
 }
 
-const NewTask = ({ tasks, lane }: { tasks: TaskType[]; lane: string }) => {
-  // const utils = api.useContext();
-  // const { mutate: createTask } = api.tasks.create.useMutation({
-  //   onSuccess: () => {
-  //     void utils.boards.invalidate();
-  //     setTask("");
-  //     taskRef.current?.focus();
-  //   },
-  // });
+const NewTaskFromOutlookOverlay = ({
+  tasks,
+  lane,
+}: {
+  tasks: TaskType[]
+  lane: string
+}) => {
+  const [isDragReady, setIsDragReady] = useState(false)
+  const dragDepthRef = useRef(0)
 
-  // const handleKeyUp = (
-  //   e: DetailedHTMLProps<
-  //     InputHTMLAttributes<HTMLInputElement>,
-  //     HTMLInputElement
-  //   >
-  // ) => {
-  //   if (e.key === "Escape") {
-  //     setTask("");
-  //   } else if (e.key === "Enter" && task) {
-  //     handleAddTask();
-  //   }
-  // };
+  const isFileDrag = (e: DragEvent<unknown>) => {
+    const items = Array.from(e.dataTransfer.items)
 
-  // const handleAddTask = () => {
-  //   createTask({
-  //     text: task,
-  //     position: bucket.tasks.length,
-  //     bucketId: bucket.id,
-  //   });
-  // };
+    console.log(
+      "isFileDrag:items",
+      items.map((item) => {
+        const file = item.getAsFile()
 
-  // const [dragActive, setDragActive] = useState(false);
+        return {
+          kind: item.kind,
+          type: item.type,
+          name: file?.name ?? null,
+        }
+      })
+    )
+
+    if (items.length === 0) {
+      console.log("isFileDrag:result", false, "reason=no-items")
+      return false
+    }
+
+    const isFile = items.some((item) => item.kind === "file")
+
+    console.log("isFileDrag:result", isFile)
+
+    return isFile
+  }
+
   const handleDrag = (e: DragEvent<unknown>) => {
-    console.log("handle drag", e.type)
     e.preventDefault()
     e.stopPropagation()
-    if (e.type === "dragenter" || e.type === "dragover") {
-      // setDragActive(true);
-    } else if (e.type === "dragleave") {
-      // setDragActive(false);
+
+    const isMsgDrag = isFileDrag(e)
+    console.log("handle drag outcome", e.type, { isMsgDrag })
+
+    if (e.type === "dragenter") {
+      dragDepthRef.current += 1
+      setIsDragReady(isMsgDrag)
+      return
+    }
+
+    if (e.type === "dragover") {
+      if (isMsgDrag) {
+        e.dataTransfer.dropEffect = "copy"
+      }
+      setIsDragReady(isMsgDrag)
+      return
+    }
+
+    if (e.type === "dragleave") {
+      dragDepthRef.current = Math.max(0, dragDepthRef.current - 1)
+
+      if (dragDepthRef.current === 0) {
+        setIsDragReady(false)
+      }
     }
   }
 
@@ -123,7 +149,9 @@ const NewTask = ({ tasks, lane }: { tasks: TaskType[]; lane: string }) => {
     console.log("handle drop", e.type)
     e.preventDefault()
     e.stopPropagation()
-    // setDragActive(false);
+    dragDepthRef.current = 0
+    setIsDragReady(false)
+
     if (e.dataTransfer.files.length > 0) {
       await processMsgFile(e.dataTransfer.files[0])
     }
@@ -137,6 +165,7 @@ const NewTask = ({ tasks, lane }: { tasks: TaskType[]; lane: string }) => {
     }
   }
 
+  const router = useRouter()
   const uploadMsgFn = useServerFn(parseOutlookMsg)
   const createTask = useServerFn(createTaskFn)
 
@@ -146,7 +175,6 @@ const NewTask = ({ tasks, lane }: { tasks: TaskType[]; lane: string }) => {
     const formData = new FormData()
     formData.append("file", msgFile)
 
-    // const { subject, body } = await parseMsgUpload({ data: formData })
     const { subject, body } = await uploadMsgFn({ data: formData })
 
     await createTask({
@@ -157,6 +185,7 @@ const NewTask = ({ tasks, lane }: { tasks: TaskType[]; lane: string }) => {
         status: lane as TaskStatus,
       },
     })
+    router.invalidate()
   }
 
   return (
@@ -183,18 +212,32 @@ const NewTask = ({ tasks, lane }: { tasks: TaskType[]; lane: string }) => {
 
       <div
         onDragEnter={handleDrag}
+        onDragOver={handleDrag}
+        onDragLeave={handleDrag}
         className="relative my-1 flex w-full items-center justify-center"
       >
         <label
           htmlFor="dropzone-file"
-          className="flex w-full flex-col items-center justify-center rounded-lg border-2 border-dashed border-accent bg-accent"
+          className={
+            "flex w-full flex-col items-center justify-center rounded-lg border-2 border-dashed transition duration-200 " +
+            (isDragReady
+              ? "scale-[1.02] border-primary bg-primary/10 text-primary shadow-sm"
+              : "border-accent bg-accent text-primary")
+          }
         >
-          <div className="flex flex-col items-center justify-center py-1">
-            <p className="text-sm text-primary">
-              <span className="font-semibold">Click to upload</span> or drag and
-              drop
+          <div className="flex flex-col items-center justify-center gap-1 py-2">
+            {isDragReady ? (
+              <CloudUploadIcon className="size-5 animate-pulse" />
+            ) : null}
+            <p className="text-sm">
+              <span className="font-semibold">
+                {isDragReady
+                  ? "Drop Outlook email to upload"
+                  : "Click to upload"}
+              </span>
+              {isDragReady ? null : " or drag and drop"}
             </p>
-            <p className="text-xs text-primary">MSG</p>
+            <p className="text-xs">MSG</p>
           </div>
           {/* Trick to getting file drag and drop to function (by function I 
               mean the browser doesn't try to load or ask if you want to 
