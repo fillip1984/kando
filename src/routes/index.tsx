@@ -15,7 +15,7 @@ function App() {
 
   return (
     <>
-      <div className="flex grow">
+      <div className="flex grow overflow-hidden">
         <KanbanBoard tasks={tasks} />
       </div>
     </>

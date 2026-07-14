@@ -59,11 +59,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           <TooltipProvider>
             <SidebarProvider>
               <AppSidebar />
-              <SidebarInset className="overflow-hidden">
-                <div className="flex grow flex-col overflow-hidden">
-                  <AppTopbar />
-                  {children}
-                </div>
+              <SidebarInset className="flex h-screen flex-col overflow-hidden">
+                <AppTopbar />
+                <div className="flex grow overflow-hidden">{children}</div>
               </SidebarInset>
             </SidebarProvider>
           </TooltipProvider>

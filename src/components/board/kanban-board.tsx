@@ -5,12 +5,10 @@ import { animations } from "@formkit/drag-and-drop"
 import { useDragAndDrop } from "@formkit/drag-and-drop/react"
 import { useServerFn } from "@tanstack/react-start"
 import { useEffect } from "react"
-import { SwimlaneColumn } from "./swimlane/swimlane-column"
+import { Swimlane } from "./swimlane/swimlane"
 
 export function KanbanBoard({ tasks }: { tasks: TaskType[] }) {
   // const { taskFilter } = useTaskStore()
-
-  const now = new Date()
 
   useEffect(() => {
     setTodoTasks(tasks.filter((task) => task.status === "todo"))
@@ -62,31 +60,23 @@ export function KanbanBoard({ tasks }: { tasks: TaskType[] }) {
   >([], config)
 
   return (
-    <div className="flex grow gap-4 overflow-x-auto p-4">
-      <SwimlaneColumn
-        ref={todoTasksRef}
-        label="Todo"
-        lane="todo"
-        tasks={todos}
-      />
-      <SwimlaneColumn
-        ref={inProgressTasksRef}
-        label="In Progress"
-        lane="in_progress"
-        tasks={inProgress}
-      />
-      <SwimlaneColumn
-        ref={blockedTasksRef}
-        label="Blocked"
-        lane="blocked"
-        tasks={blocked}
-      />
-      <SwimlaneColumn
-        ref={doneTasksRef}
-        label="Done"
-        lane="done"
-        tasks={done}
-      />
+    <div className="flex grow overflow-hidden p-4">
+      <div className="flex grow gap-4 overflow-x-auto">
+        <Swimlane ref={todoTasksRef} label="Todo" lane="todo" tasks={todos} />
+        <Swimlane
+          ref={inProgressTasksRef}
+          label="In Progress"
+          lane="in_progress"
+          tasks={inProgress}
+        />
+        <Swimlane
+          ref={blockedTasksRef}
+          label="Blocked"
+          lane="blocked"
+          tasks={blocked}
+        />
+        <Swimlane ref={doneTasksRef} label="Done" lane="done" tasks={done} />
+      </div>
     </div>
   )
 }
