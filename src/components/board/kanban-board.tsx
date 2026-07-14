@@ -1,6 +1,7 @@
 import type { TaskType } from "@/server/functions/todos"
 import { reorderTasksFn } from "@/server/functions/todos"
 
+import { animations } from "@formkit/drag-and-drop"
 import { useDragAndDrop } from "@formkit/drag-and-drop/react"
 import { useServerFn } from "@tanstack/react-start"
 import { useEffect } from "react"
@@ -40,7 +41,7 @@ export function KanbanBoard({ tasks }: { tasks: TaskType[] }) {
       console.log("drag ended", updates)
       await reorderTasks({ data: { updates } })
     },
-    // plugins: [animations()]
+    plugins: [animations()],
   }
 
   const [todoTasksRef, todos, setTodoTasks] = useDragAndDrop<
