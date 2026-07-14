@@ -1,44 +1,91 @@
 import type { TaskType } from "@/server/functions/todos"
+import { reorderTasksFn } from "@/server/functions/todos"
 
-import { buildSwimlanes } from "@/lib/swimlane-utils"
-import { filterTasks } from "@/lib/task-filters"
-import { useTaskStore } from "@/server/stores/task-store"
 import { useDragAndDrop } from "@formkit/drag-and-drop/react"
-import { useEffect, useMemo } from "react"
+import { useServerFn } from "@tanstack/react-start"
+import { useEffect } from "react"
 import { SwimlaneColumn } from "./swimlane/swimlane-column"
 
 export function KanbanBoard({ tasks }: { tasks: TaskType[] }) {
-  const { taskFilter } = useTaskStore()
+  // const { taskFilter } = useTaskStore()
 
   const now = new Date()
 
-  const filteredTasks = useMemo(() => {
-    return filterTasks({ tasks, taskFilter, now })
-  }, [taskFilter, now, tasks])
+  useEffect(() => {
+    setTodoTasks(tasks.filter((task) => task.status === "todo"))
+    setInProgressTasks(tasks.filter((task) => task.status === "in_progress"))
+    setBlockedTasks(tasks.filter((task) => task.status === "blocked"))
+    setDoneTasks(tasks.filter((task) => task.status === "done"))
+  }, [tasks])
 
-  const swimlanes = useMemo(() => {
-    return buildSwimlanes(filteredTasks)
-  }, [filteredTasks])
+  const reorderTasks = useServerFn(reorderTasksFn)
 
   // DnD Stuff
-  const config = { sortable: false }
-  const [draggableTasksParentRef, draggabledTasks, setDraggabledTasks] =
-    useDragAndDrop<HTMLDivElement, TaskType>([], config)
-  useEffect(() => {
-    setDraggabledTasks(filteredTasks)
-  }, [filteredTasks])
+  const config = {
+    group: "kanban-board",
+    onDragend: async (event: unknown) => {
+      // console.log({ event })
+      const status = (event as any).parent.el.dataset.columnId
+      // const parentEl = event.target.parentElement
+      // const columnId = parentEl.dataset.columnId
+      // console.log("Dragged from column:", status)
+
+      const dragEvent = event as { values: TaskType[] }
+      const updates = dragEvent.values.map((task, i) => ({
+        taskId: task.id,
+        title: task.title,
+        status,
+        position: i,
+      }))
+      console.log("drag ended", updates)
+      await reorderTasks({ data: { updates } })
+    },
+    // plugins: [animations()]
+  }
+
+  const [todoTasksRef, todos, setTodoTasks] = useDragAndDrop<
+    HTMLDivElement,
+    TaskType
+  >([], config)
+  const [inProgressTasksRef, inProgress, setInProgressTasks] = useDragAndDrop<
+    HTMLDivElement,
+    TaskType
+  >([], config)
+  const [blockedTasksRef, blocked, setBlockedTasks] = useDragAndDrop<
+    HTMLDivElement,
+    TaskType
+  >([], config)
+  const [doneTasksRef, done, setDoneTasks] = useDragAndDrop<
+    HTMLDivElement,
+    TaskType
+  >([], config)
 
   return (
-    <section className="flex grow gap-4 overflow-x-auto p-4">
-      {Object.entries(swimlanes).map(([status, tasks]) => (
-        <SwimlaneColumn
-          key={status}
-          swimlane={{
-            label: { name: status, value: status as TaskType["status"] },
-            tasks,
-          }}
-        />
-      ))}
-    </section>
+    <div className="flex grow gap-4 overflow-x-auto p-4">
+      <SwimlaneColumn
+        ref={todoTasksRef}
+        label="Todo"
+        lane="todo"
+        tasks={todos}
+      />
+      <SwimlaneColumn
+        ref={inProgressTasksRef}
+        label="In Progress"
+        lane="in_progress"
+        tasks={inProgress}
+      />
+      <SwimlaneColumn
+        ref={blockedTasksRef}
+        label="Blocked"
+        lane="blocked"
+        tasks={blocked}
+      />
+      <SwimlaneColumn
+        ref={doneTasksRef}
+        label="Done"
+        lane="done"
+        tasks={done}
+      />
+    </div>
   )
 }

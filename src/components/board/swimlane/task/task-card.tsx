@@ -48,6 +48,7 @@ export function TaskCard({ task }: { task: TaskType }) {
               {task.description}
             </p>
           ) : null}
+          {task.position}
         </div>
 
         {/* footer */}

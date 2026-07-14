@@ -91,13 +91,17 @@ export const reorderTasksFn = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     await db.transaction(async (tx) => {
       for (const update of data.updates) {
-        await tx
-          .update(todos)
-          .set({
-            status: update.status,
-            position: update.position,
-          })
-          .where(eq(todos.id, update.taskId))
+        try {
+          await tx
+            .update(todos)
+            .set({
+              status: update.status,
+              position: update.position,
+            })
+            .where(eq(todos.id, update.taskId))
+        } catch (error) {
+          console.error("Error updating task:", error)
+        }
       }
     })
   })
