@@ -1,10 +1,12 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
+import { uploadAndParseMsg } from "@/server/functions/email"
 import type { TaskType } from "@/server/functions/todos"
+import { useServerFn } from "@tanstack/react-start"
 import { PlusIcon } from "lucide-react"
 import type { ChangeEvent, DragEvent } from "react"
-import { useRef, useState } from "react"
+import { useState } from "react"
 import { TaskCard } from "./task/task-card"
 import { TaskDialog } from "./task/task-dialog"
 
@@ -51,7 +53,7 @@ export function Swimlane({
             Add Task
           </Button>
         </div>
-        <NewTask lane={lane} />
+        <NewTask />
       </div>
 
       <TaskDialog
@@ -73,9 +75,7 @@ export function Swimlane({
   )
 }
 
-const NewTask = ({ lane }: { lane: string }) => {
-  const taskRef = useRef<HTMLInputElement | null>(null)
-
+const NewTask = () => {
   // const utils = api.useContext();
   // const { mutate: createTask } = api.tasks.create.useMutation({
   //   onSuccess: () => {
@@ -136,14 +136,18 @@ const NewTask = ({ lane }: { lane: string }) => {
     }
   }
 
+  const uploadMsgFn = useServerFn(uploadAndParseMsg)
+
   const processMsgFile = async (msgFile: File) => {
     console.log("process msg file")
 
-    // const msgFileBuffer = await msgFile.arrayBuffer()
-    // const msgReader = new MsgReader()
-    // const msgInfo = msgReader.getFileData()
-    // const { subject, body } = msgInfo
-    // console.log("MSG Info:", subject, body)
+    const formData = new FormData()
+    formData.append("file", msgFile)
+
+    // const { subject, body } = await parseMsgUpload({ data: formData })
+    const { subject, body } = await uploadMsgFn({ data: formData })
+
+    console.log("MSG Info:", subject, body)
     // createTask({
     //   text: subject ?? "No subject",
     //   description: body ?? "",
