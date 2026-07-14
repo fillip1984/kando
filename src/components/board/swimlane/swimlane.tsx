@@ -1,8 +1,9 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { uploadAndParseMsg } from "@/server/functions/email"
-import type { TaskType } from "@/server/functions/todos"
+import { parseOutlookMsg } from "@/server/functions/email"
+import type { TaskStatus, TaskType } from "@/server/functions/todos"
+import { createTaskFn } from "@/server/functions/todos"
 import { useServerFn } from "@tanstack/react-start"
 import { PlusIcon } from "lucide-react"
 import type { ChangeEvent, DragEvent } from "react"
@@ -25,7 +26,7 @@ export function Swimlane({
 
   return (
     <>
-      <div className="flex w-90 grow flex-col overflow-hidden rounded-xl border border-border/70 bg-card shadow-sm">
+      <div className="flex w-90 shrink-0 grow flex-col overflow-hidden rounded-xl border border-border/70 bg-card shadow-sm">
         <header className="mb-2 flex items-center justify-between p-2">
           <h2 className="font-heading text-base">{label}</h2>
           <span className="rounded-full border border-border px-2 py-0.5 text-xs text-muted-foreground">
@@ -53,7 +54,7 @@ export function Swimlane({
             Add Task
           </Button>
         </div>
-        <NewTask />
+        <NewTask tasks={tasks} lane={lane} />
       </div>
 
       <TaskDialog
@@ -75,7 +76,7 @@ export function Swimlane({
   )
 }
 
-const NewTask = () => {
+const NewTask = ({ tasks, lane }: { tasks: TaskType[]; lane: string }) => {
   // const utils = api.useContext();
   // const { mutate: createTask } = api.tasks.create.useMutation({
   //   onSuccess: () => {
@@ -136,7 +137,8 @@ const NewTask = () => {
     }
   }
 
-  const uploadMsgFn = useServerFn(uploadAndParseMsg)
+  const uploadMsgFn = useServerFn(parseOutlookMsg)
+  const createTask = useServerFn(createTaskFn)
 
   const processMsgFile = async (msgFile: File) => {
     console.log("process msg file")
@@ -147,13 +149,14 @@ const NewTask = () => {
     // const { subject, body } = await parseMsgUpload({ data: formData })
     const { subject, body } = await uploadMsgFn({ data: formData })
 
-    console.log("MSG Info:", subject, body)
-    // createTask({
-    //   text: subject ?? "No subject",
-    //   description: body ?? "",
-    //   position: bucket.tasks.length,
-    //   bucketId: bucket.id,
-    // })
+    await createTask({
+      data: {
+        title: subject ?? "No subject",
+        description: body ?? "",
+        position: tasks.length,
+        status: lane as TaskStatus,
+      },
+    })
   }
 
   return (

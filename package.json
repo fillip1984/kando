@@ -19,7 +19,7 @@
     "@fontsource-variable/geist": "^5.2.9",
     "@fontsource-variable/noto-sans": "^5.2.10",
     "@formkit/drag-and-drop": "^0.6.1",
-    "@kenjiuno/msgreader": "^1.28.0",
+    "@kenjiuno/msgreader-web-ng": "0.2.0-alpha1",
     "@paralleldrive/cuid2": "^3.3.0",
     "@tailwindcss/vite": "^4",
     "@tanstack/react-devtools": "latest",

@@ -1,57 +1,7 @@
-import { createRequire } from "node:module"
+import { MsgReader } from "@kenjiuno/msgreader-web-ng"
 import { createServerFn } from "@tanstack/react-start"
 
-type ParsedMsgData = {
-  subject?: string | null
-  body?: string | null
-}
-
-type MsgReaderInstance = {
-  getFileData: () => ParsedMsgData
-}
-
-type MsgReaderConstructor = new (arrayBuffer: ArrayBuffer) => MsgReaderInstance
-
-const require = createRequire(import.meta.url)
-
-function resolveMsgReaderConstructor(): MsgReaderConstructor {
-  const msgReaderModule = require("@kenjiuno/msgreader") as
-    | MsgReaderConstructor
-    | {
-        default?:
-          | MsgReaderConstructor
-          | {
-              default?: MsgReaderConstructor
-            }
-      }
-
-  if (typeof msgReaderModule === "function") {
-    return msgReaderModule
-  }
-
-  if (typeof msgReaderModule === "object") {
-    const defaultExport = msgReaderModule.default
-
-    if (typeof defaultExport === "function") {
-      return defaultExport
-    }
-
-    if (
-      defaultExport != null &&
-      typeof defaultExport === "object" &&
-      "default" in defaultExport &&
-      typeof defaultExport.default === "function"
-    ) {
-      return defaultExport.default
-    }
-  }
-
-  throw new TypeError("Unable to resolve MsgReader constructor export.")
-}
-
-const MsgReader = resolveMsgReaderConstructor()
-
-export const uploadAndParseMsg = createServerFn({ method: "POST" })
+export const parseOutlookMsg = createServerFn({ method: "POST" })
   .validator((formData: FormData) => formData)
   .handler(async ({ data }) => {
     try {
@@ -64,9 +14,15 @@ export const uploadAndParseMsg = createServerFn({ method: "POST" })
       if (!file.name.toLowerCase().endsWith(".msg")) {
         throw new Error("Only .msg uploads are supported.")
       }
-      console.log("uploadAndParseMsg", file.name, file.size)
       const msgFileBuffer = await file.arrayBuffer()
       const msgReader = new MsgReader(msgFileBuffer)
+      //   msgReader.parserConfig = {
+      //     ansiEncoding: ansiEncoding,
+      //     includeRawProps: includeRawProps,
+      //   }
+      // TODO: interesting dump of other data that may be useful
+      //   const testMsgInfo = msgReader.getFileData()
+      //   console.log("testMsgInfo", testMsgInfo)
       const msgInfo = msgReader.getFileData()
       const { subject, body } = msgInfo
 
