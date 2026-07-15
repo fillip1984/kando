@@ -1,4 +1,10 @@
-import { FlagIcon, GoalIcon, Trash2Icon } from "lucide-react"
+import {
+  FlagIcon,
+  GoalIcon,
+  ListChecksIcon,
+  MessageCircleIcon,
+  Trash2Icon,
+} from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { isOverdue } from "@/lib/task-filters"
@@ -68,6 +74,27 @@ export function TaskCard({ task }: { task: TaskType }) {
             >
               <FlagIcon data-testid="priority-icon" />
               <span className="capitalize">{task.priority}</span>
+            </Badge>
+          ) : null}
+          {task.checklistItems.length > 0 ? (
+            <Badge
+              variant="outline"
+              aria-label={`Checklist items ${task.checklistItems.length}`}
+            >
+              <ListChecksIcon />
+              <span>
+                {task.checklistItems.filter((item) => item.complete).length}/
+                {task.checklistItems.length}
+              </span>
+            </Badge>
+          ) : null}
+          {task.comments.length > 0 ? (
+            <Badge
+              variant="outline"
+              aria-label={`Comments ${task.comments.length}`}
+            >
+              <MessageCircleIcon />
+              <span>{task.comments.length}</span>
             </Badge>
           ) : null}
         </div>

@@ -24,7 +24,6 @@ import {
   InputGroupAddon,
   InputGroupButton,
   InputGroupInput,
-  InputGroupText,
   InputGroupTextarea,
 } from "@/components/ui/input-group"
 import { Textarea } from "@/components/ui/textarea"
@@ -38,10 +37,16 @@ import type {
 } from "@/server/functions/todos"
 import {
   createChecklistItemFn,
+  createCommentFn,
   createTaskFn,
+  deleteChecklistItemFn,
+  deleteCommentFn,
+  reorderChecklistItemsFn,
   updateChecklistItemFn,
   updateTaskFn,
 } from "@/server/functions/todos"
+import { animations } from "@formkit/drag-and-drop"
+import { useDragAndDrop } from "@formkit/drag-and-drop/react"
 import { useRouter } from "@tanstack/react-router"
 import { useServerFn } from "@tanstack/react-start"
 import {
@@ -244,23 +249,29 @@ export function TaskDialog({
             </Combobox>
           </div>
 
-          <ChecklistSection task={task} />
-          <CommentsSection />
+          {task.id !== "new" && (
+            <>
+              <ChecklistSection task={task} />
+              <CommentsSection task={task} />
+            </>
+          )}
         </div>
 
         <DialogFooter>
-          <Button
-            variant={"ghost"}
-            onClick={handleCopyToClipboard}
-            className="mr-auto"
-          >
-            Email Subject line{" "}
-            {!isCopied ? (
-              <CopyIcon />
-            ) : (
-              <CheckIcon className="animate-bounce text-primary" />
-            )}
-          </Button>
+          {task.emailSubjectLine && (
+            <Button
+              variant={"ghost"}
+              onClick={handleCopyToClipboard}
+              className="mr-auto"
+            >
+              Email Subject line
+              {!isCopied ? (
+                <CopyIcon />
+              ) : (
+                <CheckIcon className="animate-bounce text-primary" />
+              )}
+            </Button>
+          )}
           <DialogClose render={<Button variant="outline">Cancel</Button>} />
           <Button
             disabled={saving || !title.trim() || !status}
@@ -296,6 +307,26 @@ const ChecklistSection = ({ task }: { task: TaskType }) => {
     router.invalidate()
   }
 
+  // DnD
+  const reorderChecklistItems = useServerFn(reorderChecklistItemsFn)
+  const [checklistRef, checklistItems] = useDragAndDrop<
+    HTMLUListElement,
+    ChecklistItemType
+  >(task.checklistItems, {
+    dragHandle: ".drag-handle",
+    plugins: [animations()],
+    onDragend: async (event) => {
+      const dragEvent = event as { values: ChecklistItemType[] }
+      const updates = dragEvent.values.map((item, i) => ({
+        id: item.id,
+        content: item.content,
+        position: i,
+        complete: item.complete,
+      }))
+      reorderChecklistItems({ data: { updates } })
+    },
+  })
+
   return (
     <div className="mt-6">
       <h3 className="mb-4 flex items-center gap-2 text-sm font-medium">
@@ -303,8 +334,8 @@ const ChecklistSection = ({ task }: { task: TaskType }) => {
         Checklist
         <div className="ml-auto">
           <Badge variant="secondary">
-            {task.checklistItems.filter((item) => item.complete).length}/
-            {task.checklistItems.length}
+            {checklistItems.filter((item) => item.complete).length}/
+            {checklistItems.length}
           </Badge>
           <Button
             onClick={() => setIsCollapsed(!isCollapsed)}
@@ -319,8 +350,8 @@ const ChecklistSection = ({ task }: { task: TaskType }) => {
       </h3>
       {!isCollapsed && (
         <>
-          <ul className="mb-4">
-            {task.checklistItems.map((item) => (
+          <ul ref={checklistRef} className="mb-4">
+            {checklistItems.map((item) => (
               <ChecklistItem key={item.id} item={item} />
             ))}
           </ul>
@@ -349,6 +380,8 @@ const ChecklistSection = ({ task }: { task: TaskType }) => {
 }
 
 const ChecklistItem = ({ item }: { item: ChecklistItemType }) => {
+  const [isChecked, setIsChecked] = useState(item.complete)
+
   const router = useRouter()
   const updateChecklistItem = useServerFn(updateChecklistItemFn)
   const handleToggle = async () => {
@@ -363,24 +396,65 @@ const ChecklistItem = ({ item }: { item: ChecklistItemType }) => {
     })
     router.invalidate()
   }
+
+  const deleteChecklistItem = useServerFn(deleteChecklistItemFn)
+  const handleDelete = async () => {
+    await deleteChecklistItem({
+      data: {
+        id: item.id,
+      },
+    })
+    router.invalidate()
+  }
+
   return (
-    <li className="flex items-center gap-2 p-2 hover:bg-primary-foreground">
-      <GripVerticalIcon className="size-4" />
+    <li className="flex items-center gap-2 p-2">
+      <GripVerticalIcon className="drag-handle size-4" />
       <Checkbox checked={isChecked} onCheckedChange={handleToggle} />
       <span
         className={`${isChecked ? "text-muted-foreground line-through" : ""}`}
       >
         {item.content}
       </span>
-      <Button variant="destructive" size="icon-xs" className="ml-auto">
+      <Button
+        variant="destructive"
+        size="icon-xs"
+        className="ml-auto"
+        onClick={handleDelete}
+      >
         <TrashIcon />
       </Button>
     </li>
   )
 }
 
-const CommentsSection = () => {
+const CommentsSection = ({ task }: { task: TaskType }) => {
   const [isCollapsed, setIsCollapsed] = useState(false)
+  const [newCommentContent, setNewCommentContent] = useState("")
+
+  const router = useRouter()
+  const createComment = useServerFn(createCommentFn)
+  const handleCreateComment = async () => {
+    await createComment({
+      data: {
+        content: newCommentContent,
+        todoId: task.id,
+      },
+    })
+    setNewCommentContent("")
+    router.invalidate()
+  }
+
+  const deleteComment = useServerFn(deleteCommentFn)
+  const handleDeleteComment = async (commentId: string) => {
+    await deleteComment({
+      data: {
+        id: commentId,
+      },
+    })
+    router.invalidate()
+  }
+
   return (
     <div className="mt-6">
       <h3 className="mb-4 flex items-center gap-2 text-sm font-medium">
@@ -397,20 +471,48 @@ const CommentsSection = () => {
         </Button>
       </h3>
       {!isCollapsed && (
-        <Field>
-          <InputGroup>
-            <InputGroupTextarea
-              id="block-end-textarea"
-              placeholder="Write a comment..."
-            />
-            <InputGroupAddon align="block-end">
-              <InputGroupText>0/280</InputGroupText>
-              <InputGroupButton variant="default" size="sm" className="ml-auto">
-                Post
-              </InputGroupButton>
-            </InputGroupAddon>
-          </InputGroup>
-        </Field>
+        <>
+          <div>
+            {task.comments.map((comment) => (
+              <div key={comment.id} className="mb-2 flex items-start gap-2">
+                <div className="flex-1 rounded-lg border border-border/70 bg-card p-2">
+                  <p className="text-sm">{comment.content}</p>
+                  <div className="mt-1 flex items-center justify-between text-xs text-muted-foreground">
+                    {comment.createdAt.toLocaleDateString()}
+                    <Button
+                      variant="destructive"
+                      size="icon-xs"
+                      onClick={() => handleDeleteComment(comment.id)}
+                    >
+                      <TrashIcon />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <Field>
+            <InputGroup>
+              <InputGroupTextarea
+                id="block-end-textarea"
+                placeholder="Write a comment..."
+                value={newCommentContent}
+                onChange={(e) => setNewCommentContent(e.target.value)}
+              />
+              <InputGroupAddon align="block-end">
+                {/* <InputGroupText>{newCommentContent.length}/280</InputGroupText> */}
+                <InputGroupButton
+                  variant="default"
+                  size="sm"
+                  className="ml-auto"
+                  onClick={handleCreateComment}
+                >
+                  Post
+                </InputGroupButton>
+              </InputGroupAddon>
+            </InputGroup>
+          </Field>
+        </>
       )}
     </div>
   )
