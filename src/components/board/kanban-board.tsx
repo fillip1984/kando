@@ -3,12 +3,14 @@ import { reorderTasksFn } from "@/server/functions/todos"
 
 import { animations } from "@formkit/drag-and-drop"
 import { useDragAndDrop } from "@formkit/drag-and-drop/react"
+import { useRouter } from "@tanstack/react-router"
 import { useServerFn } from "@tanstack/react-start"
 import { useEffect } from "react"
 import { Swimlane } from "./swimlane/swimlane"
 
 export function KanbanBoard({ tasks }: { tasks: TaskType[] }) {
   // const { taskFilter } = useTaskStore()
+  const route = useRouter()
 
   useEffect(() => {
     setTodoTasks(tasks.filter((task) => task.status === "todo"))
@@ -38,6 +40,7 @@ export function KanbanBoard({ tasks }: { tasks: TaskType[] }) {
       }))
       console.log("drag ended", updates)
       await reorderTasks({ data: { updates } })
+      route.invalidate()
     },
     plugins: [animations()],
   }

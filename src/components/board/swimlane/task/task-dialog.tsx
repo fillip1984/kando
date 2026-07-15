@@ -130,7 +130,7 @@ export function TaskDialog({
               value={description}
               onChange={(event) => setDescription(event.target.value)}
               placeholder="Description (optional)"
-              className="max-h-120 min-h-40 pl-9"
+              className="max-h-120 min-h-40 resize-none pl-9 break-all"
             />
           </div>
 

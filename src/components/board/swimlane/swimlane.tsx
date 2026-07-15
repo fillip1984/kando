@@ -88,6 +88,10 @@ const NewTaskFromOutlookOverlay = ({
   const [isDragReady, setIsDragReady] = useState(false)
   const dragDepthRef = useRef(0)
 
+  const router = useRouter()
+  const uploadMsgFn = useServerFn(parseOutlookMsg)
+  const createTask = useServerFn(createTaskFn)
+
   useEffect(() => {
     window.addEventListener("dragenter", (e) =>
       setIsDragStart(isFileDrag(e as unknown as DragEvent<unknown>))
@@ -150,10 +154,6 @@ const NewTaskFromOutlookOverlay = ({
       await processMsgFile(e.dataTransfer.files[0])
     }
   }
-
-  const router = useRouter()
-  const uploadMsgFn = useServerFn(parseOutlookMsg)
-  const createTask = useServerFn(createTaskFn)
 
   const processMsgFile = async (msgFile: File) => {
     const formData = new FormData()
