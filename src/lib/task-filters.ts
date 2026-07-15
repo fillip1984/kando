@@ -1,5 +1,5 @@
 import type { TaskType } from "@/server/functions/todos"
-import { differenceInCalendarDays, isSameDay, startOfDay } from "date-fns"
+import { differenceInCalendarDays, isToday, startOfDay } from "date-fns"
 
 type TaskDateFilterInput = {
   status: TaskType["status"]
@@ -29,16 +29,11 @@ export function isOverdue(task: TaskDateFilterInput, now: Date): boolean {
     return false
   }
 
-  return dueDate < startOfDay(now)
-}
-
-export function isToday(task: TaskDateFilterInput, now: Date): boolean {
-  const dueDate = parseDueDate(task.dueDate)
-  if (!dueDate) {
+  if (isToday(dueDate)) {
     return false
   }
 
-  return isSameDay(dueDate, now)
+  return dueDate < startOfDay(now)
 }
 
 export function isDoneRecently(
@@ -77,7 +72,7 @@ export const filterTasks = ({
       return false
     }
 
-    if (taskFilter === "today" && !isToday(task, now)) {
+    if (taskFilter === "today" && task.dueDate && !isToday(task.dueDate)) {
       return false
     }
 
