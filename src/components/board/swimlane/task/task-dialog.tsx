@@ -29,7 +29,15 @@ import type {
 import { createTaskFn, updateTaskFn } from "@/server/functions/todos"
 import { useRouter } from "@tanstack/react-router"
 import { useServerFn } from "@tanstack/react-start"
-import { AlignLeft, Flag, GoalIcon, Kanban, Type } from "lucide-react"
+import {
+  AlignLeft,
+  CheckIcon,
+  CopyIcon,
+  Flag,
+  GoalIcon,
+  Kanban,
+  Type,
+} from "lucide-react"
 import { useEffect, useState } from "react"
 
 export function TaskDialog({
@@ -99,6 +107,13 @@ export function TaskDialog({
       router.invalidate()
       setSaving(false)
     }
+  }
+
+  const [isCopied, setIsCopied] = useState(false)
+  const handleCopyToClipboard = () => {
+    navigator.clipboard.writeText(title)
+    setIsCopied(true)
+    setTimeout(() => setIsCopied(false), 2000)
   }
 
   return (
@@ -213,6 +228,18 @@ export function TaskDialog({
         </div>
 
         <DialogFooter>
+          <Button
+            variant={"ghost"}
+            onClick={handleCopyToClipboard}
+            className="mr-auto"
+          >
+            Email Subject line{" "}
+            {!isCopied ? (
+              <CopyIcon />
+            ) : (
+              <CheckIcon className="animate-bounce text-primary" />
+            )}
+          </Button>
           <DialogClose render={<Button variant="outline">Cancel</Button>} />
           <Button
             disabled={saving || !title.trim() || !status}
