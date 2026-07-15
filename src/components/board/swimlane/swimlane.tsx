@@ -7,8 +7,8 @@ import { createTaskFn } from "@/server/functions/todos"
 import { useRouter } from "@tanstack/react-router"
 import { useServerFn } from "@tanstack/react-start"
 import { CloudUploadIcon, PlusIcon } from "lucide-react"
-import type { ChangeEvent, DragEvent } from "react"
-import { useRef, useState } from "react"
+import type { DragEvent } from "react"
+import { useEffect, useRef, useState } from "react"
 import { TaskCard } from "./task/task-card"
 import { TaskDialog } from "./task/task-dialog"
 
@@ -84,8 +84,19 @@ const NewTaskFromOutlookOverlay = ({
   tasks: TaskType[]
   lane: string
 }) => {
+  const [isDragStart, setIsDragStart] = useState(false)
   const [isDragReady, setIsDragReady] = useState(false)
   const dragDepthRef = useRef(0)
+
+  useEffect(() => {
+    window.addEventListener("dragenter", (e) =>
+      setIsDragStart(isFileDrag(e as unknown as DragEvent<unknown>))
+    )
+
+    return () => {
+      window.removeEventListener("dragenter", () => setIsDragStart(false))
+    }
+  }, [])
 
   const isFileDrag = (e: DragEvent<unknown>) => {
     const items = Array.from(e.dataTransfer.items)
@@ -116,6 +127,7 @@ const NewTaskFromOutlookOverlay = ({
   }
 
   const handleDrag = (e: DragEvent<unknown>) => {
+    console.log("handle drag", e.type)
     e.preventDefault()
     e.stopPropagation()
 
@@ -151,17 +163,10 @@ const NewTaskFromOutlookOverlay = ({
     e.stopPropagation()
     dragDepthRef.current = 0
     setIsDragReady(false)
+    setIsDragStart(false)
 
     if (e.dataTransfer.files.length > 0) {
       await processMsgFile(e.dataTransfer.files[0])
-    }
-  }
-
-  const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    console.log("handle change", e.type)
-    e.preventDefault()
-    if (e.target.files && e.target.files.length > 0) {
-      await processMsgFile(e.target.files[0])
     }
   }
 
@@ -189,55 +194,23 @@ const NewTaskFromOutlookOverlay = ({
   }
 
   return (
-    <div className="new-task mb-3 px-2">
+    <div
+      onDragEnter={handleDrag}
+      onDragOver={handleDrag}
+      onDragLeave={handleDrag}
+      className={`${isDragStart ? "pointer-events-auto" : "pointer-events-none"} absolute top-0 right-0 bottom-0 left-0`}
+    >
       <div
-        onDragEnter={handleDrag}
-        onDragOver={handleDrag}
-        onDragLeave={handleDrag}
-        className="relative my-1 flex w-full items-center justify-center"
+        onDrop={handleDrop}
+        className={`${isDragReady ? "visible" : "hidden"}`}
       >
-        <label
-          htmlFor="dropzone-file"
-          className={
-            "flex w-full flex-col items-center justify-center rounded-lg border-2 border-dashed transition duration-200 " +
-            (isDragReady
-              ? "scale-[1.02] border-primary bg-primary/10 text-primary shadow-sm"
-              : "border-accent bg-accent text-primary")
-          }
-        >
-          <div className="flex flex-col items-center justify-center gap-1 py-2">
-            {isDragReady ? (
-              <CloudUploadIcon className="size-5 animate-pulse" />
-            ) : null}
-            <p className="text-sm">
-              <span className="font-semibold">
-                {isDragReady
-                  ? "Drop Outlook email to upload"
-                  : "Click to upload"}
-              </span>
-              {isDragReady ? null : " or drag and drop"}
-            </p>
-            <p className="text-xs">MSG</p>
-          </div>
-          {/* Trick to getting file drag and drop to function (by function I 
-              mean the browser doesn't try to load or ask if you want to 
-              download it) is to drop the file into the <input type="file"/> 
-              element. To style things, you cannot make the input hidden but 
-              can make it's opacity 0. One last note, the input below overlays 
-              everything above so css styles like setting the cursor to a 
-              pointer will not apply unless you put it on this element. Same 
-              with on hover effects... messing with z index doesn't fix this.
-            */}
-          <input
-            id="dropzone-file"
-            type="file"
-            accept=".msg"
-            multiple={false}
-            className="absolute inset-0 cursor-pointer opacity-0"
-            onChange={handleChange}
-            onDrop={handleDrop}
-          />
-        </label>
+        {/* backdrop */}
+        <div className="absolute inset-0 z-998 bg-black/30 backdrop-blur"></div>
+
+        <div className="absolute inset-2 z-999 flex flex-col items-center justify-center">
+          <CloudUploadIcon className="size-12 text-muted-foreground" />
+          <p>Add task via Outlook email</p>
+        </div>
       </div>
     </div>
   )
