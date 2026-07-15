@@ -1,5 +1,7 @@
 import StyledDatePicker from "@/components/custom-ui/styled-date-picker"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   Combobox,
   ComboboxContent,
@@ -17,25 +19,41 @@ import {
 } from "@/components/ui/dialog"
 import { Field } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { InputGroupAddon } from "@/components/ui/input-group"
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+  InputGroupText,
+  InputGroupTextarea,
+} from "@/components/ui/input-group"
 import { Textarea } from "@/components/ui/textarea"
 import { priorityLabels } from "@/lib/priority-utils"
 import { swimlaneLabels } from "@/lib/swimlane-utils"
 import type {
+  ChecklistItemType,
   TaskPriority,
   TaskStatus,
   TaskType,
 } from "@/server/functions/todos"
-import { createTaskFn, updateTaskFn } from "@/server/functions/todos"
+import {
+  createChecklistItemFn,
+  createTaskFn,
+  updateChecklistItemFn,
+  updateTaskFn,
+} from "@/server/functions/todos"
 import { useRouter } from "@tanstack/react-router"
 import { useServerFn } from "@tanstack/react-start"
 import {
   AlignLeft,
   CheckIcon,
+  ChevronDownIcon,
   CopyIcon,
   Flag,
   GoalIcon,
+  GripVerticalIcon,
   Kanban,
+  TrashIcon,
   Type,
 } from "lucide-react"
 import { useEffect, useState } from "react"
@@ -225,6 +243,9 @@ export function TaskDialog({
               </ComboboxContent>
             </Combobox>
           </div>
+
+          <ChecklistSection task={task} />
+          <CommentsSection />
         </div>
 
         <DialogFooter>
@@ -250,5 +271,147 @@ export function TaskDialog({
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  )
+}
+
+const ChecklistSection = ({ task }: { task: TaskType }) => {
+  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isPending, setIsPending] = useState(false)
+  const [newChecklistItem, setNewChecklistItem] = useState("")
+
+  const router = useRouter()
+  const createChecklistItem = useServerFn(createChecklistItemFn)
+  const handleAddChecklistItem = async () => {
+    if (!newChecklistItem.trim()) return
+    setIsPending(true)
+    await createChecklistItem({
+      data: {
+        content: newChecklistItem,
+        position: task.checklistItems.length,
+        todoId: task.id,
+      },
+    })
+    setNewChecklistItem("")
+    setIsPending(false)
+    router.invalidate()
+  }
+
+  return (
+    <div className="mt-6">
+      <h3 className="mb-4 flex items-center gap-2 text-sm font-medium">
+        <CheckIcon className="size-4" />
+        Checklist
+        <div className="ml-auto">
+          <Badge variant="secondary">
+            {task.checklistItems.filter((item) => item.complete).length}/
+            {task.checklistItems.length}
+          </Badge>
+          <Button
+            onClick={() => setIsCollapsed(!isCollapsed)}
+
+            variant="ghost"
+          >
+            <ChevronDownIcon
+              className={`${isCollapsed ? "-rotate-90" : ""} transition`}
+            />
+          </Button>
+        </div>
+      </h3>
+      {!isCollapsed && (
+        <>
+          <ul className="mb-4">
+            {task.checklistItems.map((item) => (
+              <ChecklistItem key={item.id} item={item} />
+            ))}
+          </ul>
+          <InputGroup>
+            <InputGroupInput
+              placeholder="New checklist item..."
+              value={newChecklistItem}
+              onChange={(e) => setNewChecklistItem(e.target.value)}
+              onKeyUp={async (e) => {
+                if (e.key === "Enter") await handleAddChecklistItem()
+              }}
+            />
+            <InputGroupAddon align="inline-end">
+              <InputGroupButton
+                onClick={handleAddChecklistItem}
+                disabled={isPending || !newChecklistItem}
+              >
+                Add
+              </InputGroupButton>
+            </InputGroupAddon>
+          </InputGroup>
+        </>
+      )}
+    </div>
+  )
+}
+
+const ChecklistItem = ({ item }: { item: ChecklistItemType }) => {
+  const router = useRouter()
+  const updateChecklistItem = useServerFn(updateChecklistItemFn)
+  const handleToggle = async () => {
+    setIsChecked(!isChecked)
+    await updateChecklistItem({
+      data: {
+        id: item.id,
+        content: item.content,
+        position: item.position,
+        complete: !isChecked,
+      },
+    })
+    router.invalidate()
+  }
+  return (
+    <li className="flex items-center gap-2 p-2 hover:bg-primary-foreground">
+      <GripVerticalIcon className="size-4" />
+      <Checkbox checked={isChecked} onCheckedChange={handleToggle} />
+      <span
+        className={`${isChecked ? "text-muted-foreground line-through" : ""}`}
+      >
+        {item.content}
+      </span>
+      <Button variant="destructive" size="icon-xs" className="ml-auto">
+        <TrashIcon />
+      </Button>
+    </li>
+  )
+}
+
+const CommentsSection = () => {
+  const [isCollapsed, setIsCollapsed] = useState(false)
+  return (
+    <div className="mt-6">
+      <h3 className="mb-4 flex items-center gap-2 text-sm font-medium">
+        <AlignLeft className="size-4" />
+        Comments
+        <Button
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className="ml-auto"
+          variant="ghost"
+        >
+          <ChevronDownIcon
+            className={`${isCollapsed ? "-rotate-90" : ""} transition`}
+          />
+        </Button>
+      </h3>
+      {!isCollapsed && (
+        <Field>
+          <InputGroup>
+            <InputGroupTextarea
+              id="block-end-textarea"
+              placeholder="Write a comment..."
+            />
+            <InputGroupAddon align="block-end">
+              <InputGroupText>0/280</InputGroupText>
+              <InputGroupButton variant="default" size="sm" className="ml-auto">
+                Post
+              </InputGroupButton>
+            </InputGroupAddon>
+          </InputGroup>
+        </Field>
+      )}
+    </div>
   )
 }

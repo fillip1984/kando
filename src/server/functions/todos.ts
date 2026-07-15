@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start"
 import { eq } from "drizzle-orm"
 import { db } from "../db/client"
-import { todos } from "../db/schema"
+import { checklistItems, comments, todos } from "../db/schema"
 
 export const Swimlanes = ["todo", "in_progress", "blocked", "done"] as const
 export type TaskStatus = (typeof Swimlanes)[number]
@@ -28,6 +28,8 @@ export type UpdateTaskInput = {
 }
 
 export type TaskType = Awaited<ReturnType<typeof readTasksFn>>[0]
+export type ChecklistItemType = TaskType["checklistItems"][0]
+export type CommentType = TaskType["comments"][0]
 // export type TaskDetailType = Awaited<ReturnType<typeof readTaskFn>>
 
 // crud
@@ -49,6 +51,14 @@ export const readTasksFn = createServerFn({ method: "GET" }).handler(
     return await db.query.todos.findMany({
       orderBy: {
         position: "asc",
+      },
+      with: {
+        checklistItems: {
+          orderBy: {
+            position: "asc",
+          },
+        },
+        comments: true,
       },
     })
   }
@@ -110,4 +120,90 @@ export const deleteTaskFn = createServerFn({ method: "POST" })
   .validator((data: { id: string }) => data)
   .handler(async ({ data }) => {
     await db.delete(todos).where(eq(todos.id, data.id))
+  })
+
+export const createChecklistItemFn = createServerFn({ method: "POST" })
+  .validator(
+    (data: { content: string; todoId: string; position: number }) => data
+  )
+  .handler(async ({ data }) => {
+    await db.insert(checklistItems).values({
+      content: data.content,
+      position: data.position,
+      todoId: data.todoId,
+    })
+  })
+
+export const updateChecklistItemFn = createServerFn({ method: "POST" })
+  .validator(
+    (data: {
+      id: string
+      content: string
+      position: number
+      complete: boolean
+    }) => data
+  )
+  .handler(async ({ data }) => {
+    await db
+      .update(checklistItems)
+      .set({
+        content: data.content,
+        position: data.position,
+        complete: data.complete,
+      })
+      .where(eq(checklistItems.id, data.id))
+  })
+
+export const deleteChecklistItemFn = createServerFn({ method: "POST" })
+  .validator((data: { id: string }) => data)
+  .handler(async ({ data }) => {
+    await db.delete(checklistItems).where(eq(checklistItems.id, data.id))
+  })
+
+export const reorderChecklistItemsFn = createServerFn({ method: "POST" })
+  .validator(
+    (data: {
+      updates: {
+        id: string
+        position: number
+      }[]
+    }) => data
+  )
+  .handler(async ({ data }) => {
+    await db.transaction(async (tx) => {
+      for (const update of data.updates) {
+        await tx
+          .update(checklistItems)
+          .set({
+            position: update.position,
+          })
+          .where(eq(checklistItems.id, update.id))
+      }
+    })
+  })
+
+export const createCommentFn = createServerFn({ method: "POST" })
+  .validator((data: { content: string; todoId: string }) => data)
+  .handler(async ({ data }) => {
+    await db.insert(comments).values({
+      content: data.content,
+      todoId: data.todoId,
+    })
+  })
+
+export const updateCommentFn = createServerFn({ method: "POST" })
+  .validator((data: { id: string; content: string }) => data)
+  .handler(async ({ data }) => {
+    await db
+      .update(comments)
+      .set({
+        content: data.content,
+      })
+      .where(eq(comments.id, data.id))
+  })
+
+export const deleteCommentFn = createServerFn({ method: "POST" })
+  .validator((data: { id: string }) => data)
+  .handler(async ({ data }) => {
+    await db.delete(comments).where(eq(comments.id, data.id))
   })

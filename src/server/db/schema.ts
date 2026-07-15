@@ -13,7 +13,7 @@ export const todoPriorityEnum = baseSchema.enum("todo_priority", [
   "frantic",
 ])
 
-export const todos = baseSchema.table("todos", (t) => ({
+export const todos = baseSchema.table("todo", (t) => ({
   ...baseFields,
   title: t.text("title").notNull(),
   description: t.text("description"),
@@ -21,6 +21,27 @@ export const todos = baseSchema.table("todos", (t) => ({
   priority: todoPriorityEnum("priority"),
   dueDate: t.date("dueDate", { mode: "string" }),
   position: t.integer("position"),
+  emailSubjectLine: t.text("email_subject_line"),
+}))
+
+export const comments = baseSchema.table("comment", (t) => ({
+  ...baseFields,
+  content: t.text("content").notNull(),
+  todoId: t
+    .text("todoId")
+    .notNull()
+    .references(() => todos.id),
+}))
+
+export const checklistItems = baseSchema.table("checklist_item", (t) => ({
+  ...baseFields,
+  content: t.text("content").notNull(),
+  complete: t.boolean("complete").notNull().default(false),
+  position: t.integer("position").notNull(),
+  todoId: t
+    .text("todoId")
+    .notNull()
+    .references(() => todos.id),
 }))
 
 export const todoTags = baseSchema.table("todo_tag", (t) => ({
