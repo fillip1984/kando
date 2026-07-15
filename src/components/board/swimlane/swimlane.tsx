@@ -190,26 +190,6 @@ const NewTaskFromOutlookOverlay = ({
 
   return (
     <div className="new-task mb-3 px-2">
-      <div className="flex">
-        {/* <input
-          type="text"
-          className="rounded-r-none"
-          placeholder="New task..."
-          value={task}
-          onChange={(e) => setTask(e.target.value)}
-          onKeyUp={handleKeyUp}
-          ref={taskRef}
-        /> */}
-        <button
-          type="button"
-          // onClick={handleAddTask}
-          className="h-auto rounded-r bg-accent px-4 text-xl text-white"
-          // disabled={!task}
-        >
-          +
-        </button>
-      </div>
-
       <div
         onDragEnter={handleDrag}
         onDragOver={handleDrag}
