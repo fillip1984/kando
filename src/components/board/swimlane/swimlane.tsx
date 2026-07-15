@@ -101,38 +101,20 @@ const NewTaskFromOutlookOverlay = ({
   const isFileDrag = (e: DragEvent<unknown>) => {
     const items = Array.from(e.dataTransfer.items)
 
-    console.log(
-      "isFileDrag:items",
-      items.map((item) => {
-        const file = item.getAsFile()
-
-        return {
-          kind: item.kind,
-          type: item.type,
-          name: file?.name ?? null,
-        }
-      })
-    )
-
     if (items.length === 0) {
-      console.log("isFileDrag:result", false, "reason=no-items")
       return false
     }
 
     const isFile = items.some((item) => item.kind === "file")
 
-    console.log("isFileDrag:result", isFile)
-
     return isFile
   }
 
   const handleDrag = (e: DragEvent<unknown>) => {
-    console.log("handle drag", e.type)
     e.preventDefault()
     e.stopPropagation()
 
     const isMsgDrag = isFileDrag(e)
-    console.log("handle drag outcome", e.type, { isMsgDrag })
 
     if (e.type === "dragenter") {
       dragDepthRef.current += 1
@@ -158,7 +140,6 @@ const NewTaskFromOutlookOverlay = ({
   }
 
   const handleDrop = async (e: DragEvent<unknown>) => {
-    console.log("handle drop", e.type)
     e.preventDefault()
     e.stopPropagation()
     dragDepthRef.current = 0
@@ -175,8 +156,6 @@ const NewTaskFromOutlookOverlay = ({
   const createTask = useServerFn(createTaskFn)
 
   const processMsgFile = async (msgFile: File) => {
-    console.log("process msg file")
-
     const formData = new FormData()
     formData.append("file", msgFile)
 
