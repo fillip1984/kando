@@ -1,18 +1,17 @@
-import { TaskDialog } from "@/components/board/swimlane/task/task-dialog"
+import { TaskCard } from "@/components/board/swimlane/task/task-card"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { parseDueDate } from "@/lib/task-utils"
 import type { TaskType } from "@/server/functions/todos"
 import { readTasksFn } from "@/server/functions/todos"
 import { createFileRoute } from "@tanstack/react-router"
-import { format, isToday, startOfDay } from "date-fns"
+import { isToday, startOfDay } from "date-fns"
 import {
   CalendarClockIcon,
   CircleIcon,
   FlagIcon,
   ListTodoIcon,
 } from "lucide-react"
-import { useMemo, useState } from "react"
+import { useMemo } from "react"
 
 export const Route = createFileRoute("/")({
   component: App,
@@ -154,7 +153,7 @@ function TaskListGroup({
           No tasks in this list.
         </p>
       ) : (
-        <ul className="divide-y">
+        <ul className="space-y-2 p-2">
           {tasks.map((task) => (
             <TaskListItem key={task.id} task={task} />
           ))}
@@ -165,35 +164,9 @@ function TaskListGroup({
 }
 
 function TaskListItem({ task }: { task: TaskType }) {
-  const [open, setOpen] = useState(false)
-
   return (
-    <>
-      <li>
-        <Button
-          variant="ghost"
-          className="h-auto w-full justify-between rounded-none p-3 text-left"
-          onClick={() => setOpen(true)}
-        >
-          <div className="space-y-1">
-            <p className="line-clamp-1 text-sm font-medium">{task.title}</p>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <span className="capitalize">
-                {task.status.replace("_", " ")}
-              </span>
-              {task.dueDate ? (
-                <span>Due {format(new Date(task.dueDate), "MMM d")}</span>
-              ) : null}
-            </div>
-          </div>
-          {task.priority ? (
-            <Badge variant="outline" className="capitalize">
-              {task.priority}
-            </Badge>
-          ) : null}
-        </Button>
-      </li>
-      <TaskDialog task={task} open={open} close={() => setOpen(false)} />
-    </>
+    <li>
+      <TaskCard task={task} />
+    </li>
   )
 }

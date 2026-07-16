@@ -4,7 +4,6 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarRail,
   SidebarSeparator,
@@ -20,7 +19,6 @@ export default function AppSidebar() {
     <Sidebar>
       <Branding />
       <PrimaryNav />
-      <SecondaryNav />
       <Footer />
       <SidebarRail />
     </Sidebar>
@@ -44,7 +42,6 @@ const PrimaryNav = () => {
   return (
     <SidebarContent>
       <SidebarGroup>
-        <SidebarGroupLabel>Views</SidebarGroupLabel>
         <SidebarGroupContent>
           <div className="grid gap-2 px-2 text-sm">
             <Link
@@ -74,17 +71,6 @@ const PrimaryNav = () => {
             </Link>
           </div>
         </SidebarGroupContent>
-      </SidebarGroup>
-    </SidebarContent>
-  )
-}
-
-const SecondaryNav = () => {
-  return (
-    <SidebarContent>
-      <SidebarGroup>
-        <SidebarGroupLabel>Tag Filters</SidebarGroupLabel>
-        <SidebarContent>Secondary content</SidebarContent>
       </SidebarGroup>
     </SidebarContent>
   )
