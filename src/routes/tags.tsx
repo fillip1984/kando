@@ -1,5 +1,3 @@
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,6 +9,8 @@ import {
   AlertDialogMedia,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogClose,
@@ -19,8 +19,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Spinner } from "@/components/ui/spinner"
 import { Input } from "@/components/ui/input"
+import { Spinner } from "@/components/ui/spinner"
 import { Textarea } from "@/components/ui/textarea"
 import type { TagType } from "@/server/functions/tags"
 import {
@@ -95,7 +95,9 @@ function TagsPage() {
 
           <section className="rounded-xl border bg-card p-4">
             <div className="mb-3 flex items-center justify-between">
-              <h2 className="font-heading text-lg font-medium">Existing Tags</h2>
+              <h2 className="font-heading text-lg font-medium">
+                Existing Tags
+              </h2>
               <Badge variant="outline">{tags.length}</Badge>
             </div>
 
@@ -145,11 +147,11 @@ function TagListItem({ tag, onEdit }: { tag: TagType; onEdit: () => void }) {
       <div className="mt-2 flex items-center justify-between gap-2">
         {tag.color ? (
           <div className="flex items-center gap-2">
-          <span
-            className="size-4 rounded-full border"
-            style={{ backgroundColor: tag.color }}
-          />
-          <span className="text-xs text-muted-foreground">{tag.color}</span>
+            <span
+              className="size-4 rounded-full border"
+              style={{ backgroundColor: tag.color }}
+            />
+            <span className="text-xs text-muted-foreground">{tag.color}</span>
           </div>
         ) : (
           <span className="text-xs text-muted-foreground">No color set</span>
@@ -308,7 +310,10 @@ function TagDialog({
               </Button>
             ) : null}
             <DialogClose render={<Button variant="outline">Cancel</Button>} />
-            <Button disabled={saving || deleting || !name.trim()} onClick={handleSubmit}>
+            <Button
+              disabled={saving || deleting || !name.trim()}
+              onClick={handleSubmit}
+            >
               {saving ? "Saving..." : isNew ? "Create Tag" : "Save Changes"}
             </Button>
           </DialogFooter>
@@ -317,7 +322,9 @@ function TagDialog({
 
       <AlertDialog
         open={deleteConfirmationOpen}
-        onOpenChange={(nextOpen) => !nextOpen && setDeleteConfirmationOpen(false)}
+        onOpenChange={(nextOpen) =>
+          !nextOpen && setDeleteConfirmationOpen(false)
+        }
       >
         <AlertDialogContent size="sm">
           <AlertDialogHeader>
@@ -326,7 +333,9 @@ function TagDialog({
             </AlertDialogMedia>
             <AlertDialogTitle>Delete tag?</AlertDialogTitle>
             <AlertDialogDescription>
-              {tag ? `This will permanently delete '${tag.name}'.` : "This will permanently delete this tag."}
+              {tag
+                ? `This will permanently delete '${tag.name}'.`
+                : "This will permanently delete this tag."}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooterContent>
