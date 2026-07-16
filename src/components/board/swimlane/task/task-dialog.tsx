@@ -346,20 +346,29 @@ const TagsSection = ({ task }: { task: TaskType }) => {
   return (
     <div className="space-y-2">
       <h3 className="text-sm font-medium">Tags</h3>
-      {task.todoTags.map((todoTag) => (
-        <Badge key={todoTag.id} variant="outline">
-          {todoTag.tag?.color ? (
-            <span
-              className="size-2 rounded-full"
-              style={{ backgroundColor: todoTag.tag.color }}
-            />
-          ) : null}
-          <span>{todoTag.tag?.name || "Tag"}</span>
-          <Button onClick={() => handleRemoveTag(todoTag.tag!)}>
-            <XIcon className="size-3" />
-          </Button>
-        </Badge>
-      ))}
+      <div className="flex flex-wrap gap-2">
+        {task.todoTags.map((todoTag) => (
+          <div
+            key={todoTag.id}
+            className="flex h-5 w-fit items-center gap-2 rounded-2xl border pl-2 text-sm"
+          >
+            {todoTag.tag?.color ? (
+              <span
+                className="size-2 rounded-full"
+                style={{ backgroundColor: todoTag.tag.color }}
+              />
+            ) : null}
+            <span>{todoTag.tag!.name}</span>
+            <Button
+              variant={"ghost"}
+              size={"icon-sm"}
+              onClick={() => handleRemoveTag(todoTag.tag!)}
+            >
+              <XIcon className="size-3" />
+            </Button>
+          </div>
+        ))}
+      </div>
       {/* TODO: replace with combo box instead? https://ui.shadcn.com/docs/components/base/combobox#multiple */}
       <Input
         value={tagSearch}
