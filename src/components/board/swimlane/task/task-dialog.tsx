@@ -62,6 +62,7 @@ import {
   GoalIcon,
   GripVerticalIcon,
   Kanban,
+  PlusIcon,
   TrashIcon,
   Type,
   XIcon,
@@ -308,16 +309,20 @@ const TagsSection = ({ task }: { task: TaskType }) => {
   const [filteredTags, setFilteredTags] = useState<TagType[]>([])
   useEffect(() => {
     console.log("filtered tags")
+    let suggestedTags = []
     if (tagSearch.trim().length === 0) {
       console.log("no search, showing all tags")
-      setFilteredTags(availableTags)
-      return
-    }
-    setFilteredTags(
-      availableTags.filter((tag) =>
+      suggestedTags = availableTags
+    } else {
+      suggestedTags = availableTags.filter((tag) =>
         tag.name.toLowerCase().includes(tagSearch.toLowerCase())
       )
+    }
+    // exclude tags already added to the task
+    suggestedTags = suggestedTags.filter(
+      (tag) => !task.todoTags.some((todoTag) => todoTag.tagId === tag.id)
     )
+    setFilteredTags(suggestedTags)
   }, [tagSearch, availableTags])
 
   const router = useRouter()
@@ -329,6 +334,7 @@ const TagsSection = ({ task }: { task: TaskType }) => {
         tagId: tag.id,
       },
     })
+    setTagSearch("")
     router.invalidate()
   }
 
@@ -346,51 +352,66 @@ const TagsSection = ({ task }: { task: TaskType }) => {
   return (
     <div className="space-y-2">
       <h3 className="text-sm font-medium">Tags</h3>
-      <div className="flex flex-wrap gap-2">
-        {task.todoTags.map((todoTag) => (
-          <div
-            key={todoTag.id}
-            className="flex h-5 w-fit items-center gap-2 rounded-2xl border pl-2 text-sm"
-          >
-            {todoTag.tag?.color ? (
-              <span
-                className="size-2 rounded-full"
-                style={{ backgroundColor: todoTag.tag.color }}
-              />
-            ) : null}
-            <span>{todoTag.tag!.name}</span>
-            <Button
-              variant={"ghost"}
-              size={"icon-sm"}
-              onClick={() => handleRemoveTag(todoTag.tag!)}
-            >
-              <XIcon className="size-3" />
-            </Button>
+      <InputGroup>
+        <InputGroupAddon align="block-start">
+          <div data-slot="input-group-control" className="flex flex-wrap gap-2">
+            {task.todoTags.map((todoTag) => (
+              <div
+                key={todoTag.id}
+                className="flex h-5 w-fit items-center gap-2 rounded-2xl border pl-2 text-sm"
+              >
+                {todoTag.tag?.color ? (
+                  <span
+                    className="size-2 rounded-full"
+                    style={{ backgroundColor: todoTag.tag.color }}
+                  />
+                ) : null}
+                <span>{todoTag.tag!.name}</span>
+                <Button
+                  variant={"ghost"}
+                  size={"icon-sm"}
+                  onClick={() => handleRemoveTag(todoTag.tag!)}
+                >
+                  <XIcon className="size-3" />
+                </Button>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </InputGroupAddon>
+
+        <InputGroupAddon align="block-end">
+          <InputGroupInput
+            value={tagSearch}
+            onChange={(e) => setTagSearch(e.target.value)}
+            placeholder="Search tags..."
+          />
+        </InputGroupAddon>
+      </InputGroup>
+
       {/* TODO: replace with combo box instead? https://ui.shadcn.com/docs/components/base/combobox#multiple */}
-      <Input
-        value={tagSearch}
-        onChange={(e) => setTagSearch(e.target.value)}
-        placeholder="Search tags..."
-      />
+      {/* <Input
+        
+      /> */}
       {filteredTags.length > 0 && (
-        <div className="space-y-1">
+        <div className="flex flex-wrap">
           {filteredTags.map((todoTag) => (
-            <Badge
+            <Button
               key={todoTag.id}
-              variant="outline"
+              variant={"ghost"}
               onClick={() => handleAddTag(todoTag)}
+              className="p-0"
             >
-              {todoTag.color ? (
-                <span
-                  className="size-2 rounded-full"
-                  style={{ backgroundColor: todoTag.color }}
-                />
-              ) : null}
-              <span>{todoTag.name}</span>
-            </Badge>
+              <Badge variant="outline">
+                {todoTag.color ? (
+                  <span
+                    className="size-2 rounded-full"
+                    style={{ backgroundColor: todoTag.color }}
+                  />
+                ) : null}
+                <span>{todoTag.name}</span>
+                <PlusIcon data-icon="inline-end" />
+              </Badge>
+            </Button>
           ))}
         </div>
       )}
