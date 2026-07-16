@@ -181,7 +181,7 @@ function App() {
 function TagSwatch({ tag }: { tag: TagType }) {
   return tag.color ? (
     <span
-      className="size-3 rounded-full border border-border/70"
+      className="size-12 rounded-full border-3 border-border/70"
       style={{ backgroundColor: tag.color }}
       aria-hidden="true"
     />

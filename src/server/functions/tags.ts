@@ -10,6 +10,13 @@ export type CreateTagInput = {
   color?: string | null
 }
 
+export type UpdateTagInput = {
+  id: string
+  name: string
+  description?: string | null
+  color?: string | null
+}
+
 export const createTagFn = createServerFn({ method: "POST" })
   .validator((data: CreateTagInput) => data)
   .handler(async ({ data }) => {
@@ -20,11 +27,24 @@ export const createTagFn = createServerFn({ method: "POST" })
     })
   })
 
+export const updateTagFn = createServerFn({ method: "POST" })
+  .validator((data: UpdateTagInput) => data)
+  .handler(async ({ data }) => {
+    await db
+      .update(tags)
+      .set({
+        name: data.name.trim(),
+        description: data.description ?? null,
+        color: data.color ?? null,
+      })
+      .where(eq(tags.id, data.id))
+  })
+
 export const readTagsFn = createServerFn({ method: "GET" }).handler(
   async () => {
     return await db.query.tags.findMany({
       orderBy: {
-        createdAt: "desc",
+        name: "asc",
       },
     })
   }
