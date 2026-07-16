@@ -7,7 +7,7 @@ import {
 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
-import { isOverdue } from "@/lib/task-filters"
+import { isOverdue } from "@/lib/task-utils"
 import type { TaskType } from "@/server/functions/todos"
 import { useState } from "react"
 

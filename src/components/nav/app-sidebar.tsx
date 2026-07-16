@@ -9,9 +9,11 @@ import {
   SidebarRail,
   SidebarSeparator,
 } from "@/components/ui/sidebar"
-import { useTaskStore } from "@/server/stores/task-store"
+import { cn } from "@/lib/utils"
+import { Link, useLocation } from "@tanstack/react-router"
+import { LayoutDashboardIcon, Rows4Icon } from "lucide-react"
 import { ModeToggle } from "../theme/mode-toggle"
-import { Button } from "../ui/button"
+import { buttonVariants } from "../ui/button"
 
 export default function AppSidebar() {
   return (
@@ -37,56 +39,39 @@ const Branding = () => {
 }
 
 const PrimaryNav = () => {
-  const { taskFilter, toggleFilter, resetFilters } = useTaskStore()
+  const location = useLocation()
 
   return (
     <SidebarContent>
       <SidebarGroup>
-        <SidebarGroupLabel>Due Date Filters</SidebarGroupLabel>
+        <SidebarGroupLabel>Views</SidebarGroupLabel>
         <SidebarGroupContent>
           <div className="grid gap-2 px-2 text-sm">
-            <Button
-              variant={taskFilter === "overdue" ? "default" : "outline"}
-              className="justify-start"
-              onClick={() => toggleFilter("overdue")}
+            <Link
+              to="/"
+              className={cn(
+                buttonVariants({
+                  variant: location.pathname === "/" ? "default" : "outline",
+                }),
+                "justify-start"
+              )}
             >
-              Overdue
-            </Button>
-            <Button
-              variant={taskFilter === "today" ? "default" : "outline"}
-              className="justify-start"
-              onClick={() => toggleFilter("today")}
+              <LayoutDashboardIcon className="size-4" />
+              Dashboard
+            </Link>
+            <Link
+              to="/board"
+              className={cn(
+                buttonVariants({
+                  variant:
+                    location.pathname === "/board" ? "default" : "outline",
+                }),
+                "justify-start"
+              )}
             >
-              Due Today
-            </Button>
-            <Button
-              variant={taskFilter === "doneRecently" ? "default" : "outline"}
-              className="justify-start"
-              onClick={() => toggleFilter("doneRecently")}
-            >
-              Done Recently
-            </Button>
-            <Button
-              variant={taskFilter === "blockedOnly" ? "default" : "outline"}
-              className="justify-start"
-              onClick={() => toggleFilter("blockedOnly")}
-            >
-              Blocked Only
-            </Button>
-            <Button
-              variant={taskFilter === "noDueDate" ? "default" : "outline"}
-              className="justify-start"
-              onClick={() => toggleFilter("noDueDate")}
-            >
-              No Due Date
-            </Button>
-            <Button
-              variant="ghost"
-              className="justify-start"
-              onClick={resetFilters}
-            >
-              Reset Filters
-            </Button>
+              <Rows4Icon className="size-4" />
+              Board
+            </Link>
           </div>
         </SidebarGroupContent>
       </SidebarGroup>

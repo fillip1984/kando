@@ -146,7 +146,7 @@ export function TaskDialog({
           <DialogTitle>{isNew ? "Create Task" : "Edit Task"}</DialogTitle>
         </DialogHeader>
 
-        <div className="grid gap-3">
+        <div className="-mx-4 no-scrollbar grid max-h-[75vh] gap-3 overflow-y-auto px-4">
           <div className="relative">
             <Type
               data-testid="title-icon"
@@ -168,7 +168,7 @@ export function TaskDialog({
               value={description}
               onChange={(event) => setDescription(event.target.value)}
               placeholder="Description (optional)"
-              className="max-h-120 min-h-40 resize-none pl-9 break-all"
+              className="max-h-80 min-h-40 resize-none pl-9 break-all"
             />
           </div>
 

@@ -57,37 +57,3 @@ export function isDoneRecently(
 
   return daysSinceDue >= 0 && daysSinceDue <= recentDays
 }
-
-export const filterTasks = ({
-  tasks,
-  taskFilter,
-  now,
-}: {
-  tasks: TaskType[]
-  taskFilter: string | null
-  now: Date
-}) => {
-  return tasks.filter((task) => {
-    if (taskFilter === "overdue" && !isOverdue(task, now)) {
-      return false
-    }
-
-    if (taskFilter === "today" && task.dueDate && !isToday(task.dueDate)) {
-      return false
-    }
-
-    if (taskFilter === "doneRecently" && !isDoneRecently(task, now)) {
-      return false
-    }
-
-    if (taskFilter === "blockedOnly" && task.status !== "blocked") {
-      return false
-    }
-
-    if (taskFilter === "noDueDate" && parseDueDate(task.dueDate) !== null) {
-      return false
-    }
-
-    return true
-  })
-}
