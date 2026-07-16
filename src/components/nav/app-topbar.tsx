@@ -3,11 +3,11 @@ import { SidebarTrigger } from "../ui/sidebar"
 
 export default function AppTopbar() {
   return (
-    <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+    <header className="flex h-12 shrink-0 items-center gap-2 border-b px-4">
       <SidebarTrigger className="-ml-1" />
       <Separator
         orientation="vertical"
-        className="mr-2 data-[orientation=vertical]:h-4"
+        className="mr-2 data-[orientation=vertical]:my-auto data-[orientation=vertical]:h-6"
       />
 
       {/* <Breadcrumb>
