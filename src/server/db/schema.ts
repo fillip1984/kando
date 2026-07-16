@@ -30,7 +30,7 @@ export const comments = baseSchema.table("comment", (t) => ({
   todoId: t
     .text("todoId")
     .notNull()
-    .references(() => todos.id),
+    .references(() => todos.id, { onDelete: "cascade" }),
 }))
 
 export const checklistItems = baseSchema.table("checklist_item", (t) => ({
@@ -41,7 +41,7 @@ export const checklistItems = baseSchema.table("checklist_item", (t) => ({
   todoId: t
     .text("todoId")
     .notNull()
-    .references(() => todos.id),
+    .references(() => todos.id, { onDelete: "cascade" }),
 }))
 
 export const todoTags = baseSchema.table("todo_tag", (t) => ({
@@ -49,11 +49,11 @@ export const todoTags = baseSchema.table("todo_tag", (t) => ({
   todoId: t
     .text("todoId")
     .notNull()
-    .references(() => todos.id),
+    .references(() => todos.id, { onDelete: "cascade" }),
   tagId: t
     .text("tagId")
     .notNull()
-    .references(() => tags.id),
+    .references(() => tags.id, { onDelete: "cascade" }),
 }))
 
 export const tags = baseSchema.table("tag", (t) => ({

@@ -64,32 +64,4 @@ export default function DeleteTaskConfirmation({
       </AlertDialogContent>
     </AlertDialog>
   )
-
-  // if (!task) return null
-
-  // return (
-  //   <Dialog open={open}>
-  //     <DialogContent>
-  //       <DialogHeader>
-  //         <DialogTitle>Delete Task</DialogTitle>
-  //         <DialogDescription>
-  //           This action cannot be undone. Delete "{task.title}"?
-  //         </DialogDescription>
-  //       </DialogHeader>
-
-  //       <DialogFooter>
-  //         <Button variant="outline" onClick={closeDeleteTaskConfirmation}>
-  //           Cancel
-  //         </Button>
-  //         <Button
-  //           variant="destructive"
-  //           disabled={deleting}
-  //           onClick={handleDeleteTask}
-  //         >
-  //           {deleting ? "Deleting..." : "Delete"}
-  //         </Button>
-  //       </DialogFooter>
-  //     </DialogContent>
-  //   </Dialog>
-  // )
 }
