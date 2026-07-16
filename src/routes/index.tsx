@@ -1,6 +1,8 @@
 import { TaskCard } from "@/components/board/swimlane/task/task-card"
 import { Badge } from "@/components/ui/badge"
 import { parseDueDate } from "@/lib/task-utils"
+import type { TagType } from "@/server/functions/tags"
+import { readTagsFn } from "@/server/functions/tags"
 import type { TaskType } from "@/server/functions/todos"
 import { readTasksFn } from "@/server/functions/todos"
 import { createFileRoute } from "@tanstack/react-router"
@@ -10,6 +12,7 @@ import {
   CircleIcon,
   FlagIcon,
   ListTodoIcon,
+  TagIcon,
 } from "lucide-react"
 import { useMemo } from "react"
 
@@ -17,12 +20,13 @@ export const Route = createFileRoute("/")({
   component: App,
   loader: async () => {
     const tasks = await readTasksFn()
-    return { tasks }
+    const tags = await readTagsFn()
+    return { tasks, tags }
   },
 })
 
 function App() {
-  const { tasks } = Route.useLoaderData()
+  const { tasks, tags } = Route.useLoaderData()
 
   const activeTasks = useMemo(
     () => tasks.filter((task) => task.status !== "done"),
@@ -54,6 +58,22 @@ function App() {
   const urgent = activeTasks.filter((task) => task.priority === "urgent")
   const important = activeTasks.filter((task) => task.priority === "important")
   const unprioritized = activeTasks.filter((task) => task.priority === null)
+
+  const tasksByTag = useMemo(
+    () =>
+      tags.map((tag) => ({
+        tag,
+        tasks: activeTasks.filter((task) =>
+          task.todoTags.some((todoTag) => todoTag.tagId === tag.id)
+        ),
+      })),
+    [activeTasks, tags]
+  )
+
+  const untagged = useMemo(
+    () => activeTasks.filter((task) => task.todoTags.length === 0),
+    [activeTasks]
+  )
 
   return (
     <div className="flex grow overflow-auto">
@@ -122,8 +142,51 @@ function App() {
             />
           </div>
         </section>
+
+        <section className="space-y-3">
+          <div className="flex items-center gap-2">
+            <TagIcon className="size-4 text-muted-foreground" />
+            <h2 className="font-heading text-lg font-medium">By Tag</h2>
+          </div>
+
+          {tags.length === 0 ? (
+            <article className="rounded-xl border bg-card p-4 text-sm text-muted-foreground">
+              No tags yet. Create tags from the Tags page to group tasks here.
+            </article>
+          ) : (
+            <div className="grid gap-4 xl:grid-cols-2">
+              {tasksByTag.map(({ tag, tasks }) => (
+                <TaskListGroup
+                  key={tag.id}
+                  title={tag.name}
+                  icon={<TagSwatch tag={tag} />}
+                  tasks={tasks}
+                  tone="outline"
+                />
+              ))}
+              <TaskListGroup
+                title="Untagged"
+                icon={<TagIcon className="size-4" />}
+                tasks={untagged}
+                tone="secondary"
+              />
+            </div>
+          )}
+        </section>
       </div>
     </div>
+  )
+}
+
+function TagSwatch({ tag }: { tag: TagType }) {
+  return tag.color ? (
+    <span
+      className="size-3 rounded-full border border-border/70"
+      style={{ backgroundColor: tag.color }}
+      aria-hidden="true"
+    />
+  ) : (
+    <TagIcon className="size-4" />
   )
 }
 
