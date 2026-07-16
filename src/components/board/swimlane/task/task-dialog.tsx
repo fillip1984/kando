@@ -29,6 +29,8 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import { priorityLabels } from "@/lib/priority-utils"
 import { swimlaneLabels } from "@/lib/swimlane-utils"
+import type { TagType } from "@/server/functions/tags"
+import { readTagsFn } from "@/server/functions/tags"
 import type {
   ChecklistItemType,
   TaskPriority,
@@ -36,11 +38,13 @@ import type {
   TaskType,
 } from "@/server/functions/todos"
 import {
+  addTagToTaskFn,
   createChecklistItemFn,
   createCommentFn,
   createTaskFn,
   deleteChecklistItemFn,
   deleteCommentFn,
+  removeTagToTaskFn,
   reorderChecklistItemsFn,
   updateChecklistItemFn,
   updateTaskFn,
@@ -60,6 +64,7 @@ import {
   Kanban,
   TrashIcon,
   Type,
+  XIcon,
 } from "lucide-react"
 import { useEffect, useState } from "react"
 
@@ -251,6 +256,7 @@ export function TaskDialog({
 
           {task.id !== "new" && (
             <>
+              <TagsSection task={task} />
               <ChecklistSection task={task} />
               <CommentsSection task={task} />
             </>
@@ -282,6 +288,104 @@ export function TaskDialog({
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  )
+}
+
+const TagsSection = ({ task }: { task: TaskType }) => {
+  // gather tags
+  const readTags = useServerFn(readTagsFn)
+  const [availableTags, setAvailableTags] = useState<TagType[]>([])
+  useEffect(() => {
+    const fetchTags = async () => {
+      const tags = await readTags()
+      setAvailableTags(tags)
+    }
+    fetchTags()
+  }, [readTags, task.todoTags])
+
+  // search state
+  const [tagSearch, setTagSearch] = useState("")
+  const [filteredTags, setFilteredTags] = useState<TagType[]>([])
+  useEffect(() => {
+    console.log("filtered tags")
+    if (tagSearch.trim().length === 0) {
+      console.log("no search, showing all tags")
+      setFilteredTags(availableTags)
+      return
+    }
+    setFilteredTags(
+      availableTags.filter((tag) =>
+        tag.name.toLowerCase().includes(tagSearch.toLowerCase())
+      )
+    )
+  }, [tagSearch, availableTags])
+
+  const router = useRouter()
+  const addTag = useServerFn(addTagToTaskFn)
+  const handleAddTag = async (tag: TagType) => {
+    await addTag({
+      data: {
+        todoId: task.id,
+        tagId: tag.id,
+      },
+    })
+    router.invalidate()
+  }
+
+  const removeTag = useServerFn(removeTagToTaskFn)
+  const handleRemoveTag = async (tag: TagType) => {
+    await removeTag({
+      data: {
+        todoId: task.id,
+        tagId: tag.id,
+      },
+    })
+    router.invalidate()
+  }
+
+  return (
+    <div className="space-y-2">
+      <h3 className="text-sm font-medium">Tags</h3>
+      {task.todoTags.map((todoTag) => (
+        <Badge key={todoTag.id} variant="outline">
+          {todoTag.tag?.color ? (
+            <span
+              className="size-2 rounded-full"
+              style={{ backgroundColor: todoTag.tag.color }}
+            />
+          ) : null}
+          <span>{todoTag.tag?.name || "Tag"}</span>
+          <Button onClick={() => handleRemoveTag(todoTag.tag!)}>
+            <XIcon className="size-3" />
+          </Button>
+        </Badge>
+      ))}
+      {/* TODO: replace with combo box instead? https://ui.shadcn.com/docs/components/base/combobox#multiple */}
+      <Input
+        value={tagSearch}
+        onChange={(e) => setTagSearch(e.target.value)}
+        placeholder="Search tags..."
+      />
+      {filteredTags.length > 0 && (
+        <div className="space-y-1">
+          {filteredTags.map((todoTag) => (
+            <Badge
+              key={todoTag.id}
+              variant="outline"
+              onClick={() => handleAddTag(todoTag)}
+            >
+              {todoTag.color ? (
+                <span
+                  className="size-2 rounded-full"
+                  style={{ backgroundColor: todoTag.color }}
+                />
+              ) : null}
+              <span>{todoTag.name}</span>
+            </Badge>
+          ))}
+        </div>
+      )}
+    </div>
   )
 }
 

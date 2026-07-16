@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start"
 import { eq } from "drizzle-orm"
 import { db } from "../db/client"
-import { checklistItems, comments, todos } from "../db/schema"
+import { checklistItems, comments, todos, todoTags } from "../db/schema"
 
 export const Swimlanes = ["todo", "in_progress", "blocked", "done"] as const
 export type TaskStatus = (typeof Swimlanes)[number]
@@ -59,6 +59,11 @@ export const readTasksFn = createServerFn({ method: "GET" }).handler(
           },
         },
         comments: true,
+        todoTags: {
+          with: {
+            tag: true,
+          },
+        },
       },
     })
   }
@@ -206,4 +211,19 @@ export const deleteCommentFn = createServerFn({ method: "POST" })
   .validator((data: { id: string }) => data)
   .handler(async ({ data }) => {
     await db.delete(comments).where(eq(comments.id, data.id))
+  })
+
+export const addTagToTaskFn = createServerFn({ method: "POST" })
+  .validator((data: { todoId: string; tagId: string }) => data)
+  .handler(async ({ data }) => {
+    await db.insert(todoTags).values({
+      todoId: data.todoId,
+      tagId: data.tagId,
+    })
+  })
+
+export const removeTagToTaskFn = createServerFn({ method: "POST" })
+  .validator((data: { todoId: string; tagId: string }) => data)
+  .handler(async ({ data }) => {
+    await db.delete(todoTags).where(eq(todoTags.tagId, data.tagId))
   })

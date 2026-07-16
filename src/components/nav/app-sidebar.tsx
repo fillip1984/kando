@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils"
 import { Link, useLocation } from "@tanstack/react-router"
-import { LayoutDashboardIcon, Rows4Icon } from "lucide-react"
+import { LayoutDashboardIcon, Rows4Icon, TagIcon } from "lucide-react"
 import { ModeToggle } from "../theme/mode-toggle"
 import { buttonVariants } from "../ui/button"
 
@@ -68,6 +68,19 @@ const PrimaryNav = () => {
             >
               <Rows4Icon className="size-4" />
               Board
+            </Link>
+            <Link
+              to="/tags"
+              className={cn(
+                buttonVariants({
+                  variant:
+                    location.pathname === "/tags" ? "default" : "outline",
+                }),
+                "justify-start"
+              )}
+            >
+              <TagIcon className="size-4" />
+              Tags
             </Link>
           </div>
         </SidebarGroupContent>

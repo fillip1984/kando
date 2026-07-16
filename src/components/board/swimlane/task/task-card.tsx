@@ -97,6 +97,20 @@ export function TaskCard({ task }: { task: TaskType }) {
               <span>{task.comments.length}</span>
             </Badge>
           ) : null}
+          {task.todoTags.slice(0, 2).map((todoTag) => (
+            <Badge key={todoTag.id} variant="outline">
+              {todoTag.tag?.color ? (
+                <span
+                  className="size-2 rounded-full"
+                  style={{ backgroundColor: todoTag.tag.color }}
+                />
+              ) : null}
+              <span>{todoTag.tag?.name || "Tag"}</span>
+            </Badge>
+          ))}
+          {task.todoTags.length > 2 ? (
+            <Badge variant="outline">+{task.todoTags.length - 2}</Badge>
+          ) : null}
         </div>
       </div>
 
