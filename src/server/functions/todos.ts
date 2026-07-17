@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start"
-import { eq } from "drizzle-orm"
+import { and, eq } from "drizzle-orm"
 import { db } from "../db/client"
 import { checklistItems, comments, todos, todoTags } from "../db/schema"
 
@@ -225,5 +225,9 @@ export const addTagToTaskFn = createServerFn({ method: "POST" })
 export const removeTagToTaskFn = createServerFn({ method: "POST" })
   .validator((data: { todoId: string; tagId: string }) => data)
   .handler(async ({ data }) => {
-    await db.delete(todoTags).where(eq(todoTags.tagId, data.tagId))
+    await db
+      .delete(todoTags)
+      .where(
+        and(eq(todoTags.todoId, data.todoId), eq(todoTags.tagId, data.tagId))
+      )
   })

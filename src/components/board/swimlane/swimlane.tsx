@@ -24,6 +24,11 @@ export function Swimlane({
   ref?: React.Ref<HTMLDivElement>
 }) {
   const [isTaskDialogOpen, setIsTaskDialogOpen] = useState(false)
+  const nextPosition =
+    tasks.reduce(
+      (maxPosition, task) => Math.max(maxPosition, task.position ?? -1),
+      -1
+    ) + 1
 
   return (
     <>
@@ -67,7 +72,7 @@ export function Swimlane({
             status: lane,
             dueDate: "",
             priority: null,
-            position: tasks.length,
+            position: nextPosition,
           } as TaskType
         }
         open={isTaskDialogOpen}
@@ -91,6 +96,11 @@ const NewTaskFromOutlookOverlay = ({
   const router = useRouter()
   const uploadMsgFn = useServerFn(parseOutlookMsg)
   const createTask = useServerFn(createTaskFn)
+  const nextPosition =
+    tasks.reduce(
+      (maxPosition, task) => Math.max(maxPosition, task.position ?? -1),
+      -1
+    ) + 1
 
   useEffect(() => {
     window.addEventListener("dragenter", (e) =>
@@ -165,7 +175,7 @@ const NewTaskFromOutlookOverlay = ({
       data: {
         title: subject ?? "No subject",
         description: body ?? "",
-        position: tasks.length,
+        position: nextPosition,
         status: lane as TaskStatus,
       },
     })

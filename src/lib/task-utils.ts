@@ -1,5 +1,11 @@
 import type { TaskType } from "@/server/functions/todos"
-import { differenceInCalendarDays, isToday, startOfDay } from "date-fns"
+import {
+  differenceInCalendarDays,
+  isToday,
+  isValid,
+  parse,
+  startOfDay,
+} from "date-fns"
 
 type TaskDateFilterInput = {
   status: TaskType["status"]
@@ -11,12 +17,20 @@ export function parseDueDate(value: unknown): Date | null {
     return null
   }
 
-  const date = value instanceof Date ? value : new Date(String(value))
-  if (Number.isNaN(date.getTime())) {
-    return null
+  if (value instanceof Date) {
+    return Number.isNaN(value.getTime()) ? null : value
   }
 
-  return date
+  const stringValue = String(value)
+
+  // Parse date-only values explicitly as local dates to avoid UTC shifts.
+  if (/^\d{4}-\d{2}-\d{2}$/.test(stringValue)) {
+    const parsedDateOnly = parse(stringValue, "yyyy-MM-dd", new Date())
+    return isValid(parsedDateOnly) ? parsedDateOnly : null
+  }
+
+  const parsed = new Date(stringValue)
+  return Number.isNaN(parsed.getTime()) ? null : parsed
 }
 
 export function isOverdue(task: TaskDateFilterInput, now: Date): boolean {

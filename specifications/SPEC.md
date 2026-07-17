@@ -2,137 +2,135 @@
 
 ## Problem
 
-We are building a simple todo application called Kando. The product requires a clear, implementation-ready baseline that aligns with the current package set and the existing todo schema.
+Specification and design documents drifted from the implemented codebase. This baseline defines the current product behavior as implemented in the repository on 2026-07-17.
 
 ## Goals
 
-- Define Kando as a Kanban-first task tracking experience.
-- Use existing dependencies and current schema fields as the source of truth.
-- Keep scope to one board for now, with explicit roadmap support for multiple boards later.
-- Include sidebar filters for overdue and today tasks, with room for additional useful filters.
-- Define drag-and-drop status updates across Kanban columns.
+- Define Kando as a single-workspace task tracker with three main views: Dashboard, Board, and Tags.
+- Keep the Kanban board as the primary workflow for moving tasks across statuses.
+- Treat the current Drizzle schema and server functions as the source of truth.
+- Document implemented task metadata and sub-features, including tags, checklist items, and comments.
+- Capture known gaps and risks without misrepresenting current behavior.
 
 ## Non-Goals
 
-- Supporting multiple boards in the initial release.
-- Implementing tags in the initial release.
-- Rewriting framework, router, or database stack.
+- Supporting multiple boards in the current release.
+- Adding new schema entities beyond what is already implemented.
+- Rewriting the routing, state, or database stack.
 
 ## Tooling Requirements
 
 - Use `pnpm` and `pnpx` for all package management and package execution commands.
 - Do not use `npm` or `npx` in repository docs, runbooks, or implementation notes.
-- Convert third-party command examples from `npm`/`npx` to `pnpm`/`pnpx` when applying them in this repo.
 
 ## User Stories
 
-- As a user, I can view tasks on a Kanban board grouped by status.
-- As a user, I can drag a task between columns to change its status.
-- As a user, I can quickly filter tasks in a sidebar, including overdue and due today.
-- As a user, I can edit an existing task in a dialog without leaving the board context.
-- As a user, I can create a task from a button pinned to the bottom of each swimlane.
-- As a user, I can use the same task dialog for both creating and editing tasks.
-- As a user, I can delete a task from its card using a visible trashcan action.
-- As a user, I must confirm task deletion in a dialog before the task is removed.
-- As a user, I can control theme from a control placed under the app bar.
-- As a user, I can set a task priority to important, urgent, frantic, or leave it unset.
-- As a user, I can see due date and priority metadata on each task card at a glance.
-- As a user, I can use a compact task dialog where placeholders and icons communicate field meaning.
-- As a developer, I can rely on the schema fields for task behavior and rendering.
-- As a maintainer, I can evolve toward tags and multiple boards without reworking core flows.
+- As a user, I can navigate between Dashboard, Board, and Tags from the sidebar.
+- As a user, I can create and edit tasks through a shared task dialog.
+- As a user, I can move tasks between Kanban columns with drag and drop.
+- As a user, I can delete a task from a card with a confirmation step.
+- As a user, I can view due date and priority indicators on task cards.
+- As a user, I can assign and remove tags from a task.
+- As a user, I can add checklist items and comments to an existing task.
+- As a user, I can create a task by dropping an Outlook `.msg` file onto a swimlane.
+- As a user, I can manage tag records from the Tags page.
+- As a user, I can switch theme mode from the sidebar footer.
 
 ## Functional Requirements
 
-- Application name is Kando and core experience is a Kanban todo board.
-- Kanban columns map to schema status values: todo, in_progress, blocked, done.
-- Todo cards use schema fields from src/server/db/schema.ts: title, description, status, dueDate, position.
-- Editing a task must be performed through a dialog-based form.
-- Editing must be initiated by clicking the task card surface.
-- Each task card must show a visible trashcan icon action for deletion.
-- Trash/delete actions must use destructive button variants.
-- Each task card must render due date and priority as shadcn badges.
-- Task card metadata badges must use icons to indicate due date and priority instead of text labels like "Due" or "Priority".
-- If a task has no due date, the task card must not render a due-date badge.
-- Deleting a task must require a confirmation dialog before the delete mutation is executed.
-- Theme control must be placed under the app bar.
-- Date picking fields must use a shadcn date picker-based picker.
-- Date picker fields in app features must use the shared styled date-picker component in `src/components/custom-ui/styled-date-picker.tsx`.
-- The shared styled date-picker component must support a configurable leading icon for field-specific semantics.
-- The shared styled date-picker component must support a configurable placeholder for field-specific empty-state guidance.
-- Due-date indicators must use a consistent icon treatment between task-dialog date fields and task-card due-date badges.
-- Date picker display controls must include an inline clear affordance with an `X` icon for clearing selected values, similar to combobox clear interactions.
-- Date-picker clear affordances must use the lucide `X` icon.
-- Drag-and-drop is temporarily deferred in the current refactor branch and must be re-introduced before release to satisfy Kanban movement requirements.
-- Dropdown-style choice fields should prefer combobox over select.
-- Required fields implemented as comboboxes must not enable clear actions.
-- Optional fields implemented as comboboxes may enable clear actions.
-- Dropdown input-group icons must be positioned at the front (inline-start) of the control.
-- Dropdown icon composition should use leading input-group addons when building compact combobox controls.
-- Combobox controls should use shrink-resistant sizing (for example `shrink-0`) so selected values remain readable.
-- Combobox selected values should remain readable within reasonable layout constraints; truncation is acceptable under constrained widths.
-- Task dialog inputs should be compact and avoid standalone text labels when placeholders and/or icon input groups can convey field meaning.
-- Task dialog title field must use a title icon as its semantic input-group icon.
-- Todo priority must be nullable and constrained to: important, urgent, frantic.
-- Package management and package execution commands must use pnpm/pnpx conventions.
-- Each swimlane must provide a create-task button pinned to the bottom of the lane.
-- The create-task button must open the same task dialog used for editing.
-- The shared task dialog must support both modes:
-  - Create mode initializes empty/default values for the target swimlane.
-  - Edit mode initializes existing task values.
-- Drag-and-drop must update task status (and position if needed) persistently.
-- Sidebar must include filters for overdue tasks and today tasks.
-- Additional recommended filters: by status, no due date, blocked only, done recently.
-- Sidebar filters must be mutually exclusive: only one filter can be active at a time.
-- Selecting a filter activates it and deactivates any previously active filter.
-- Clicking the currently active filter toggles it off (returns to unfiltered state).
-- Initial release supports exactly one board.
-- Tags are explicitly out of scope for now but must be represented as a planned extension.
+- Application name is Kando.
+- Primary routes are:
+  - `/` Dashboard view.
+  - `/board` Kanban board view.
+  - `/tags` Tag management view.
+- Global layout includes left sidebar navigation and a topbar.
+- Theme mode control is rendered in the sidebar footer.
+- Board uses four status columns: `todo`, `in_progress`, `blocked`, `done`.
+- Swimlanes render task counts and include a bottom-pinned `Add Task` action.
+- Clicking `Add Task` opens the shared task dialog in create mode.
+- Clicking a task card opens the shared task dialog in edit mode.
+- Task creation and updates are persisted through server functions.
+- Drag and drop on the board persists both `status` and `position` through `reorderTasksFn`.
+- Each task card exposes a visible destructive delete button.
+- Deleting a task requires confirmation through a dialog before mutation.
+- Task cards render metadata badges for:
+  - Due date (only when due date exists).
+  - Priority (only when priority exists).
+  - Checklist progress (only when checklist exists).
+  - Comment count (only when comments exist).
+  - Up to two tags plus overflow count.
+- Task card metadata uses icon-based indicators.
+- Task dialog includes compact, icon-led controls for:
+  - Title (required).
+  - Description (optional).
+  - Status combobox (required, no clear action).
+  - Priority combobox (optional, clear action enabled).
+  - Due date picker using shared styled date picker.
+- Shared styled date picker supports:
+  - Optional configurable leading icon.
+  - Optional configurable placeholder.
+  - Inline clear action using lucide `X` when value exists.
+- For existing tasks, task dialog additionally includes:
+  - Tags section (attach/remove tags).
+  - Checklist section (create, toggle, reorder, delete checklist items).
+  - Comments section (create and delete comments).
+- Dashboard lists non-done tasks grouped by derived categories:
+  - Overdue.
+  - Due Today.
+  - Upcoming.
+  - Todo (no due date).
+  - Priority buckets.
+  - Tag buckets and untagged.
+- Tags page supports create, edit, and delete of tag records.
+- Task records may include an optional `emailSubjectLine` field.
+- Swimlanes support drag-and-drop import of Outlook `.msg` files to create tasks.
+
+## Data Model Requirements
+
+Current todo/task fields include:
+
+- `title` (required)
+- `description` (optional)
+- `status` (`todo` | `in_progress` | `blocked` | `done`)
+- `priority` (optional: `important` | `urgent` | `frantic`)
+- `dueDate` (optional string date)
+- `position` (optional integer)
+- `emailSubjectLine` (optional)
+
+Additional implemented entities:
+
+- `comments`
+- `checklistItems`
+- `tags`
+- `todoTags` (task-tag join)
 
 ## Acceptance Criteria
 
-- Board UI renders columns for todo, in_progress, blocked, and done.
-- Each swimlane has a create button pinned to the bottom of the column.
-- Clicking the pinned create button opens the shared task dialog in create mode.
-- Clicking an existing task card opens the shared task dialog in edit mode with pre-filled values.
-- Each task card visibly renders a trashcan icon delete action.
-- Trash/delete controls render with destructive variant styling.
-- Each task card shows due date and priority metadata using shadcn badge components.
-- Due date and priority badges use icons as their field indicators rather than text labels.
-- Tasks without due dates render no due-date badge on the task card.
-- Clicking the trashcan action opens a confirmation dialog before deletion.
-- Confirming deletion removes the task and persists the change.
-- Canceling deletion closes the confirmation dialog and leaves the task unchanged.
-- Theme mode control is rendered under the app bar.
-- Date picking fields render a shadcn date picker-based picker.
-- Date picking fields in app features use the shared styled date-picker component.
-- Styled date-picker usage supports customizable leading icon and placeholder text per field context.
-- Due-date indicators use a consistent icon treatment across task-dialog and task-card contexts.
-- Date picker selected-value displays include an inline `X` clear affordance rendered inside the display control.
-- Date-picker clear affordances render with the lucide `X` icon.
-- Dropdown-style controls prefer combobox over select.
-- Required combobox fields render without clear actions.
-- Optional combobox fields may render with clear actions.
-- Dropdown controls with input-group icons render those icons at the front of the control.
-- Dropdown controls with semantic field icons use leading input-group addons in compact dialog layouts.
-- Combobox controls preserve enough width for selected value readability and avoid excessive shrinking.
-- Combobox selected values remain readable within reasonable layout constraints, including truncated rendering when constrained.
-- Task dialog uses a compact layout where field meaning is conveyed through placeholders and/or icon input groups instead of standalone labels.
-- Task dialog title input renders a title icon as the field indicator.
-- Task create and edit flows support priority values of null, important, urgent, or frantic.
-- Submitting the dialog in create mode creates a new task in the intended swimlane.
-- Submitting the dialog in edit mode updates the existing task.
-- Dragging a card to another column updates its status and persists the change.
-- Current refactor branch keeps cards draggable but does not yet persist drag/drop lane moves; this remains an open delivery item.
-- Sidebar provides overdue and today filters that correctly derive from dueDate.
-- Only one sidebar filter can be active at a time.
-- Activating one filter automatically deactivates the previously active filter.
-- Clicking the active filter again clears it and restores the unfiltered task view.
-- Overdue excludes done tasks and includes tasks with dueDate earlier than the current date.
-- Specification and design both document future support for tags and multiple boards.
-- Task list includes implementation, validation, and spec drift tracking.
+- Sidebar navigation includes links for Dashboard, Board, and Tags.
+- Theme mode toggle is visible in sidebar footer.
+- Board renders all four swimlanes and task counts.
+- Swimlanes provide `Add Task` action at lane bottom.
+- Task create/edit dialog is shared between create and edit flows.
+- Saving create/edit dialog persists task changes and refreshes route data.
+- Task cards include visible destructive delete action.
+- Delete action opens confirmation dialog before task removal.
+- Task cards render icon-led due date and priority badges when fields are present.
+- Task cards omit due-date and priority badges when those fields are null/empty.
+- Dragging a task between columns updates persisted `status` and `position`.
+- Styled date picker is used in task dialog for due date and shows inline `X` clear affordance.
+- Status control uses combobox without clear action.
+- Priority control uses combobox with clear action.
+- Existing task dialog shows tags, checklist, and comments sections.
+- Tags page supports creating, editing, and deleting tags.
+- Dashboard renders derived non-done task groupings including date, priority, and tag-based sections.
 
-## Open Questions
+## Known Gaps and Risks
 
-- Done tasks do not appear in overdue results, and today includes done tasks when dueDate matches the current date.
-- Position remains ordered per status column in v1.
-- Extra sidebar filters in v1 are blocked only, no due date, and done recently; by status remains a follow-up iteration.
+- Date-only parsing now prefers explicit local-date handling for `yyyy-MM-dd` values; verify behavior in all deployment timezones.
+- There is an observed issue where newly added tasks may not become draggable until refresh.
+
+## Future Scope
+
+- Multi-board support is still a roadmap item.
+- Richer filtering UX (for example, interactive sidebar filters) can be added in a future iteration.
+- Additional analytics/reporting can be layered on top of current entities.
