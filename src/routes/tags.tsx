@@ -33,6 +33,7 @@ import { createFileRoute, useRouter } from "@tanstack/react-router"
 import { useServerFn } from "@tanstack/react-start"
 import { PencilIcon, PlusIcon, TagIcon, Trash2Icon } from "lucide-react"
 import { useEffect, useState } from "react"
+import { toast } from "sonner"
 
 const tagColorOptions = [
   "#16a34a",
@@ -214,6 +215,7 @@ function TagDialog({
             color,
           },
         })
+        toast.success(`Tag '${normalizedName}' created`)
       } else {
         await updateTag({
           data: {
@@ -223,10 +225,15 @@ function TagDialog({
             color,
           },
         })
+        toast.success("Tag updated")
       }
-    } finally {
+
       close()
-      router.invalidate()
+      await router.invalidate()
+    } catch (error) {
+      console.error("Failed to save tag", error)
+      toast.error("Failed to save tag")
+    } finally {
       setSaving(false)
     }
   }
@@ -236,12 +243,19 @@ function TagDialog({
       return
     }
 
-    setDeleting(true)
-    await deleteTag({ data: { id: tag.id } })
-    setDeleting(false)
-    setDeleteConfirmationOpen(false)
-    close()
-    router.invalidate()
+    try {
+      setDeleting(true)
+      await deleteTag({ data: { id: tag.id } })
+      toast.success("Tag deleted")
+      setDeleteConfirmationOpen(false)
+      close()
+      await router.invalidate()
+    } catch (error) {
+      console.error("Failed to delete tag", error)
+      toast.error("Failed to delete tag")
+    } finally {
+      setDeleting(false)
+    }
   }
 
   return (

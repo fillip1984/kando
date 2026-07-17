@@ -6,7 +6,7 @@ Last updated: 2026-07-17
 
 - [ ] things due today are showing as overdue (recording as utc and not translating properly)
 - [ ] standardize on enums
-- [ ] add toasts
+- [x] add toasts
 - [ ] inline edits everywhere
 - [ ] break up task dialog so that it is 2 columns
 - [ ] add settings and import/export
@@ -34,6 +34,7 @@ Last updated: 2026-07-17
 - [x] Improve due-date parsing for `yyyy-MM-dd` values using local-date parsing semantics.
 - [x] Improve new-task position assignment (`max(position) + 1`) to reduce duplicate positions after create/import.
 - [x] Run verification checks (`pnpm typecheck`, `pnpm build`) successfully after fixes.
+- [x] Add toasts for key create/update/delete flows.
 
 ## In Progress / Validate
 
@@ -50,7 +51,6 @@ Last updated: 2026-07-17
 
 ## Product / UX Backlog
 
-- [ ] Add toasts for key create/update/delete flows.
 - [ ] Evaluate inline edit affordances for common task fields.
 - [ ] Evaluate two-column layout option for the task dialog on larger screens.
 - [ ] Add settings and import/export workflows.

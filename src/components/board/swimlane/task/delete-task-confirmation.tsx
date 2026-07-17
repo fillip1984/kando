@@ -16,6 +16,7 @@ import { useRouter } from "@tanstack/react-router"
 import { useServerFn } from "@tanstack/react-start"
 import { Trash2Icon } from "lucide-react"
 import { useState } from "react"
+import { toast } from "sonner"
 
 export default function DeleteTaskConfirmation({
   task,
@@ -30,11 +31,18 @@ export default function DeleteTaskConfirmation({
   const deleteTask = useServerFn(deleteTaskFn)
   const [isDeleting, setIsDeleting] = useState(false)
   const handleDeleteTask = async () => {
-    setIsDeleting(true)
-    await deleteTask({ data: { id: task.id } })
-    setIsDeleting(false)
-    router.invalidate()
-    close()
+    try {
+      setIsDeleting(true)
+      await deleteTask({ data: { id: task.id } })
+      toast.success("Task deleted")
+      await router.invalidate()
+      close()
+    } catch (error) {
+      console.error("Failed to delete task", error)
+      toast.error("Failed to delete task")
+    } finally {
+      setIsDeleting(false)
+    }
   }
 
   return (

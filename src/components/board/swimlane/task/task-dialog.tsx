@@ -68,6 +68,7 @@ import {
   XIcon,
 } from "lucide-react"
 import { useEffect, useState } from "react"
+import { toast } from "sonner"
 
 export function TaskDialog({
   task,
@@ -103,6 +104,7 @@ export function TaskDialog({
   const createTask = useServerFn(createTaskFn)
   const updateTask = useServerFn(updateTaskFn)
   const handleSubmit = async () => {
+    const normalizedTitle = title.trim()
     try {
       setSaving(true)
       if (isNew) {
@@ -116,6 +118,7 @@ export function TaskDialog({
             position,
           },
         })
+        toast.success(`Task '${normalizedTitle}' created`)
       } else {
         await updateTask({
           data: {
@@ -128,12 +131,15 @@ export function TaskDialog({
             position,
           },
         })
+        toast.success("Task updated")
       }
-    } finally {
-      // TODO: this may cause issues if the server function fails
-      // TODO: to make this perfect we should wait for the dialog to close then set saving to false
+
       close()
-      router.invalidate()
+      await router.invalidate()
+    } catch (error) {
+      console.error("Failed to save task", error)
+      toast.error("Failed to save task")
+    } finally {
       setSaving(false)
     }
   }
