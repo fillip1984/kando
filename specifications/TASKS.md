@@ -4,11 +4,12 @@ Last updated: 2026-07-17
 
 ## TODOs
 
-- [ ] things due today are showing as overdue (recording as utc and not translating properly)
+- [x] things due today are showing as overdue (recording as utc and not translating properly)
 - [ ] standardize on enums
 - [x] add toasts
 - [ ] inline edits everywhere
-- [ ] break up task dialog so that it is 2 columns
+- [x] break up task dialog so that it is 2 columns
+  - [ ] would prefer that the tags go on the left... work on this after inlining form and making to possible to add tags on creation
 - [ ] add settings and import/export
 - [ ] when adding items, they are not draggable without a page refresh (formkit dnd issue)
 
@@ -35,6 +36,7 @@ Last updated: 2026-07-17
 - [x] Improve new-task position assignment (`max(position) + 1`) to reduce duplicate positions after create/import.
 - [x] Run verification checks (`pnpm typecheck`, `pnpm build`) successfully after fixes.
 - [x] Add toasts for key create/update/delete flows.
+- [x] Break up task dialog into a responsive two-column layout on larger screens.
 
 ## In Progress / Validate
 
@@ -52,7 +54,6 @@ Last updated: 2026-07-17
 ## Product / UX Backlog
 
 - [ ] Evaluate inline edit affordances for common task fields.
-- [ ] Evaluate two-column layout option for the task dialog on larger screens.
 - [ ] Add settings and import/export workflows.
 - [ ] Improve dashboard filtering UX if interactive filters are desired.
 

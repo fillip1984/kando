@@ -153,120 +153,129 @@ export function TaskDialog({
 
   return (
     <Dialog open={open} onOpenChange={(open) => open === false && close()}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="w-3/4 sm:max-w-5xl">
         <DialogHeader>
           <DialogTitle>{isNew ? "Create Task" : "Edit Task"}</DialogTitle>
         </DialogHeader>
 
-        <div className="-mx-4 no-scrollbar grid max-h-[75vh] gap-3 overflow-y-auto px-4">
-          <div className="relative">
-            <Type
-              data-testid="title-icon"
-              className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
-            />
-            <Input
-              aria-label="Task title"
-              value={title}
-              onChange={(event) => setTitle(event.target.value)}
-              placeholder="Task title"
-              className="pl-9"
-            />
-          </div>
+        <div
+          className={`-mx-4 no-scrollbar grid max-h-[75vh] gap-4 overflow-y-auto px-4 ${
+            isNew ? "" : "lg:grid-cols-2"
+          }`}
+        >
+          <div className="space-y-3 lg:min-w-0">
+            <div className="relative">
+              <Type
+                data-testid="title-icon"
+                className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+              />
+              <Input
+                aria-label="Task title"
+                value={title}
+                onChange={(event) => setTitle(event.target.value)}
+                placeholder="Task title"
+                className="pl-9"
+              />
+            </div>
 
-          <div className="relative">
-            <AlignLeft className="pointer-events-none absolute top-3 left-3 size-4 text-muted-foreground" />
-            <Textarea
-              aria-label="Task description"
-              value={description}
-              onChange={(event) => setDescription(event.target.value)}
-              placeholder="Description (optional)"
-              className="max-h-80 min-h-40 resize-none pl-9 break-all"
-            />
-          </div>
+            <div className="relative">
+              <AlignLeft className="pointer-events-none absolute top-3 left-3 size-4 text-muted-foreground" />
+              <Textarea
+                aria-label="Task description"
+                value={description}
+                onChange={(event) => setDescription(event.target.value)}
+                placeholder="Description (optional)"
+                className="max-h-80 min-h-40 resize-none pl-9 break-all"
+              />
+            </div>
 
-          <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
-            <Combobox
-              value={status || null}
-              items={swimlaneLabels.map((label) => label.value)}
-              onValueChange={(next) => setStatus(next ?? "")}
-            >
-              <ComboboxInput
-                aria-label="Open status options"
-                showTrigger
-                value={
-                  status
-                    ? swimlaneLabels.find((label) => label.value === status)
-                        ?.name
-                    : ""
-                }
-                placeholder="Status"
-                className="shrink-0"
+            <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
+              <Combobox
+                value={status || null}
+                items={swimlaneLabels.map((label) => label.value)}
+                onValueChange={(next) => setStatus(next ?? "")}
               >
-                <InputGroupAddon>
-                  <Kanban data-testid="status-icon" className="size-4" />
-                </InputGroupAddon>
-              </ComboboxInput>
+                <ComboboxInput
+                  aria-label="Open status options"
+                  showTrigger
+                  value={
+                    status
+                      ? swimlaneLabels.find((label) => label.value === status)
+                          ?.name
+                      : ""
+                  }
+                  placeholder="Status"
+                  className="shrink-0"
+                >
+                  <InputGroupAddon>
+                    <Kanban data-testid="status-icon" className="size-4" />
+                  </InputGroupAddon>
+                </ComboboxInput>
 
-              <Field className="mx-auto w-full">
-                <StyledDatePicker
-                  value={dueDate}
-                  handleOnChange={(value) => setDueDate(value)}
-                  leadingIcon={<GoalIcon data-testid="due-date-icon" />}
-                  placeholder="Due date"
-                />
-              </Field>
+                <Field className="mx-auto w-full">
+                  <StyledDatePicker
+                    value={dueDate}
+                    handleOnChange={(value) => setDueDate(value)}
+                    leadingIcon={<GoalIcon data-testid="due-date-icon" />}
+                    placeholder="Due date"
+                  />
+                </Field>
 
-              <ComboboxContent className="w-full" align="center">
-                <ComboboxList>
-                  {swimlaneLabels.map((label) => (
-                    <ComboboxItem key={label.value} value={label.value}>
-                      {label.name}
-                    </ComboboxItem>
-                  ))}
-                </ComboboxList>
-              </ComboboxContent>
-            </Combobox>
+                <ComboboxContent className="w-full" align="center">
+                  <ComboboxList>
+                    {swimlaneLabels.map((label) => (
+                      <ComboboxItem key={label.value} value={label.value}>
+                        {label.name}
+                      </ComboboxItem>
+                    ))}
+                  </ComboboxList>
+                </ComboboxContent>
+              </Combobox>
 
-            <Combobox
-              value={priority || null}
-              items={priorityLabels.map((label) => label.value)}
-              onValueChange={(next) => setPriority(next ?? "")}
-            >
-              <ComboboxInput
-                aria-label="Open priority options"
-                showClear
-                showTrigger
-                value={
-                  priority
-                    ? priorityLabels.find((label) => label.value === priority)
-                        ?.name
-                    : ""
-                }
-                placeholder="Priority"
-                className="shrink-0"
+              <Combobox
+                value={priority || null}
+                items={priorityLabels.map((label) => label.value)}
+                onValueChange={(next) => setPriority(next ?? "")}
               >
-                <InputGroupAddon>
-                  <Flag data-testid="priority-field-icon" className="size-4" />
-                </InputGroupAddon>
-              </ComboboxInput>
-              <ComboboxContent className="w-full" align="center">
-                <ComboboxList>
-                  {priorityLabels.map((label) => (
-                    <ComboboxItem key={label.value} value={label.value}>
-                      {label.name}
-                    </ComboboxItem>
-                  ))}
-                </ComboboxList>
-              </ComboboxContent>
-            </Combobox>
+                <ComboboxInput
+                  aria-label="Open priority options"
+                  showClear
+                  showTrigger
+                  value={
+                    priority
+                      ? priorityLabels.find((label) => label.value === priority)
+                          ?.name
+                      : ""
+                  }
+                  placeholder="Priority"
+                  className="shrink-0"
+                >
+                  <InputGroupAddon>
+                    <Flag
+                      data-testid="priority-field-icon"
+                      className="size-4"
+                    />
+                  </InputGroupAddon>
+                </ComboboxInput>
+                <ComboboxContent className="w-full" align="center">
+                  <ComboboxList>
+                    {priorityLabels.map((label) => (
+                      <ComboboxItem key={label.value} value={label.value}>
+                        {label.name}
+                      </ComboboxItem>
+                    ))}
+                  </ComboboxList>
+                </ComboboxContent>
+              </Combobox>
+            </div>
           </div>
 
-          {task.id !== "new" && (
-            <>
+          {!isNew && (
+            <div className="space-y-6 lg:min-w-0 lg:border-l lg:pl-4">
               <TagsSection task={task} />
               <ChecklistSection task={task} />
               <CommentsSection task={task} />
-            </>
+            </div>
           )}
         </div>
 
