@@ -30,7 +30,6 @@ import {
   InputGroupInput,
   InputGroupTextarea,
 } from "@/components/ui/input-group"
-import { Item, ItemContent, ItemTitle } from "@/components/ui/item"
 import { Textarea } from "@/components/ui/textarea"
 import { priorityLabels } from "@/lib/priority-utils"
 import { swimlaneLabels } from "@/lib/swimlane-utils"
@@ -414,13 +413,7 @@ const TagsSection = ({ task }: { task: TaskType }) => {
           <ComboboxList>
             {(item: ComboboxOption) => (
               <ComboboxItem key={item.value} value={item}>
-                <Item size="xs" className="p-0">
-                  <ItemContent>
-                    <ItemTitle className="whitespace-nowrap">
-                      {item.label}
-                    </ItemTitle>
-                  </ItemContent>
-                </Item>
+                {item.label}
               </ComboboxItem>
             )}
           </ComboboxList>
