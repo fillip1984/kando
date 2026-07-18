@@ -22,8 +22,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Field } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
+import { Field, FieldGroup } from "@/components/ui/field"
 import {
   InputGroup,
   InputGroupAddon,
@@ -31,7 +30,7 @@ import {
   InputGroupInput,
   InputGroupTextarea,
 } from "@/components/ui/input-group"
-import { Textarea } from "@/components/ui/textarea"
+import type { ComboboxOption } from "@/lib/combobox-utils"
 import type { TodoPriorityEnum, TodoStatusEnum } from "@/lib/enum-values"
 import { TodoPriorityEnumValues, TodoStatusEnumValues } from "@/lib/enum-values"
 import type { TagType } from "@/server/functions/tags"
@@ -58,6 +57,7 @@ import { useRouter } from "@tanstack/react-router"
 import { useServerFn } from "@tanstack/react-start"
 import {
   AlignLeft,
+  AlignLeftIcon,
   CheckIcon,
   ChevronDownIcon,
   CopyIcon,
@@ -67,7 +67,7 @@ import {
   Kanban,
   TagIcon,
   TrashIcon,
-  Type,
+  TypeIcon,
   XIcon,
 } from "lucide-react"
 import { useEffect, useState } from "react"
@@ -167,32 +167,34 @@ export function TaskDialog({
           }`}
         >
           <div className="space-y-3 lg:min-w-0">
-            <div className="relative">
-              <Type
-                data-testid="title-icon"
-                className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
-              />
-              <Input
-                aria-label="Task title"
-                value={title}
-                onChange={(event) => setTitle(event.target.value)}
-                placeholder="Task title"
-                className="pl-9"
-              />
-            </div>
+            <Field>
+              <InputGroup>
+                <InputGroupAddon>
+                  <TypeIcon />
+                </InputGroupAddon>
+                <InputGroupInput
+                  value={title}
+                  onChange={(event) => setTitle(event.target.value)}
+                  placeholder="Task title"
+                />
+              </InputGroup>
+            </Field>
 
-            <div className="relative">
-              <AlignLeft className="pointer-events-none absolute top-3 left-3 size-4 text-muted-foreground" />
-              <Textarea
-                aria-label="Task description"
-                value={description}
-                onChange={(event) => setDescription(event.target.value)}
-                placeholder="Description (optional)"
-                className="max-h-80 min-h-40 resize-none pl-9 break-all"
-              />
-            </div>
+            <Field>
+              <InputGroup>
+                <InputGroupAddon>
+                  <AlignLeftIcon />
+                </InputGroupAddon>
+                <InputGroupTextarea
+                  value={description}
+                  onChange={(event) => setDescription(event.target.value)}
+                  placeholder="Description (optional)"
+                  className="max-h-80 min-h-40 resize-none break-all"
+                />
+              </InputGroup>
+            </Field>
 
-            <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
+            <FieldGroup className="grid grid-cols-1 gap-2 md:grid-cols-3">
               <Combobox
                 items={Object.values(TodoStatusEnumValues)}
                 value={status}
@@ -214,14 +216,12 @@ export function TaskDialog({
                 </ComboboxContent>
               </Combobox>
 
-              <Field className="mx-auto w-full">
-                <StyledDatePicker
-                  value={dueDate}
-                  handleOnChange={(value) => setDueDate(value)}
-                  leadingIcon={<GoalIcon data-testid="due-date-icon" />}
-                  placeholder="Due date"
-                />
-              </Field>
+              <StyledDatePicker
+                value={dueDate}
+                handleOnChange={(value) => setDueDate(value)}
+                leadingIcon={<GoalIcon data-testid="due-date-icon" />}
+                placeholder="Due date"
+              />
 
               <Combobox
                 items={Object.values(TodoPriorityEnumValues)}
@@ -246,7 +246,7 @@ export function TaskDialog({
                   </ComboboxList>
                 </ComboboxContent>
               </Combobox>
-            </div>
+            </FieldGroup>
           </div>
 
           {!isNew && (
@@ -284,11 +284,6 @@ export function TaskDialog({
       </DialogContent>
     </Dialog>
   )
-}
-
-type ComboboxOption = {
-  value: string
-  label: string
 }
 
 const TagsSection = ({ task }: { task: TaskType }) => {

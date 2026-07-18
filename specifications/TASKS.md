@@ -4,14 +4,13 @@ Last updated: 2026-07-17
 
 ## TODOs
 
-- [ ] clean up lane and label to swimlanes now if possible?
-- [ ] try to get consistent on fields, either use null or empty string to denote no value
-- [ ] switch over to Field instead of div everywhere
 - [ ] inline edits everywhere
 - [ ] add settings and import/export
 
 ### Long-term TODOs
 
+- [ ] switch over to Field instead of div everywhere
+- [ ] try to get consistent on fields, either use null or empty string to denote no value
 - [ ] when adding items, they are not draggable without a page refresh (formkit dnd issue)
 - [ ] break up task dialog - would prefer that the tags go on the left... work on this after inlining form and making to possible to add tags on creation
 - [ ] add security
