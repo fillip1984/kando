@@ -1,4 +1,5 @@
 import StyledDatePicker from "@/components/custom-ui/styled-date-picker"
+import DeleteCommentConfirmation from "@/components/board/swimlane/task/delete-comment-confirmation"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -36,6 +37,7 @@ import { swimlaneLabels } from "@/lib/swimlane-utils"
 import type { TagType } from "@/server/functions/tags"
 import { readTagsFn } from "@/server/functions/tags"
 import type {
+  CommentType,
   ChecklistItemType,
   TaskPriority,
   TaskStatus,
@@ -47,7 +49,6 @@ import {
   createCommentFn,
   createTaskFn,
   deleteChecklistItemFn,
-  deleteCommentFn,
   removeTagToTaskFn,
   reorderChecklistItemsFn,
   updateChecklistItemFn,
@@ -617,6 +618,11 @@ const ChecklistItem = ({ item }: { item: ChecklistItemType }) => {
 const CommentsSection = ({ task }: { task: TaskType }) => {
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [newCommentContent, setNewCommentContent] = useState("")
+  const [isDeleteCommentConfirmationOpen, setIsDeleteCommentConfirmationOpen] =
+    useState(false)
+  const [selectedComment, setSelectedComment] = useState<CommentType | null>(
+    null
+  )
 
   const router = useRouter()
   const createComment = useServerFn(createCommentFn)
@@ -631,14 +637,9 @@ const CommentsSection = ({ task }: { task: TaskType }) => {
     router.invalidate()
   }
 
-  const deleteComment = useServerFn(deleteCommentFn)
-  const handleDeleteComment = async (commentId: string) => {
-    await deleteComment({
-      data: {
-        id: commentId,
-      },
-    })
-    router.invalidate()
+  const handleDeleteComment = (comment: CommentType) => {
+    setSelectedComment(comment)
+    setIsDeleteCommentConfirmationOpen(true)
   }
 
   return (
@@ -671,7 +672,7 @@ const CommentsSection = ({ task }: { task: TaskType }) => {
                     <Button
                       variant="destructive"
                       size="icon-xs"
-                      onClick={() => handleDeleteComment(comment.id)}
+                      onClick={() => handleDeleteComment(comment)}
                     >
                       <TrashIcon />
                     </Button>
@@ -702,6 +703,17 @@ const CommentsSection = ({ task }: { task: TaskType }) => {
             </InputGroup>
           </Field>
         </>
+      )}
+
+      {selectedComment !== null && (
+        <DeleteCommentConfirmation
+          comment={selectedComment}
+          open={isDeleteCommentConfirmationOpen}
+          close={() => {
+            setIsDeleteCommentConfirmationOpen(false)
+            setSelectedComment(null)
+          }}
+        />
       )}
     </div>
   )
