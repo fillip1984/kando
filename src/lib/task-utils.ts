@@ -34,7 +34,7 @@ export function parseDueDate(value: unknown): Date | null {
 }
 
 export function isOverdue(task: TaskDateFilterInput, now: Date): boolean {
-  if (task.status === "done") {
+  if (task.status === "Done") {
     return false
   }
 
@@ -55,7 +55,7 @@ export function isDoneRecently(
   now: Date,
   recentDays = 7
 ): boolean {
-  if (task.status !== "done") {
+  if (task.status !== "Done") {
     return false
   }
 

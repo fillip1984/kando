@@ -13,10 +13,10 @@ export function KanbanBoard({ tasks }: { tasks: TaskType[] }) {
   const route = useRouter()
 
   useEffect(() => {
-    setTodoTasks(tasks.filter((task) => task.status === "todo"))
-    setInProgressTasks(tasks.filter((task) => task.status === "in_progress"))
-    setBlockedTasks(tasks.filter((task) => task.status === "blocked"))
-    setDoneTasks(tasks.filter((task) => task.status === "done"))
+    setTodoTasks(tasks.filter((task) => task.status === "Todo"))
+    setInProgressTasks(tasks.filter((task) => task.status === "In Progress"))
+    setBlockedTasks(tasks.filter((task) => task.status === "Blocked"))
+    setDoneTasks(tasks.filter((task) => task.status === "Done"))
   }, [tasks])
 
   const reorderTasks = useServerFn(reorderTasksFn)
@@ -25,12 +25,7 @@ export function KanbanBoard({ tasks }: { tasks: TaskType[] }) {
   const config = {
     group: "kanban-board",
     onDragend: async (event: unknown) => {
-      // console.log({ event })
       const status = (event as any).parent.el.dataset.columnId
-      // const parentEl = event.target.parentElement
-      // const columnId = parentEl.dataset.columnId
-      // console.log("Dragged from column:", status)
-
       const dragEvent = event as { values: TaskType[] }
       const updates = dragEvent.values.map((task, i) => ({
         taskId: task.id,
@@ -65,20 +60,20 @@ export function KanbanBoard({ tasks }: { tasks: TaskType[] }) {
   return (
     <div className="flex grow overflow-hidden p-4">
       <div className="flex grow gap-4 overflow-x-auto">
-        <Swimlane ref={todoTasksRef} label="Todo" lane="todo" tasks={todos} />
+        <Swimlane ref={todoTasksRef} label="Todo" lane="Todo" tasks={todos} />
         <Swimlane
           ref={inProgressTasksRef}
           label="In Progress"
-          lane="in_progress"
+          lane="In Progress"
           tasks={inProgress}
         />
         <Swimlane
           ref={blockedTasksRef}
           label="Blocked"
-          lane="blocked"
+          lane="Blocked"
           tasks={blocked}
         />
-        <Swimlane ref={doneTasksRef} label="Done" lane="done" tasks={done} />
+        <Swimlane ref={doneTasksRef} label="Done" lane="Done" tasks={done} />
       </div>
     </div>
   )

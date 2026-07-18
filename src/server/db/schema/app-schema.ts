@@ -1,24 +1,15 @@
+import { TodoStatusEnumValues } from "@/lib/enum-values"
 import { baseFields, baseSchema } from "./base"
-
-export const todoStatusEnum = baseSchema.enum("todo_status", [
-  "todo",
-  "in_progress",
-  "blocked",
-  "done",
-])
-
-export const todoPriorityEnum = baseSchema.enum("todo_priority", [
-  "important",
-  "urgent",
-  "frantic",
-])
+import { todoPriorityPgEnum, todoStatusPgEnum } from "./enums"
 
 export const todos = baseSchema.table("todo", (t) => ({
   ...baseFields,
   title: t.text("title").notNull(),
   description: t.text("description"),
-  status: todoStatusEnum("status").notNull().default("todo"),
-  priority: todoPriorityEnum("priority"),
+  status: todoStatusPgEnum("status")
+    .notNull()
+    .default(TodoStatusEnumValues.TODO),
+  priority: todoPriorityPgEnum("priority"),
   dueDate: t.date("dueDate", { mode: "string" }),
   position: t.integer("position"),
   emailSubjectLine: t.text("email_subject_line"),

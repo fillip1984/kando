@@ -1,31 +1,8 @@
+import type { TodoPriorityEnum, TodoStatusEnum } from "@/lib/enum-values"
 import { createServerFn } from "@tanstack/react-start"
 import { and, eq } from "drizzle-orm"
 import { db } from "../db/client"
 import { checklistItems, comments, todos, todoTags } from "../db/schema"
-
-export const Swimlanes = ["todo", "in_progress", "blocked", "done"] as const
-export type TaskStatus = (typeof Swimlanes)[number]
-export const TaskPriorities = ["important", "urgent", "frantic"] as const
-export type TaskPriority = (typeof TaskPriorities)[number]
-
-export type CreateTaskInput = {
-  title: string
-  description?: string | null
-  dueDate?: string | null
-  status?: TaskStatus
-  priority?: TaskPriority | null
-  position?: number
-}
-
-export type UpdateTaskInput = {
-  id: string
-  title: string
-  description?: string | null
-  dueDate?: string | null
-  status: TaskStatus
-  priority: TaskPriority | null
-  position: number
-}
 
 export type TaskType = Awaited<ReturnType<typeof readTasksFn>>[0]
 export type ChecklistItemType = TaskType["checklistItems"][0]
@@ -34,15 +11,24 @@ export type CommentType = TaskType["comments"][0]
 
 // crud
 export const createTaskFn = createServerFn({ method: "POST" })
-  .validator((data: CreateTaskInput) => data)
+  .validator(
+    (data: {
+      title: string
+      description?: string | null
+      dueDate?: string | null
+      status: TodoStatusEnum
+      priority?: TodoPriorityEnum | null
+      position: number
+    }) => data
+  )
   .handler(async ({ data }) => {
     await db.insert(todos).values({
       title: data.title,
       description: data.description ?? null,
-      status: data.status ?? "todo",
+      status: data.status,
       dueDate: data.dueDate !== "" ? data.dueDate : null,
       priority: data.priority ?? null,
-      position: data.position ?? 0,
+      position: data.position,
     })
   })
 
@@ -69,16 +55,18 @@ export const readTasksFn = createServerFn({ method: "GET" }).handler(
   }
 )
 
-// export const readTaskFn = createServerFn({ method: "GET" })
-//   .validator((data: { id: string }) => data)
-//   .handler(async ({ data }) => {
-//     return await db.query.todos.findFirst({
-//       where: { id: data.id },
-//     })
-//   })
-
 export const updateTaskFn = createServerFn({ method: "POST" })
-  .validator((data: UpdateTaskInput) => data)
+  .validator(
+    (data: {
+      id: string
+      title: string
+      description?: string | null
+      dueDate?: string | null
+      status: TodoStatusEnum
+      priority: TodoPriorityEnum | null
+      position: number
+    }) => data
+  )
   .handler(async ({ data }) => {
     await db
       .update(todos)
@@ -99,7 +87,7 @@ export const reorderTasksFn = createServerFn({ method: "POST" })
       updates: {
         taskId: string
         position: number
-        status: TaskStatus
+        status: TodoStatusEnum
       }[]
     }) => data
   )

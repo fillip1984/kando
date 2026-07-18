@@ -1,8 +1,10 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
+
+import type { TodoStatusEnum } from "@/lib/enum-values"
 import { parseOutlookMsg } from "@/server/functions/email"
-import type { TaskStatus, TaskType } from "@/server/functions/todos"
+import type { TaskType } from "@/server/functions/todos"
 import { createTaskFn } from "@/server/functions/todos"
 import { useRouter } from "@tanstack/react-router"
 import { useServerFn } from "@tanstack/react-start"
@@ -176,7 +178,7 @@ const NewTaskFromOutlookOverlay = ({
         title: subject ?? "No subject",
         description: body ?? "",
         position: nextPosition,
-        status: lane as TaskStatus,
+        status: lane as TodoStatusEnum,
       },
     })
     router.invalidate()

@@ -32,15 +32,13 @@ import {
   InputGroupTextarea,
 } from "@/components/ui/input-group"
 import { Textarea } from "@/components/ui/textarea"
-import { priorityLabels } from "@/lib/priority-utils"
-import { swimlaneLabels } from "@/lib/swimlane-utils"
+import type { TodoPriorityEnum, TodoStatusEnum } from "@/lib/enum-values"
+import { TodoPriorityEnumValues, TodoStatusEnumValues } from "@/lib/enum-values"
 import type { TagType } from "@/server/functions/tags"
 import { readTagsFn } from "@/server/functions/tags"
 import type {
   ChecklistItemType,
   CommentType,
-  TaskPriority,
-  TaskStatus,
   TaskType,
 } from "@/server/functions/todos"
 import {
@@ -89,9 +87,9 @@ export function TaskDialog({
   const isNew = task.id === "new"
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
-  const [status, setStatus] = useState<TaskStatus | "">("")
+  const [status, setStatus] = useState<TodoStatusEnum>(task.status)
   const [dueDate, setDueDate] = useState("")
-  const [priority, setPriority] = useState<TaskPriority | "">("")
+  const [priority, setPriority] = useState<TodoPriorityEnum | null>(null)
   const [position, setPosition] = useState(9999)
   const [saving, setSaving] = useState(false)
   useEffect(() => {
@@ -100,7 +98,7 @@ export function TaskDialog({
       setDescription(task.description || "")
       setStatus(task.status)
       setDueDate(task.dueDate || "")
-      setPriority(task.priority || "")
+      setPriority(task.priority ?? null)
       setPosition(task.position ?? 9999)
     }
   }, [open])
@@ -117,7 +115,7 @@ export function TaskDialog({
           data: {
             title,
             description: description || null,
-            status: status as TaskStatus,
+            status,
             dueDate,
             priority: priority || null,
             position,
@@ -130,7 +128,7 @@ export function TaskDialog({
             id: task.id,
             title,
             description: description || null,
-            status: status as TaskStatus,
+            status,
             dueDate: dueDate || null,
             priority: priority || null,
             position,
@@ -196,65 +194,41 @@ export function TaskDialog({
 
             <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
               <Combobox
-                value={status || null}
-                items={swimlaneLabels.map((label) => label.value)}
-                onValueChange={(next) => setStatus(next ?? "")}
+                items={Object.values(TodoStatusEnumValues)}
+                value={status}
+                onValueChange={(value) => setStatus(value ?? "Todo")}
               >
-                <ComboboxInput
-                  aria-label="Open status options"
-                  showTrigger
-                  value={
-                    status
-                      ? swimlaneLabels.find((label) => label.value === status)
-                          ?.name
-                      : ""
-                  }
-                  placeholder="Status"
-                  className="shrink-0"
-                >
+                <ComboboxInput>
                   <InputGroupAddon>
                     <Kanban data-testid="status-icon" className="size-4" />
                   </InputGroupAddon>
                 </ComboboxInput>
-
-                <Field className="mx-auto w-full">
-                  <StyledDatePicker
-                    value={dueDate}
-                    handleOnChange={(value) => setDueDate(value)}
-                    leadingIcon={<GoalIcon data-testid="due-date-icon" />}
-                    placeholder="Due date"
-                  />
-                </Field>
-
                 <ComboboxContent className="w-full" align="center">
                   <ComboboxList>
-                    {swimlaneLabels.map((label) => (
-                      <ComboboxItem key={label.value} value={label.value}>
-                        {label.name}
+                    {(item) => (
+                      <ComboboxItem key={item} value={item}>
+                        {item}
                       </ComboboxItem>
-                    ))}
+                    )}
                   </ComboboxList>
                 </ComboboxContent>
               </Combobox>
 
+              <Field className="mx-auto w-full">
+                <StyledDatePicker
+                  value={dueDate}
+                  handleOnChange={(value) => setDueDate(value)}
+                  leadingIcon={<GoalIcon data-testid="due-date-icon" />}
+                  placeholder="Due date"
+                />
+              </Field>
+
               <Combobox
-                value={priority || null}
-                items={priorityLabels.map((label) => label.value)}
-                onValueChange={(next) => setPriority(next ?? "")}
+                items={Object.values(TodoPriorityEnumValues)}
+                value={priority}
+                onValueChange={(value) => setPriority(value)}
               >
-                <ComboboxInput
-                  aria-label="Open priority options"
-                  showClear
-                  showTrigger
-                  value={
-                    priority
-                      ? priorityLabels.find((label) => label.value === priority)
-                          ?.name
-                      : ""
-                  }
-                  placeholder="Priority"
-                  className="shrink-0"
-                >
+                <ComboboxInput showClear placeholder="Priority">
                   <InputGroupAddon>
                     <Flag
                       data-testid="priority-field-icon"
@@ -262,13 +236,13 @@ export function TaskDialog({
                     />
                   </InputGroupAddon>
                 </ComboboxInput>
-                <ComboboxContent className="w-full" align="center">
+                <ComboboxContent>
                   <ComboboxList>
-                    {priorityLabels.map((label) => (
-                      <ComboboxItem key={label.value} value={label.value}>
-                        {label.name}
+                    {(item) => (
+                      <ComboboxItem key={item} value={item}>
+                        {item}
                       </ComboboxItem>
-                    ))}
+                    )}
                   </ComboboxList>
                 </ComboboxContent>
               </Combobox>
@@ -624,6 +598,11 @@ const ChecklistItem = ({ item }: { item: ChecklistItemType }) => {
 const CommentsSection = ({ task }: { task: TaskType }) => {
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [newCommentContent, setNewCommentContent] = useState("")
+  const [isNewCommentContentValid, setIsNewCommentContentValid] =
+    useState(false)
+  useEffect(() => {
+    setIsNewCommentContentValid(newCommentContent.trim().length > 0)
+  }, [newCommentContent])
   const [isDeleteCommentConfirmationOpen, setIsDeleteCommentConfirmationOpen] =
     useState(false)
   const [selectedComment, setSelectedComment] = useState<CommentType | null>(
@@ -633,6 +612,7 @@ const CommentsSection = ({ task }: { task: TaskType }) => {
   const router = useRouter()
   const createComment = useServerFn(createCommentFn)
   const handleCreateComment = async () => {
+    if (!isNewCommentContentValid) return
     await createComment({
       data: {
         content: newCommentContent,
@@ -701,6 +681,7 @@ const CommentsSection = ({ task }: { task: TaskType }) => {
                   variant="default"
                   size="sm"
                   className="ml-auto"
+                  disabled={!isNewCommentContentValid}
                   onClick={handleCreateComment}
                 >
                   Post

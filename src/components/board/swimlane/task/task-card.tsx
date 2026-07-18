@@ -16,13 +16,6 @@ import DeleteTaskConfirmation from "./delete-task-confirmation"
 import { TaskDialog } from "./task-dialog"
 
 export function TaskCard({ task }: { task: TaskType }) {
-  const priorityBadgeVariant =
-    task.priority === "frantic"
-      ? "destructive"
-      : task.priority === "urgent"
-        ? "default"
-        : "secondary"
-
   const [isOpen, setIsOpen] = useState(false)
   const [isDeleteConfirmationOpen, setIsDeleteConfirmationOpen] =
     useState(false)
@@ -69,7 +62,14 @@ export function TaskCard({ task }: { task: TaskType }) {
           ) : null}
           {task.priority ? (
             <Badge
-              variant={priorityBadgeVariant}
+              variant="outline"
+              className={`${
+                task.priority === "Frantic"
+                  ? "bg-destructive text-white"
+                  : task.priority === "Urgent"
+                    ? "bg-amber-200"
+                    : "outline"
+              }`}
               aria-label={`Priority ${task.priority}`}
             >
               <FlagIcon data-testid="priority-icon" />

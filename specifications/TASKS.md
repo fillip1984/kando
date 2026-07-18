@@ -6,6 +6,9 @@ Last updated: 2026-07-17
 
 - [x] things due today are showing as overdue (recording as utc and not translating properly)
 - [ ] standardize on enums
+  - [ ] clean up lane and label to swimlanes now if possible?
+  - [ ] try to get consistent on fields, either use null or empty string to denote no value
+  - [ ] switch over to Field instead of div everywhere
 - [x] add toasts
 - [ ] inline edits everywhere
 - [x] break up task dialog so that it is 2 columns

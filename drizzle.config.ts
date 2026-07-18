@@ -1,21 +1,21 @@
-import { defineConfig } from "drizzle-kit";
+import { defineConfig } from "drizzle-kit"
 
-const url = process.env.DATABASE_URL;
-const schemaFilter = process.env.DATABASE_SCHEMA;
+const url = process.env.DATABASE_URL
+const schemaFilter = process.env.DATABASE_SCHEMA
 
 if (!url) {
-  throw new Error("DATABASE_URL is not set");
+  throw new Error("DATABASE_URL is not set")
 }
 
 if (!schemaFilter) {
-  throw new Error("DATABASE_SCHEMA is not set");
+  throw new Error("DATABASE_SCHEMA is not set")
 }
 
 export default defineConfig({
-  schema: "./src/server/db/schema.ts",
+  schema: "./src/server/db/schema/index.ts",
   dialect: "postgresql",
   dbCredentials: {
     url,
   },
   schemaFilter,
-});
+})

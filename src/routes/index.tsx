@@ -29,7 +29,7 @@ function App() {
   const { tasks, tags } = Route.useLoaderData()
 
   const activeTasks = useMemo(
-    () => tasks.filter((task) => task.status !== "done"),
+    () => tasks.filter((task) => task.status !== "Done"),
     [tasks]
   )
   const todayStart = startOfDay(new Date())
@@ -51,12 +51,12 @@ function App() {
 
   const todoBacklog = activeTasks.filter((task) => {
     const dueDate = parseDueDate(task.dueDate)
-    return task.status === "todo" && dueDate === null
+    return task.status === "Todo" && dueDate === null
   })
 
-  const frantic = activeTasks.filter((task) => task.priority === "frantic")
-  const urgent = activeTasks.filter((task) => task.priority === "urgent")
-  const important = activeTasks.filter((task) => task.priority === "important")
+  const frantic = activeTasks.filter((task) => task.priority === "Frantic")
+  const urgent = activeTasks.filter((task) => task.priority === "Urgent")
+  const important = activeTasks.filter((task) => task.priority === "Important")
   const unprioritized = activeTasks.filter((task) => task.priority === null)
 
   const tasksByTag = useMemo(
