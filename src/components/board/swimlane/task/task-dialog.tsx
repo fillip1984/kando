@@ -1,5 +1,5 @@
-import StyledDatePicker from "@/components/custom-ui/styled-date-picker"
 import DeleteCommentConfirmation from "@/components/board/swimlane/task/delete-comment-confirmation"
+import StyledDatePicker from "@/components/custom-ui/styled-date-picker"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -37,8 +37,8 @@ import { swimlaneLabels } from "@/lib/swimlane-utils"
 import type { TagType } from "@/server/functions/tags"
 import { readTagsFn } from "@/server/functions/tags"
 import type {
-  CommentType,
   ChecklistItemType,
+  CommentType,
   TaskPriority,
   TaskStatus,
   TaskType,
