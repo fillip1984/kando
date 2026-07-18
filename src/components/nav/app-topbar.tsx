@@ -49,37 +49,59 @@ export default function AppTopbar() {
 }
 
 const SearchCommand = () => {
+  const commonCommands = [
+    {
+      title: "New Task",
+      action: () => {
+        setSelectedTask({
+          id: "new",
+          title: "",
+          description: "",
+          status: "Todo",
+          dueDate: "",
+          priority: null,
+          position: 9999,
+        } as TaskType)
+        setCommandAndSearchOpen(false)
+        setIsTaskDialogOpen(true)
+      },
+    },
+  ]
   const [commandAndSearchOpen, setCommandAndSearchOpen] = useState(false)
 
   const [commandOrSearch, setCommandOrSearch] = useState("")
 
   // search form and results
   const readTasks = useServerFn(readTasksFn)
-  const [searchResults, setSearchResults] = useState<TaskType[]>([])
+  const [searchTaskResults, setSearchTaskResults] = useState<TaskType[]>([])
+  const [searchCommandResults, setSearchCommandResults] =
+    useState<{ title: string; action: () => void }[]>(commonCommands)
   useEffect(() => {
-    async function debounceSearch() {
+    const debouncedSearch = setTimeout(async function search() {
       // debounce commandOrSearch for 300 ms and then update the search results
       if (!commandOrSearch) {
-        setSearchResults([])
+        setSearchTaskResults([])
+        setSearchCommandResults(commonCommands)
         return
       } else {
         const tasks = await readTasks()
-        setSearchResults(
+        setSearchTaskResults(
           tasks.filter((task) =>
             task.title
               .toLocaleLowerCase()
               .includes(commandOrSearch.toLocaleLowerCase())
           )
         )
+        setSearchCommandResults(
+          commonCommands.filter((command) =>
+            command.title
+              .toLocaleLowerCase()
+              .includes(commandOrSearch.toLocaleLowerCase())
+          )
+        )
       }
-    }
-    debounceSearch()
-    // debounce commandOrSearch for 300 ms and then update the search results
-    // const handler = setTimeout(async () => {
-    // )
-    // }, 300)
-
-    // return () => clearTimeout(handler)
+    }, 300)
+    return () => clearTimeout(debouncedSearch)
   }, [commandOrSearch])
 
   useEffect(() => {
@@ -127,9 +149,9 @@ const SearchCommand = () => {
           <CommandList>
             <CommandEmpty>No commands or tasks found.</CommandEmpty>
 
-            {searchResults.length > 0 && (
+            {searchTaskResults.length > 0 && (
               <CommandGroup heading="Tasks">
-                {searchResults.map((task) => (
+                {searchTaskResults.map((task) => (
                   <CommandItem
                     key={task.id}
                     onSelect={() => {
@@ -144,25 +166,15 @@ const SearchCommand = () => {
               </CommandGroup>
             )}
 
-            <CommandGroup heading="Common Commands">
-              <CommandItem
-                onSelect={() => {
-                  setSelectedTask({
-                    id: "new",
-                    title: "",
-                    description: "",
-                    status: "Todo",
-                    dueDate: "",
-                    priority: null,
-                    position: 9999,
-                  } as TaskType)
-                  setCommandAndSearchOpen(false)
-                  setIsTaskDialogOpen(true)
-                }}
-              >
-                New Task
-              </CommandItem>
-            </CommandGroup>
+            {searchCommandResults.length > 0 && (
+              <CommandGroup heading="Common Commands">
+                {searchCommandResults.map((command) => (
+                  <CommandItem key={command.title} onSelect={command.action}>
+                    {command.title}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            )}
           </CommandList>
         </Command>
       </CommandDialog>
