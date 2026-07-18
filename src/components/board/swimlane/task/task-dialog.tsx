@@ -340,6 +340,7 @@ const TagsSection = ({ task }: { task: TaskType }) => {
   }, [task.id, task.todoTags])
 
   const handleSelectedTagsChange = async (nextSelectedTags: string[]) => {
+    console.log("handleSelectedTagsChange", nextSelectedTags)
     const previousSelectedTags = selectedTags
     setSelectedTags(nextSelectedTags)
 
@@ -440,7 +441,9 @@ const TagsSection = ({ task }: { task: TaskType }) => {
                         size={"icon-xs"}
                         data-slot="combobox-chip-remove"
                         onClick={() =>
-                          setSelectedTags(selectedTags.filter((t) => t !== tag))
+                          handleSelectedTagsChange(
+                            selectedTags.filter((t) => t !== tag)
+                          )
                         }
                       >
                         <XIcon className="size-3" />
