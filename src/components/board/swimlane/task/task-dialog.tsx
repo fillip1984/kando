@@ -363,8 +363,8 @@ const TagsSection = ({ task }: { task: TaskType }) => {
     return tag?.color ? tag.color : "transparent"
   }
   return (
-    <div className="space-y-2">
-      <h3 className="mb-4 flex items-center gap-2 text-sm font-medium">
+    <div>
+      <h3 className="flex items-center gap-2 text-sm font-medium">
         <TagIcon className="size-4" />
         Tags
         <div className="ml-auto flex items-center">
@@ -488,8 +488,8 @@ const ChecklistSection = ({ task }: { task: TaskType }) => {
   })
 
   return (
-    <div className="mt-6">
-      <h3 className="mb-4 flex items-center gap-2 text-sm font-medium">
+    <div>
+      <h3 className="flex items-center gap-2 text-sm font-medium">
         <CheckIcon className="size-4" />
         Checklist
         <div className="ml-auto flex items-center">
@@ -510,7 +510,7 @@ const ChecklistSection = ({ task }: { task: TaskType }) => {
       </h3>
       {!isCollapsed && (
         <>
-          <ul ref={checklistRef} className="mb-4">
+          <ul ref={checklistRef}>
             {checklistItems.map((item) => (
               <ChecklistItem key={item.id} item={item} />
             ))}
@@ -616,8 +616,8 @@ const CommentsSection = ({ task }: { task: TaskType }) => {
   }
 
   return (
-    <div className="mt-6">
-      <h3 className="mb-4 flex items-center gap-2 text-sm font-medium">
+    <div>
+      <h3 className="flex items-center gap-2 text-sm font-medium">
         <AlignLeft className="size-4" />
         Comments
         <div className="ml-auto flex items-center">
