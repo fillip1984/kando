@@ -66,6 +66,7 @@ import {
   GoalIcon,
   GripVerticalIcon,
   Kanban,
+  TagIcon,
   TrashIcon,
   Type,
   XIcon,
@@ -316,6 +317,8 @@ type ComboboxOption = {
 }
 
 const TagsSection = ({ task }: { task: TaskType }) => {
+  const [isCollapsed, setIsCollapsed] = useState(false)
+
   // gather tags
   const readTags = useServerFn(readTagsFn)
   const [availableTags, setAvailableTags] = useState<TagType[]>([])
@@ -336,7 +339,6 @@ const TagsSection = ({ task }: { task: TaskType }) => {
         tagId: tag.id,
       },
     })
-    // setTagSearch("")
     router.invalidate()
   }
 
@@ -351,7 +353,10 @@ const TagsSection = ({ task }: { task: TaskType }) => {
     router.invalidate()
   }
 
-  const [selectedTags, setSelectedTags] = useState<ComboboxOption[]>([])
+  const [selectedTags, setSelectedTags] = useState<string[]>([])
+  useEffect(() => {
+    console.log(selectedTags)
+  }, [selectedTags])
 
   const lookupTagColor = (tagId: string, tags: TagType[]): string => {
     const tag = tags.find((t) => t.id === tagId)
@@ -359,68 +364,83 @@ const TagsSection = ({ task }: { task: TaskType }) => {
   }
   return (
     <div className="space-y-2">
-      <h3 className="text-sm font-medium">Tags</h3>
-      <Combobox
-        multiple
-        autoHighlight
-        value={selectedTags}
-        onValueChange={setSelectedTags}
-        items={availableTags.map((tag) => ({ value: tag.id, label: tag.name }))}
-        itemToStringValue={(tag: ComboboxOption) => tag.label}
-      >
-        <ComboboxChips className="min-h-10 w-full">
-          <ComboboxValue>
-            {(tags: ComboboxOption[]) => (
-              <>
-                {tags.map((tag) => (
-                  <div
-                    key={tag.value}
-                    className="flex h-5 w-fit items-center gap-2 rounded-2xl border pl-2 text-sm"
-                  >
-                    {tag.value ? (
-                      <span
-                        className="size-2 rounded-full"
-                        style={{
-                          backgroundColor: lookupTagColor(
-                            tag.value,
-                            availableTags
-                          ),
-                        }}
-                      />
-                    ) : null}
-                    <span>{tag.label}</span>
-                    <Button
-                      variant={"ghost"}
-                      size={"icon-xs"}
-                      data-slot="combobox-chip-remove"
-                      onClick={() =>
-                        setSelectedTags(
-                          selectedTags.filter((t) => t.value !== tag.value)
-                        )
-                      }
-                    >
-                      <XIcon className="size-3" />
-                    </Button>
-                  </div>
-                ))}
-                <ComboboxChipsInput placeholder="Select tags..." />
-              </>
-            )}
-          </ComboboxValue>
-        </ComboboxChips>
-        <ComboboxContent>
-          <ComboboxEmpty>No tags found.</ComboboxEmpty>
-          <ComboboxList>
-            {(item: ComboboxOption) => (
-              <ComboboxItem key={item.value} value={item}>
-                {item.label}
-              </ComboboxItem>
-            )}
-          </ComboboxList>
-        </ComboboxContent>
-      </Combobox>
+      <h3 className="mb-4 flex items-center gap-2 text-sm font-medium">
+        <TagIcon className="size-4" />
+        Tags
+        <div className="ml-auto flex items-center">
+          <Badge variant="secondary">{task.todoTags.length}</Badge>
+          <Button
+            onClick={() => setIsCollapsed(!isCollapsed)}
 
-      {/* TODO: replace with combo box instead? https://ui.shadcn.com/docs/components/base/combobox#multiple */}
+            variant="ghost"
+          >
+            <ChevronDownIcon
+              className={`${isCollapsed ? "-rotate-90" : ""} transition`}
+            />
+          </Button>
+        </div>
+      </h3>
+
+      {!isCollapsed && (
+        <Combobox
+          multiple
+          autoHighlight
+          items={availableTags.map((tag) => ({
+            value: tag.id,
+            label: tag.name,
+          }))}
+          value={selectedTags}
+          onValueChange={(value) => setSelectedTags(value)}
+        >
+          <ComboboxChips>
+            <ComboboxValue>
+              <div className="flex grow flex-col gap-2">
+                <div className="flex flex-wrap gap-2">
+                  {selectedTags.map((tag) => (
+                    <div
+                      key={tag}
+                      className="flex h-5 w-fit items-center gap-2 rounded-2xl border pl-2 text-sm"
+                    >
+                      {tag ? (
+                        <span
+                          className="size-2 rounded-full"
+                          style={{
+                            backgroundColor: lookupTagColor(tag, availableTags),
+                          }}
+                        />
+                      ) : null}
+                      <span>
+                        {availableTags.find((t) => t.id === tag)?.name || ""}
+                      </span>
+                      <Button
+                        variant={"ghost"}
+                        size={"icon-xs"}
+                        data-slot="combobox-chip-remove"
+                        onClick={() =>
+                          setSelectedTags(selectedTags.filter((t) => t !== tag))
+                        }
+                      >
+                        <XIcon className="size-3" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+                <ComboboxChipsInput placeholder="Select tags..." />
+              </div>
+            </ComboboxValue>
+          </ComboboxChips>
+          <ComboboxContent align="center">
+            <ComboboxEmpty>No tags found.</ComboboxEmpty>
+            <ComboboxList>
+              {(item: ComboboxOption) => (
+                <ComboboxItem key={item.value} value={item.value}>
+                  {item.label}
+                </ComboboxItem>
+              )}
+            </ComboboxList>
+          </ComboboxContent>
+        </Combobox>
+      )}
     </div>
   )
 }
@@ -472,7 +492,7 @@ const ChecklistSection = ({ task }: { task: TaskType }) => {
       <h3 className="mb-4 flex items-center gap-2 text-sm font-medium">
         <CheckIcon className="size-4" />
         Checklist
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center">
           <Badge variant="secondary">
             {checklistItems.filter((item) => item.complete).length}/
             {checklistItems.length}
@@ -600,15 +620,18 @@ const CommentsSection = ({ task }: { task: TaskType }) => {
       <h3 className="mb-4 flex items-center gap-2 text-sm font-medium">
         <AlignLeft className="size-4" />
         Comments
-        <Button
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="ml-auto"
-          variant="ghost"
-        >
-          <ChevronDownIcon
-            className={`${isCollapsed ? "-rotate-90" : ""} transition`}
-          />
-        </Button>
+        <div className="ml-auto flex items-center">
+          <Badge variant="secondary">{task.comments.length}</Badge>
+          <Button
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="ml-auto"
+            variant="ghost"
+          >
+            <ChevronDownIcon
+              className={`${isCollapsed ? "-rotate-90" : ""} transition`}
+            />
+          </Button>
+        </div>
       </h3>
       {!isCollapsed && (
         <>
