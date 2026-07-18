@@ -496,10 +496,10 @@ const ChecklistSection = ({ task }: { task: TaskType }) => {
 
   // DnD
   const reorderChecklistItems = useServerFn(reorderChecklistItemsFn)
-  const [checklistRef, checklistItems] = useDragAndDrop<
+  const [checklistRef, checklistItems, setChecklistItems] = useDragAndDrop<
     HTMLUListElement,
     ChecklistItemType
-  >(task.checklistItems, {
+  >([], {
     dragHandle: ".drag-handle",
     plugins: [animations()],
     onDragend: async (event) => {
@@ -511,8 +511,12 @@ const ChecklistSection = ({ task }: { task: TaskType }) => {
         complete: item.complete,
       }))
       reorderChecklistItems({ data: { updates } })
+      router.invalidate()
     },
   })
+  useEffect(() => {
+    setChecklistItems(task.checklistItems)
+  }, [task.checklistItems, setChecklistItems])
 
   return (
     <div>
