@@ -16,14 +16,7 @@ import {
   ComboboxList,
   ComboboxValue,
 } from "@/components/ui/combobox"
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
+import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { Field, FieldGroup } from "@/components/ui/field"
 import {
   InputGroup,
@@ -61,7 +54,6 @@ import {
   AlignLeft,
   CheckIcon,
   ChevronDownIcon,
-  CopyIcon,
   Flag,
   GoalIcon,
   GripVerticalIcon,
@@ -106,38 +98,49 @@ export function TaskDialog({
   const router = useRouter()
   const createTask = useServerFn(createTaskFn)
   const updateTask = useServerFn(updateTaskFn)
-  const handleSubmit = async () => {
+  const handleSubmit = async ({
+    updates,
+  }: {
+    updates: {
+      title: string
+      description: string
+      status: TodoStatusEnum
+      dueDate: string
+      priority: TodoPriorityEnum | null
+      position: number
+    }
+  }) => {
     const normalizedTitle = title.trim()
     try {
       setSaving(true)
-      if (isNew) {
-        await createTask({
-          data: {
-            title,
-            description: description || null,
-            status,
-            dueDate,
-            priority: priority || null,
-            position,
-          },
-        })
-        toast.success(`Task '${normalizedTitle}' created`)
-      } else {
-        await updateTask({
-          data: {
-            id: task.id,
-            title,
-            description: description || null,
-            status,
-            dueDate: dueDate || null,
-            priority: priority || null,
-            position,
-          },
-        })
-        toast.success("Task updated")
-      }
+      // if (isNew) {
+      //   await createTask({
+      //     data: {
+      //       title,
+      //       description: description || null,
+      //       status,
+      //       dueDate,
+      //       priority: priority || null,
+      //       position,
+      //     },
+      //   })
+      //   toast.success(`Task '${normalizedTitle}' created`)
+      // } else {
+      await updateTask({
+        data: {
+          id: task.id,
+          title: updates.title,
+          description: updates.description || null,
+          status: updates.status,
+          dueDate: updates.dueDate || null,
+          priority: updates.priority || null,
+          position: updates.position,
+        },
+      })
+      toast.success("Task updated")
+      // }
 
-      close()
+      // close()
       await router.invalidate()
     } catch (error) {
       console.error("Failed to save task", error)
@@ -156,10 +159,37 @@ export function TaskDialog({
 
   return (
     <Dialog open={open} onOpenChange={(open) => open === false && close()}>
-      <DialogContent className="w-3/4 sm:max-w-5xl">
-        <DialogHeader>
-          <DialogTitle>{isNew ? "Create Task" : "Edit Task"}</DialogTitle>
-        </DialogHeader>
+      <DialogContent className="w-3/4 sm:max-w-5xl" showCloseButton={false}>
+        {/* <DialogHeader>
+          <DialogTitle>
+            {!task.emailSubjectLine && (
+              <Button
+                variant={"secondary"}
+                onClick={handleCopyToClipboard}
+                className="text-sm"
+              >
+                Email Subject line
+                {!isCopied ? (
+                  <CopyIcon />
+                ) : (
+                  <CheckIcon className="animate-bounce text-primary" />
+                )}
+              </Button>
+            )}
+          </DialogTitle>
+        </DialogHeader> */}
+        {/* custom header section for the task dialog */}
+        {/* <div className="-m-4 flex rounded-lg">
+          // some more ideas: put the status drop down at the start, have chevrons to cycle through tasks, add an ellipsis and have a delete, duplicate, etc
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={close}
+            className="mt-2 mr-2 ml-auto"
+          >
+            <XIcon className="size-4" />
+          </Button>
+        </div> */}
 
         <div
           className={`-mx-4 no-scrollbar grid max-h-[75vh] gap-4 overflow-y-auto px-4 ${
@@ -172,7 +202,18 @@ export function TaskDialog({
                 value={title}
                 onChange={(value) => setTitle(value)}
                 placeholder="Task title"
-                onBlur={() => {}}
+                onBlur={() =>
+                  handleSubmit({
+                    updates: {
+                      title,
+                      description,
+                      status,
+                      dueDate,
+                      priority,
+                      position,
+                    },
+                  })
+                }
                 className="w-full text-xl"
               />
             </Field>
@@ -182,7 +223,18 @@ export function TaskDialog({
                 value={description}
                 onChange={(value) => setDescription(value)}
                 placeholder="Description (optional)"
-                onBlur={() => {}}
+                onBlur={() =>
+                  handleSubmit({
+                    updates: {
+                      title,
+                      description,
+                      status,
+                      dueDate,
+                      priority,
+                      position,
+                    },
+                  })
+                }
                 className="w-full"
               />
             </Field>
@@ -191,7 +243,20 @@ export function TaskDialog({
               <Combobox
                 items={Object.values(TodoStatusEnumValues)}
                 value={status}
-                onValueChange={(value) => setStatus(value ?? "Todo")}
+                onValueChange={(value) => {
+                  const newStatus = value ?? "Todo"
+                  setStatus(newStatus)
+                  handleSubmit({
+                    updates: {
+                      title,
+                      description,
+                      status: newStatus,
+                      dueDate,
+                      priority,
+                      position,
+                    },
+                  })
+                }}
               >
                 <ComboboxInput>
                   <InputGroupAddon>
@@ -211,7 +276,20 @@ export function TaskDialog({
 
               <DatePickerWithClear
                 value={dueDate}
-                handleOnChange={(value) => setDueDate(value)}
+                handleOnChange={(value) => {
+                  const newDueDate = value
+                  setDueDate(newDueDate)
+                  handleSubmit({
+                    updates: {
+                      title,
+                      description,
+                      status,
+                      dueDate: newDueDate,
+                      priority,
+                      position,
+                    },
+                  })
+                }}
                 leadingIcon={<GoalIcon data-testid="due-date-icon" />}
                 placeholder="Due date"
               />
@@ -219,7 +297,20 @@ export function TaskDialog({
               <Combobox
                 items={Object.values(TodoPriorityEnumValues)}
                 value={priority}
-                onValueChange={(value) => setPriority(value)}
+                onValueChange={(value) => {
+                  const newPriority = value
+                  setPriority(newPriority)
+                  handleSubmit({
+                    updates: {
+                      title,
+                      description,
+                      status,
+                      dueDate,
+                      priority: newPriority,
+                      position,
+                    },
+                  })
+                }}
               >
                 <ComboboxInput showClear placeholder="Priority">
                   <InputGroupAddon>
@@ -250,30 +341,6 @@ export function TaskDialog({
             </div>
           )}
         </div>
-
-        <DialogFooter>
-          {task.emailSubjectLine && (
-            <Button
-              variant={"ghost"}
-              onClick={handleCopyToClipboard}
-              className="mr-auto"
-            >
-              Email Subject line
-              {!isCopied ? (
-                <CopyIcon />
-              ) : (
-                <CheckIcon className="animate-bounce text-primary" />
-              )}
-            </Button>
-          )}
-          <DialogClose render={<Button variant="outline">Cancel</Button>} />
-          <Button
-            disabled={saving || !title.trim() || !status}
-            onClick={handleSubmit}
-          >
-            {saving ? "Saving..." : isNew ? "Create Task" : "Save Changes"}
-          </Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   )

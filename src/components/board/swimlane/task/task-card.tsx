@@ -67,7 +67,7 @@ export function TaskCard({ task }: { task: TaskType }) {
                 task.priority === "Frantic"
                   ? "bg-destructive text-white"
                   : task.priority === "Urgent"
-                    ? "bg-amber-200"
+                    ? "bg-amber-200 text-black"
                     : "outline"
               }`}
               aria-label={`Priority ${task.priority}`}

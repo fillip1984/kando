@@ -16,6 +16,7 @@ export default function InlineEditableTextarea({
   className?: string
 }) {
   const [isEditing, setIsEditing] = useState(false)
+  const [isDirty, setIsDirty] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
   useEffect(() => {
     if (isEditing) {
@@ -45,11 +46,17 @@ export default function InlineEditableTextarea({
       {isEditing ? (
         <Textarea
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e) => {
+            onChange(e.target.value)
+            setIsDirty(true)
+          }}
           placeholder={placeholder || "Enter a value"}
           onBlur={() => {
             setIsEditing(false)
-            onBlur()
+            if (isDirty) {
+              setIsDirty(false)
+              onBlur()
+            }
           }}
           onKeyDown={handleKeyDown}
           ref={textareaRef}
@@ -58,7 +65,7 @@ export default function InlineEditableTextarea({
         <div
           onClick={() => setIsEditing(true)}
           className={cn(
-            "w-full cursor-pointer resize-none select-none",
+            "w-full cursor-text resize-none select-none",
             className
           )}
         >
