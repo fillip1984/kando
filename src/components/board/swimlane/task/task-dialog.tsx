@@ -510,7 +510,7 @@ const ChecklistSection = ({ task }: { task: TaskType }) => {
         position: i,
         complete: item.complete,
       }))
-      reorderChecklistItems({ data: { updates } })
+      await reorderChecklistItems({ data: { updates } })
       router.invalidate()
     },
   })
@@ -541,7 +541,7 @@ const ChecklistSection = ({ task }: { task: TaskType }) => {
       </h3>
       {!isCollapsed && (
         <>
-          <ul ref={checklistRef}>
+          <ul ref={checklistRef} className="isolate">
             {checklistItems.map((item) => (
               <ChecklistItem key={item.id} item={item} />
             ))}
@@ -600,7 +600,9 @@ const ChecklistItem = ({ item }: { item: ChecklistItemType }) => {
 
   return (
     <li className="flex items-center gap-2 p-2">
-      <GripVerticalIcon className="drag-handle size-4" />
+      <span className="drag-handle cursor-grab active:cursor-grabbing">
+        <GripVerticalIcon className="size-4" />
+      </span>
       <Checkbox checked={isChecked} onCheckedChange={handleToggle} />
       <span
         className={`${isChecked ? "text-muted-foreground line-through" : ""}`}
