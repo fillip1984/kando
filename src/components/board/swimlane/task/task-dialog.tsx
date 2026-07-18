@@ -4,10 +4,14 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
   Combobox,
+  ComboboxChips,
+  ComboboxChipsInput,
   ComboboxContent,
+  ComboboxEmpty,
   ComboboxInput,
   ComboboxItem,
   ComboboxList,
+  ComboboxValue,
 } from "@/components/ui/combobox"
 import {
   Dialog,
@@ -26,6 +30,7 @@ import {
   InputGroupInput,
   InputGroupTextarea,
 } from "@/components/ui/input-group"
+import { Item, ItemContent, ItemTitle } from "@/components/ui/item"
 import { Textarea } from "@/components/ui/textarea"
 import { priorityLabels } from "@/lib/priority-utils"
 import { swimlaneLabels } from "@/lib/swimlane-utils"
@@ -62,7 +67,6 @@ import {
   GoalIcon,
   GripVerticalIcon,
   Kanban,
-  PlusIcon,
   TrashIcon,
   Type,
   XIcon,
@@ -307,6 +311,11 @@ export function TaskDialog({
   )
 }
 
+type ComboboxOption = {
+  value: string
+  label: string
+}
+
 const TagsSection = ({ task }: { task: TaskType }) => {
   // gather tags
   const readTags = useServerFn(readTagsFn)
@@ -319,27 +328,6 @@ const TagsSection = ({ task }: { task: TaskType }) => {
     fetchTags()
   }, [readTags, task.todoTags])
 
-  // search state
-  const [tagSearch, setTagSearch] = useState("")
-  const [filteredTags, setFilteredTags] = useState<TagType[]>([])
-  useEffect(() => {
-    console.log("filtered tags")
-    let suggestedTags = []
-    if (tagSearch.trim().length === 0) {
-      console.log("no search, showing all tags")
-      suggestedTags = availableTags
-    } else {
-      suggestedTags = availableTags.filter((tag) =>
-        tag.name.toLowerCase().includes(tagSearch.toLowerCase())
-      )
-    }
-    // exclude tags already added to the task
-    suggestedTags = suggestedTags.filter(
-      (tag) => !task.todoTags.some((todoTag) => todoTag.tagId === tag.id)
-    )
-    setFilteredTags(suggestedTags)
-  }, [tagSearch, availableTags])
-
   const router = useRouter()
   const addTag = useServerFn(addTagToTaskFn)
   const handleAddTag = async (tag: TagType) => {
@@ -349,7 +337,7 @@ const TagsSection = ({ task }: { task: TaskType }) => {
         tagId: tag.id,
       },
     })
-    setTagSearch("")
+    // setTagSearch("")
     router.invalidate()
   }
 
@@ -364,72 +352,82 @@ const TagsSection = ({ task }: { task: TaskType }) => {
     router.invalidate()
   }
 
+  const [selectedTags, setSelectedTags] = useState<ComboboxOption[]>([])
+
+  const lookupTagColor = (tagId: string, tags: TagType[]): string => {
+    const tag = tags.find((t) => t.id === tagId)
+    return tag?.color ? tag.color : "transparent"
+  }
   return (
     <div className="space-y-2">
       <h3 className="text-sm font-medium">Tags</h3>
-      <InputGroup>
-        <InputGroupAddon align="block-start">
-          <div data-slot="input-group-control" className="flex flex-wrap gap-2">
-            {task.todoTags.map((todoTag) => (
-              <div
-                key={todoTag.id}
-                className="flex h-5 w-fit items-center gap-2 rounded-2xl border pl-2 text-sm"
-              >
-                {todoTag.tag?.color ? (
-                  <span
-                    className="size-2 rounded-full"
-                    style={{ backgroundColor: todoTag.tag.color }}
-                  />
-                ) : null}
-                <span>{todoTag.tag!.name}</span>
-                <Button
-                  variant={"ghost"}
-                  size={"icon-sm"}
-                  onClick={() => handleRemoveTag(todoTag.tag!)}
-                >
-                  <XIcon className="size-3" />
-                </Button>
-              </div>
-            ))}
-          </div>
-        </InputGroupAddon>
-
-        <InputGroupAddon align="block-end">
-          <InputGroupInput
-            value={tagSearch}
-            onChange={(e) => setTagSearch(e.target.value)}
-            placeholder="Search tags..."
-          />
-        </InputGroupAddon>
-      </InputGroup>
+      <Combobox
+        multiple
+        autoHighlight
+        value={selectedTags}
+        onValueChange={setSelectedTags}
+        items={availableTags.map((tag) => ({ value: tag.id, label: tag.name }))}
+        itemToStringValue={(tag: ComboboxOption) => tag.label}
+      >
+        <ComboboxChips className="min-h-10 w-full">
+          <ComboboxValue>
+            {(tags: ComboboxOption[]) => (
+              <>
+                {tags.map((tag) => (
+                  <div
+                    key={tag.value}
+                    className="flex h-5 w-fit items-center gap-2 rounded-2xl border pl-2 text-sm"
+                  >
+                    {tag.value ? (
+                      <span
+                        className="size-2 rounded-full"
+                        style={{
+                          backgroundColor: lookupTagColor(
+                            tag.value,
+                            availableTags
+                          ),
+                        }}
+                      />
+                    ) : null}
+                    <span>{tag.label}</span>
+                    <Button
+                      variant={"ghost"}
+                      size={"icon-xs"}
+                      data-slot="combobox-chip-remove"
+                      onClick={() =>
+                        setSelectedTags(
+                          selectedTags.filter((t) => t.value !== tag.value)
+                        )
+                      }
+                    >
+                      <XIcon className="size-3" />
+                    </Button>
+                  </div>
+                ))}
+                <ComboboxChipsInput placeholder="Select tags..." />
+              </>
+            )}
+          </ComboboxValue>
+        </ComboboxChips>
+        <ComboboxContent>
+          <ComboboxEmpty>No tags found.</ComboboxEmpty>
+          <ComboboxList>
+            {(item: ComboboxOption) => (
+              <ComboboxItem key={item.value} value={item}>
+                <Item size="xs" className="p-0">
+                  <ItemContent>
+                    <ItemTitle className="whitespace-nowrap">
+                      {item.label}
+                    </ItemTitle>
+                  </ItemContent>
+                </Item>
+              </ComboboxItem>
+            )}
+          </ComboboxList>
+        </ComboboxContent>
+      </Combobox>
 
       {/* TODO: replace with combo box instead? https://ui.shadcn.com/docs/components/base/combobox#multiple */}
-      {/* <Input
-        
-      /> */}
-      {filteredTags.length > 0 && (
-        <div className="flex flex-wrap">
-          {filteredTags.map((todoTag) => (
-            <Button
-              key={todoTag.id}
-              variant={"ghost"}
-              onClick={() => handleAddTag(todoTag)}
-              className="p-0"
-            >
-              <Badge variant="outline">
-                {todoTag.color ? (
-                  <span
-                    className="size-2 rounded-full"
-                    style={{ backgroundColor: todoTag.color }}
-                  />
-                ) : null}
-                <span>{todoTag.name}</span>
-                <PlusIcon data-icon="inline-end" />
-              </Badge>
-            </Button>
-          ))}
-        </div>
-      )}
     </div>
   )
 }
