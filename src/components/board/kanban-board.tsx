@@ -9,16 +9,6 @@ import { useEffect } from "react"
 import { Swimlane } from "./swimlane/swimlane"
 
 export function KanbanBoard({ tasks }: { tasks: TaskType[] }) {
-  // const { taskFilter } = useTaskStore()
-  const route = useRouter()
-
-  useEffect(() => {
-    setTodoTasks(tasks.filter((task) => task.status === "Todo"))
-    setInProgressTasks(tasks.filter((task) => task.status === "In Progress"))
-    setBlockedTasks(tasks.filter((task) => task.status === "Blocked"))
-    setDoneTasks(tasks.filter((task) => task.status === "Done"))
-  }, [tasks])
-
   const reorderTasks = useServerFn(reorderTasksFn)
 
   // DnD Stuff
@@ -40,6 +30,7 @@ export function KanbanBoard({ tasks }: { tasks: TaskType[] }) {
     plugins: [animations()],
   }
 
+  const route = useRouter()
   const [todoTasksRef, todos, setTodoTasks] = useDragAndDrop<
     HTMLDivElement,
     TaskType
@@ -57,23 +48,24 @@ export function KanbanBoard({ tasks }: { tasks: TaskType[] }) {
     TaskType
   >([], config)
 
+  useEffect(() => {
+    setTodoTasks(tasks.filter((task) => task.status === "Todo"))
+    setInProgressTasks(tasks.filter((task) => task.status === "In Progress"))
+    setBlockedTasks(tasks.filter((task) => task.status === "Blocked"))
+    setDoneTasks(tasks.filter((task) => task.status === "Done"))
+  }, [tasks])
+
   return (
     <div className="flex grow overflow-hidden p-4">
       <div className="flex grow gap-4 overflow-x-auto">
-        <Swimlane ref={todoTasksRef} label="Todo" lane="Todo" tasks={todos} />
+        <Swimlane ref={todoTasksRef} lane="Todo" tasks={todos} />
         <Swimlane
           ref={inProgressTasksRef}
-          label="In Progress"
           lane="In Progress"
           tasks={inProgress}
         />
-        <Swimlane
-          ref={blockedTasksRef}
-          label="Blocked"
-          lane="Blocked"
-          tasks={blocked}
-        />
-        <Swimlane ref={doneTasksRef} label="Done" lane="Done" tasks={done} />
+        <Swimlane ref={blockedTasksRef} lane="Blocked" tasks={blocked} />
+        <Swimlane ref={doneTasksRef} lane="Done" tasks={done} />
       </div>
     </div>
   )
