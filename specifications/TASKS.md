@@ -4,20 +4,16 @@ Last updated: 2026-07-17
 
 ## TODOs
 
-- [x] things due today are showing as overdue (recording as utc and not translating properly)
-- [ ] standardize on enums
-  - [ ] clean up lane and label to swimlanes now if possible?
-  - [ ] try to get consistent on fields, either use null or empty string to denote no value
-  - [ ] switch over to Field instead of div everywhere
-- [x] add toasts
+- [ ] clean up lane and label to swimlanes now if possible?
+- [ ] try to get consistent on fields, either use null or empty string to denote no value
+- [ ] switch over to Field instead of div everywhere
 - [ ] inline edits everywhere
-- [x] break up task dialog so that it is 2 columns
-  - [ ] would prefer that the tags go on the left... work on this after inlining form and making to possible to add tags on creation
 - [ ] add settings and import/export
-- [ ] when adding items, they are not draggable without a page refresh (formkit dnd issue)
 
 ### Long-term TODOs
 
+- [ ] when adding items, they are not draggable without a page refresh (formkit dnd issue)
+- [ ] break up task dialog - would prefer that the tags go on the left... work on this after inlining form and making to possible to add tags on creation
 - [ ] add security
 - [ ] deploy to cloud
 - [ ] send email?
