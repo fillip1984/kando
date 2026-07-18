@@ -5,6 +5,7 @@ import { readTasksFn } from "@/server/functions/todos"
 import { useServerFn } from "@tanstack/react-start"
 import { SearchIcon } from "lucide-react"
 import { useEffect, useState } from "react"
+import NewTaskForm from "../board/swimlane/task/new-task-form"
 import { TaskDialog } from "../board/swimlane/task/task-dialog"
 import { Button } from "../ui/button"
 import {
@@ -53,17 +54,8 @@ const SearchCommand = () => {
     {
       title: "New Task",
       action: () => {
-        setSelectedTask({
-          id: "new",
-          title: "",
-          description: "",
-          status: "Todo",
-          dueDate: "",
-          priority: null,
-          position: 9999,
-        } as TaskType)
+        setIsNewTaskDialogOpen(true)
         setCommandAndSearchOpen(false)
-        setIsTaskDialogOpen(true)
       },
     },
   ]
@@ -126,6 +118,8 @@ const SearchCommand = () => {
     undefined
   )
 
+  const [isNewTaskDialogOpen, setIsNewTaskDialogOpen] = useState(false)
+
   return (
     <>
       <Button
@@ -184,6 +178,13 @@ const SearchCommand = () => {
           task={selectedTask}
           open={isTaskDialogOpen}
           close={() => setIsTaskDialogOpen(false)}
+        />
+      )}
+
+      {isNewTaskDialogOpen && (
+        <NewTaskForm
+          open={isNewTaskDialogOpen}
+          close={() => setIsNewTaskDialogOpen(false)}
         />
       )}
     </>
