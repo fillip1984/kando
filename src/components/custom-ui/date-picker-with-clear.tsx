@@ -13,7 +13,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
 /**
  * Shadcn UI DatePicker but with a clear button is all this accomplishes. Much like the combobox with clear option seen here: https://ui.shadcn.com/docs/components/base/combobox#clear-button
  */
-export default function StyledDatePicker({
+export default function DatePickerWithClear({
   value,
   handleOnChange,
   leadingIcon,

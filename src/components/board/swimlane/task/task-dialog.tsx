@@ -1,5 +1,7 @@
 import DeleteCommentConfirmation from "@/components/board/swimlane/task/delete-comment-confirmation"
-import StyledDatePicker from "@/components/custom-ui/styled-date-picker"
+import DatePickerWithClear from "@/components/custom-ui/date-picker-with-clear"
+import InlineEditableInput from "@/components/custom-ui/inline-editable-input"
+import InlineEditableTextarea from "@/components/custom-ui/inline-editable-textarea"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -57,7 +59,6 @@ import { useRouter } from "@tanstack/react-router"
 import { useServerFn } from "@tanstack/react-start"
 import {
   AlignLeft,
-  AlignLeftIcon,
   CheckIcon,
   ChevronDownIcon,
   CopyIcon,
@@ -67,7 +68,6 @@ import {
   Kanban,
   TagIcon,
   TrashIcon,
-  TypeIcon,
   XIcon,
 } from "lucide-react"
 import { useEffect, useState } from "react"
@@ -168,30 +168,23 @@ export function TaskDialog({
         >
           <div className="space-y-3 lg:min-w-0">
             <Field>
-              <InputGroup>
-                <InputGroupAddon>
-                  <TypeIcon />
-                </InputGroupAddon>
-                <InputGroupInput
-                  value={title}
-                  onChange={(event) => setTitle(event.target.value)}
-                  placeholder="Task title"
-                />
-              </InputGroup>
+              <InlineEditableInput
+                value={title}
+                onChange={(value) => setTitle(value)}
+                placeholder="Task title"
+                onBlur={() => {}}
+                className="w-full text-xl"
+              />
             </Field>
 
             <Field>
-              <InputGroup>
-                <InputGroupAddon>
-                  <AlignLeftIcon />
-                </InputGroupAddon>
-                <InputGroupTextarea
-                  value={description}
-                  onChange={(event) => setDescription(event.target.value)}
-                  placeholder="Description (optional)"
-                  className="max-h-80 min-h-40 resize-none break-all"
-                />
-              </InputGroup>
+              <InlineEditableTextarea
+                value={description}
+                onChange={(value) => setDescription(value)}
+                placeholder="Description (optional)"
+                onBlur={() => {}}
+                className="w-full"
+              />
             </Field>
 
             <FieldGroup className="grid grid-cols-1 gap-2 md:grid-cols-3">
@@ -216,7 +209,7 @@ export function TaskDialog({
                 </ComboboxContent>
               </Combobox>
 
-              <StyledDatePicker
+              <DatePickerWithClear
                 value={dueDate}
                 handleOnChange={(value) => setDueDate(value)}
                 leadingIcon={<GoalIcon data-testid="due-date-icon" />}
