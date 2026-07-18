@@ -328,35 +328,58 @@ const TagsSection = ({ task }: { task: TaskType }) => {
       setAvailableTags(tags)
     }
     fetchTags()
-  }, [readTags, task.todoTags])
+  }, [readTags])
 
   const router = useRouter()
   const addTag = useServerFn(addTagToTaskFn)
-  const handleAddTag = async (tag: TagType) => {
-    await addTag({
-      data: {
-        todoId: task.id,
-        tagId: tag.id,
-      },
-    })
-    router.invalidate()
-  }
-
   const removeTag = useServerFn(removeTagToTaskFn)
-  const handleRemoveTag = async (tag: TagType) => {
-    await removeTag({
-      data: {
-        todoId: task.id,
-        tagId: tag.id,
-      },
-    })
-    router.invalidate()
-  }
-
   const [selectedTags, setSelectedTags] = useState<string[]>([])
+
   useEffect(() => {
-    console.log(selectedTags)
-  }, [selectedTags])
+    setSelectedTags(task.todoTags.map((todoTag) => todoTag.tagId))
+  }, [task.id, task.todoTags])
+
+  const handleSelectedTagsChange = async (nextSelectedTags: string[]) => {
+    const previousSelectedTags = selectedTags
+    setSelectedTags(nextSelectedTags)
+
+    const addedTagIds = nextSelectedTags.filter(
+      (tagId) => !previousSelectedTags.includes(tagId)
+    )
+    const removedTagIds = previousSelectedTags.filter(
+      (tagId) => !nextSelectedTags.includes(tagId)
+    )
+
+    if (addedTagIds.length === 0 && removedTagIds.length === 0) {
+      return
+    }
+
+    try {
+      for (const tagId of addedTagIds) {
+        await addTag({
+          data: {
+            todoId: task.id,
+            tagId,
+          },
+        })
+      }
+
+      for (const tagId of removedTagIds) {
+        await removeTag({
+          data: {
+            todoId: task.id,
+            tagId,
+          },
+        })
+      }
+
+      await router.invalidate()
+    } catch (error) {
+      console.error("Failed to update task tags", error)
+      toast.error("Failed to update task tags")
+      setSelectedTags(previousSelectedTags)
+    }
+  }
 
   const lookupTagColor = (tagId: string, tags: TagType[]): string => {
     const tag = tags.find((t) => t.id === tagId)
@@ -390,7 +413,7 @@ const TagsSection = ({ task }: { task: TaskType }) => {
             label: tag.name,
           }))}
           value={selectedTags}
-          onValueChange={(value) => setSelectedTags(value)}
+          onValueChange={(value) => void handleSelectedTagsChange(value)}
         >
           <ComboboxChips>
             <ComboboxValue>
