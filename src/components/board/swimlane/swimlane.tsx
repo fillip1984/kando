@@ -1,7 +1,9 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-
+import { Field } from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import type { TodoStatusEnum } from "@/lib/enum-values"
 import { parseOutlookMsg } from "@/server/functions/email"
 import type { TaskType } from "@/server/functions/todos"
@@ -12,7 +14,6 @@ import { CloudUploadIcon, PlusIcon } from "lucide-react"
 import type { DragEvent } from "react"
 import { useEffect, useRef, useState } from "react"
 import { TaskCard } from "./task/task-card"
-import { TaskDialog } from "./task/task-dialog"
 
 export function Swimlane({
   lane,
@@ -23,13 +24,6 @@ export function Swimlane({
   tasks: TaskType[]
   ref?: React.Ref<HTMLDivElement>
 }) {
-  const [isTaskDialogOpen, setIsTaskDialogOpen] = useState(false)
-  const nextPosition =
-    tasks.reduce(
-      (maxPosition, task) => Math.max(maxPosition, task.position ?? -1),
-      -1
-    ) + 1
-
   return (
     <>
       <div className="relative flex w-100 shrink-0 grow flex-col overflow-hidden rounded-xl border border-border/70 bg-card shadow-sm">
@@ -39,46 +33,132 @@ export function Swimlane({
             {tasks.length}
           </span>
         </header>
-        <div className="flex grow flex-col overflow-hidden">
+        <div className="flex grow flex-col overflow-y-auto">
           <div
             ref={ref}
             data-column-id={lane}
-            className="flex min-h-full flex-col gap-1 overflow-y-auto px-2"
+            className="flex flex-col gap-1 px-4"
           >
             {tasks.map((task) => (
               <TaskCard key={task.id} task={task} />
             ))}
           </div>
-        </div>
-        <div className="p-2">
-          <Button
-            variant="outline"
-            className="mt-3 w-full justify-start"
-            onClick={() => setIsTaskDialogOpen(true)}
-          >
-            <PlusIcon className="size-4" />
-            Add Task
-          </Button>
+          <NewInlineTask lane={lane} tasks={tasks} />
         </div>
         <NewTaskFromOutlookOverlay tasks={tasks} lane={lane} />
       </div>
-
-      <TaskDialog
-        task={
-          {
-            id: "new",
-            title: "",
-            description: "",
-            status: lane,
-            dueDate: "",
-            priority: null,
-            position: nextPosition,
-          } as TaskType
-        }
-        open={isTaskDialogOpen}
-        close={() => setIsTaskDialogOpen(false)}
-      />
     </>
+  )
+}
+
+const NewInlineTask = ({
+  lane,
+  tasks,
+}: {
+  lane: string
+  tasks: TaskType[]
+}) => {
+  const [isEditMode, setIsEditMode] = useState(false)
+
+  const [title, setTitle] = useState("")
+  const [description, setDescription] = useState("")
+
+  const titleRef = useRef<HTMLInputElement>(null)
+  const newInlineTaskDivRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    if (isEditMode) {
+      titleRef.current?.focus()
+    }
+  }, [isEditMode])
+  useEffect(() => {
+    // make sure full inline task card is visible
+    if (isEditMode) {
+      newInlineTaskDivRef.current?.scrollIntoView()
+    }
+  }, [isEditMode])
+  useEffect(() => {
+    // if you click outside of the div change to not editing
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        newInlineTaskDivRef.current &&
+        !newInlineTaskDivRef.current.contains(e.target as Node)
+      ) {
+        setIsEditMode(false)
+      }
+    }
+    if (isEditMode) {
+      document.addEventListener("mousedown", handleClickOutside)
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [isEditMode])
+
+  const router = useRouter()
+  const createTask = useServerFn(createTaskFn)
+  const handleCreateTask = async (e: React.SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (!title) return
+    const nextPosition =
+      tasks.reduce(
+        (maxPosition, task) => Math.max(maxPosition, task.position ?? -1),
+        -1
+      ) + 1
+    await createTask({
+      data: {
+        title,
+        description,
+        position: nextPosition,
+        status: lane as TodoStatusEnum,
+      },
+    })
+
+    setTitle("")
+    setDescription("")
+    titleRef.current?.focus()
+    await router.invalidate()
+    newInlineTaskDivRef.current?.scrollIntoView()
+  }
+
+  return (
+    <div className="m-4" ref={newInlineTaskDivRef}>
+      {!isEditMode ? (
+        <Button
+          variant="ghost"
+          onClick={() => setIsEditMode(true)}
+          className="flex w-full items-center justify-start gap-1 text-muted-foreground"
+        >
+          <PlusIcon className="size-4 text-primary" />
+          <span>Add Task</span>
+        </Button>
+      ) : (
+        <form onSubmit={handleCreateTask} className="flex flex-col gap-1">
+          <Field>
+            <Input
+              ref={titleRef}
+              placeholder="Task title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+          </Field>
+          <Field>
+            <Textarea
+              placeholder="Task description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </Field>
+          <Button disabled={!title} type="submit">
+            Save
+          </Button>
+          <Button variant="ghost" onClick={() => setIsEditMode(false)}>
+            Cancel
+          </Button>
+        </form>
+      )}
+    </div>
   )
 }
 

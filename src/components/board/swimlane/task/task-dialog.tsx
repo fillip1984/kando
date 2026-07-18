@@ -39,7 +39,6 @@ import {
   addTagToTaskFn,
   createChecklistItemFn,
   createCommentFn,
-  createTaskFn,
   deleteChecklistItemFn,
   removeTagToTaskFn,
   reorderChecklistItemsFn,
@@ -75,16 +74,14 @@ export function TaskDialog({
   close: () => void
 }) {
   // init form state
-  // TODO: this should be done differently, but working quick to make things work for now
-  const isNew = task.id === "new"
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [status, setStatus] = useState<TodoStatusEnum>(task.status)
   const [dueDate, setDueDate] = useState("")
   const [priority, setPriority] = useState<TodoPriorityEnum | null>(null)
   const [position, setPosition] = useState(9999)
-  const [saving, setSaving] = useState(false)
   useEffect(() => {
+    // reset form between openings of the dialog
     if (open) {
       setTitle(task.title)
       setDescription(task.description || "")
@@ -96,7 +93,6 @@ export function TaskDialog({
   }, [open])
 
   const router = useRouter()
-  const createTask = useServerFn(createTaskFn)
   const updateTask = useServerFn(updateTaskFn)
   const handleSubmit = async ({
     updates,
@@ -110,74 +106,31 @@ export function TaskDialog({
       position: number
     }
   }) => {
-    const normalizedTitle = title.trim()
-    try {
-      setSaving(true)
-      // if (isNew) {
-      //   await createTask({
-      //     data: {
-      //       title,
-      //       description: description || null,
-      //       status,
-      //       dueDate,
-      //       priority: priority || null,
-      //       position,
-      //     },
-      //   })
-      //   toast.success(`Task '${normalizedTitle}' created`)
-      // } else {
-      await updateTask({
-        data: {
-          id: task.id,
-          title: updates.title,
-          description: updates.description || null,
-          status: updates.status,
-          dueDate: updates.dueDate || null,
-          priority: updates.priority || null,
-          position: updates.position,
-        },
-      })
-      toast.success("Task updated")
-      // }
-
-      // close()
-      await router.invalidate()
-    } catch (error) {
-      console.error("Failed to save task", error)
-      toast.error("Failed to save task")
-    } finally {
-      setSaving(false)
-    }
+    await updateTask({
+      data: {
+        id: task.id,
+        title: updates.title,
+        description: updates.description || null,
+        status: updates.status,
+        dueDate: updates.dueDate || null,
+        priority: updates.priority || null,
+        position: updates.position,
+      },
+    })
+    toast.success("Task updated")
+    await router.invalidate()
   }
 
-  const [isCopied, setIsCopied] = useState(false)
-  const handleCopyToClipboard = () => {
-    navigator.clipboard.writeText(title)
-    setIsCopied(true)
-    setTimeout(() => setIsCopied(false), 2000)
-  }
+  // const [isCopied, setIsCopied] = useState(false)
+  // const handleCopyToClipboard = () => {
+  //   navigator.clipboard.writeText(title)
+  //   setIsCopied(true)
+  //   setTimeout(() => setIsCopied(false), 2000)
+  // }
 
   return (
     <Dialog open={open} onOpenChange={(open) => open === false && close()}>
       <DialogContent className="w-3/4 sm:max-w-5xl" showCloseButton={false}>
-        {/* <DialogHeader>
-          <DialogTitle>
-            {!task.emailSubjectLine && (
-              <Button
-                variant={"secondary"}
-                onClick={handleCopyToClipboard}
-                className="text-sm"
-              >
-                Email Subject line
-                {!isCopied ? (
-                  <CopyIcon />
-                ) : (
-                  <CheckIcon className="animate-bounce text-primary" />
-                )}
-              </Button>
-            )}
-          </DialogTitle>
-        </DialogHeader> */}
         {/* custom header section for the task dialog */}
         {/* <div className="-m-4 flex rounded-lg">
           // some more ideas: put the status drop down at the start, have chevrons to cycle through tasks, add an ellipsis and have a delete, duplicate, etc
@@ -191,11 +144,7 @@ export function TaskDialog({
           </Button>
         </div> */}
 
-        <div
-          className={`-mx-4 no-scrollbar grid max-h-[75vh] gap-4 overflow-y-auto px-4 ${
-            isNew ? "" : "lg:grid-cols-2"
-          }`}
-        >
+        <div className="-mx-4 no-scrollbar grid max-h-[75vh] gap-4 overflow-y-auto px-4 lg:grid-cols-2">
           <div className="space-y-3 lg:min-w-0">
             <Field>
               <InlineEditableInput
@@ -333,13 +282,11 @@ export function TaskDialog({
             </FieldGroup>
           </div>
 
-          {!isNew && (
-            <div className="space-y-6 lg:min-w-0 lg:border-l lg:pl-4">
-              <TagsSection task={task} />
-              <ChecklistSection task={task} />
-              <CommentsSection task={task} />
-            </div>
-          )}
+          <div className="space-y-6 lg:min-w-0 lg:border-l lg:pl-4">
+            <TagsSection task={task} />
+            <ChecklistSection task={task} />
+            <CommentsSection task={task} />
+          </div>
         </div>
       </DialogContent>
     </Dialog>
